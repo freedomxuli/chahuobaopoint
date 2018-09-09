@@ -317,4 +317,158 @@ public class Module
             return true;
         }
     }
+
+    [CSMethod("GetPrivilegeByRole")]
+    public object GetPrivilegeByRole(string roleId)
+    {
+        using (var db = new DBConnection())
+        {
+            try
+            {
+                string sql = "select * from tb_b_module order by modulePx";
+                SqlCommand cmd = db.CreateCommand(sql);
+                DataTable dt_module = db.ExecuteDataTable(cmd);
+
+                sql = "select * from tb_b_menu order by menuPx";
+                cmd = db.CreateCommand(sql);
+                DataTable dt_menu = db.ExecuteDataTable(cmd);
+
+                sql = "select * from tb_b_privilege order by privilegePx";
+                cmd = db.CreateCommand(sql);
+                DataTable dt_privilege = db.ExecuteDataTable(cmd);
+
+                sql = "select * from tb_b_menu_role where roleId = @roleId";
+                cmd = db.CreateCommand(sql);
+                cmd.Parameters.Add("@roleId", roleId);
+                DataTable dt_menu_role = db.ExecuteDataTable(cmd);
+
+                sql = "select * from tb_b_privilege_role where roleId = @roleId";
+                cmd = db.CreateCommand(sql);
+                cmd.Parameters.Add("@roleId", roleId);
+                DataTable dt_privilege_role = db.ExecuteDataTable(cmd);
+
+                List<Hashtable> list = new List<Hashtable>();
+                for (int i = 0; i < dt_module.Rows.Count; i++)
+                {
+                    bool ischeck = true;
+                    Hashtable has = new Hashtable();
+                    has["ML_ID"] = dt_module.Rows[i]["moduleId"];
+                    has["ML_MC"] = dt_module.Rows[i]["moduleName"];
+                    has["ML_LB"] = 0;
+                    has["ML_URL"] = "";
+                    has["MODULE_ID"] = dt_module.Rows[i]["moduleId"];
+                    has["MENU_ID"] = "";
+                    has["ML_PX"] = dt_module.Rows[i]["modulePx"];
+                    has["expanded"] = true;
+
+                    DataRow[] drs_menu = dt_menu.Select("moduleId = '" + dt_module.Rows[i]["moduleId"] + "'");
+                    List<Hashtable> list1 = new List<Hashtable>();
+                    for (var j = 0; j < drs_menu.Length; j++)
+                    {
+                        bool ischeck1 = true;
+                        Hashtable has1 = new Hashtable();
+                        has1["ML_ID"] = drs_menu[j]["menuId"];
+                        has1["ML_MC"] = drs_menu[j]["menuName"];
+                        has1["ML_LB"] = 1;
+                        has1["ML_URL"] = drs_menu[j]["menuurl"];
+                        has1["MODULE_ID"] = drs_menu[j]["moduleId"];
+                        has1["MENU_ID"] = drs_menu[j]["menuId"];
+                        has1["ML_PX"] = drs_menu[j]["menuPx"];
+                        has1["expanded"] = true;
+                        DataRow[] drs_privilege = dt_privilege.Select("moduleId = '" + dt_module.Rows[i]["moduleId"] + "' and menuId = '" + drs_menu[j]["menuId"] + "'");
+                        List<Hashtable> list2 = new List<Hashtable>();
+                        for (var k = 0; k < drs_privilege.Length; k++)
+                        {
+                            bool ischeck2 = true;
+                            DataRow[] drs_privilege_role = dt_privilege_role.Select("privilegeId = '" + drs_privilege[k]["privilegeId"].ToString() + "'");
+                            if (drs_privilege_role.Length == 0)
+                            {
+                                ischeck1 = false;
+                                ischeck2 = false;
+                                ischeck = false;
+                            }
+                            Hashtable has2 = new Hashtable();
+                            has2["ML_ID"] = drs_privilege[k]["privilegeId"];
+                            has2["ML_MC"] = drs_privilege[k]["privilegeName"];
+                            has2["ML_LB"] = 2;
+                            has2["ML_URL"] = "";
+                            has2["MODULE_ID"] = drs_privilege[k]["moduleId"];
+                            has2["MENU_ID"] = drs_privilege[k]["menuId"];
+                            has2["ML_PX"] = drs_privilege[k]["privilegePx"];
+                            has2["leaf"] = true;
+                            has2["checked"] = ischeck2;
+                            list2.Add(has2);
+                        }
+                        has1["children"] = list2;
+                        has1["checked"] = ischeck1;
+                        list1.Add(has1);
+                    }
+                    has["children"] = list1;
+                    has["checked"] = ischeck;
+                    list.Add(has);
+                }
+                return new { ML_ID = "", ML_MC = "菜单目录", expanded = true, children = list };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
+    [CSMethod("SavePrivilegeByRole")]
+    public bool SavePrivilegeByRole(JSReader[] privilegeId,string roleId)
+    {
+        using (var db = new DBConnection())
+        {
+            string companyId = SystemUser.CurrentUser.CompanyID;
+            string sql = "delete from tb_b_privilege_role where roleId = @roleId and companyId = @companyId";
+            SqlCommand cmd = db.CreateCommand(sql);
+            cmd.Parameters.Add("@roleId", roleId);
+            cmd.Parameters.Add("@companyId", companyId);
+            db.ExecuteNonQuery(cmd);
+
+            sql = "delete from tb_b_menu_role where roleId = @roleId and companyId = @companyId";
+            cmd = db.CreateCommand(sql);
+            cmd.Parameters.Add("@roleId", roleId);
+            cmd.Parameters.Add("@companyId", companyId);
+            db.ExecuteNonQuery(cmd);
+
+            sql = "select * from tb_b_privilege where " + db.C_In("privilegeId", privilegeId);
+            cmd = db.CreateCommand(sql);
+            DataTable dt_privilege = db.ExecuteDataTable(cmd);
+
+            sql = "select * from tb_b_menu where menuId in (select menuId from tb_b_privilege where " + db.C_In("privilegeId", privilegeId) + ")";
+            cmd = db.CreateCommand(sql);
+            DataTable dt_menu = db.ExecuteDataTable(cmd);
+
+            DataTable dt_menu_new = db.GetEmptyDataTable("tb_b_menu_role");
+            DataTable dt_privilege_new = db.GetEmptyDataTable("tb_b_privilege_role");
+
+            for (var i = 0; i < dt_menu.Rows.Count; i++)
+            {
+                DataRow dr = dt_menu_new.NewRow();
+                dr["id"] = Guid.NewGuid();
+                dr["menuId"] = dt_menu.Rows[i]["menuId"];
+                dr["roleId"] = roleId;
+                dr["companyId"] = companyId;
+                dt_menu_new.Rows.Add(dr);
+            }
+
+            for (var i = 0; i < dt_privilege.Rows.Count; i++)
+            {
+                DataRow dr = dt_privilege_new.NewRow();
+                dr["id"] = Guid.NewGuid();
+                dr["privilegeId"] = dt_privilege.Rows[i]["privilegeId"];
+                dr["roleId"] = roleId;
+                dr["companyId"] = companyId;
+                dt_privilege_new.Rows.Add(dr);
+            }
+
+            db.InsertTable(dt_menu_new);
+            db.InsertTable(dt_privilege_new);
+            
+            return true;
+        }
+    }
 }
