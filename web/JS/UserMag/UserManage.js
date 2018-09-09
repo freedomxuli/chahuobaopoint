@@ -57,7 +57,7 @@ function EditUser(id) {
     var r = store.findRecord("UserID", id).data;
     CS('CZCLZ.YHGLClass.GetRole', function (retVal) {
         if (retVal) {
-            roleStore1.loadData(retVal, true);
+            roleStore1.loadData(retVal, false);
             var win = new addWin();
             win.show(null, function () {
                 win.setTitle("用户修改");
@@ -173,6 +173,7 @@ Ext.define('addWin', {
                     },
                      {
                          text: '取消',
+                         iconCls: 'back',
                          handler: function () {
                              this.up('window').close();
                          }
