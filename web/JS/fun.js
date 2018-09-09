@@ -235,6 +235,11 @@ function privilege(str)
             break;
         }
     }
+    if (!isOk)
+    {
+        Ext.Msg.alert("提示", "您好，你没有该权限，请联系管理员！");
+        return;
+    }
     return isOk;
 }
 
