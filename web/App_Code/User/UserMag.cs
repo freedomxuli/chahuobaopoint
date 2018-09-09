@@ -91,13 +91,13 @@ public class UserMag
     }
 
     [CSMethod("GetUserList")]
-    public object GetUserList(int pagnum, int pagesize, string jsid, string yhm, string xm,string dm)
+    public object GetUserList(int pagnum, int pagesize, string roleId, string yhm,string xm)
     {
-        if (!string.IsNullOrEmpty(jsid))
+        if (!string.IsNullOrEmpty(roleId))
         {
             try
             {
-                Guid guid = new Guid(jsid);
+                Guid guid = new Guid(roleId);
             }
             catch
             {
@@ -113,31 +113,28 @@ public class UserMag
                 int ac = 0;
 
                 string where = "";
-                if (!string.IsNullOrEmpty(jsid))
+                if (!string.IsNullOrEmpty(roleId))
                 {
-                    where += " and User_ID in (SELECT User_ID FROM tb_b_User_JS_Gl where JS_ID='"+jsid+"' and delflag=0 )";
+                    where += " and a.UserID in (SELECT userId FROM tb_b_user_role where roleId='" + roleId + "')";
                 }
 
                 if (!string.IsNullOrEmpty(yhm.Trim()))
                 {
-                    where += " and " + dbc.C_Like("LoginName", yhm.Trim(), LikeStyle.LeftAndRightLike);
+                    where += " and " + dbc.C_Like("a.UserName", yhm.Trim(), LikeStyle.LeftAndRightLike);
                 }
 
                 if (!string.IsNullOrEmpty(xm.Trim()))
                 {
-                    where += " and " + dbc.C_Like("User_XM", xm.Trim(), LikeStyle.LeftAndRightLike);
-                }
-                if (!string.IsNullOrEmpty(dm.Trim()))
-                {
-                    where += " and " + dbc.C_Like("User_DM", dm.Trim(), LikeStyle.LeftAndRightLike);
+                    where += " and " + dbc.C_Like("a.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
                 }
 
-                string str = "select * from tb_b_Users where User_DelFlag=0  ";
+                string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                                left join tb_b_roledb c on b.roleId=c.roleId where 1=1  ";
                 str += where;
 
                 //开始取分页数据
                 System.Data.DataTable dtPage = new System.Data.DataTable();
-                dtPage = dbc.GetPagedDataTable(str+" order by LoginName,User_XM", pagesize, ref cp, out ac);
+                dtPage = dbc.GetPagedDataTable(str + " order by a.UserName,a.UserXM", pagesize, ref cp, out ac);
 
                 return new { dt = dtPage, cp = cp, ac = ac };
             }
@@ -228,10 +225,10 @@ public class UserMag
         }
     }
 
-    [CSMethod("GetJs")]
-    public DataTable GetJs()
+    [CSMethod("GetRole")]
+    public DataTable GetRole()
     {
-        string sqlStr = "select JS_ID,JS_NAME from tb_b_JS where status=0 order by JS_Type,JS_PX";
+        string sqlStr = "select roleId,roleName from tb_b_roledb order by rolePx";
         using (DBConnection dbc = new DBConnection())
         {
             return dbc.ExecuteDataTable(sqlStr);
@@ -244,7 +241,7 @@ public class UserMag
         using (DBConnection dbc = new DBConnection())
         {
             DataTable dt = new DataTable();
-            string sqlStr = "select * from tb_b_JS where status=0 and JS_ID='" + jsid + "'";
+            string sqlStr = "select * from tb_b_roledb where status=0 and roleId='" + jsid + "'";
             DataTable dtjs = dbc.ExecuteDataTable(sqlStr);
             if (dtjs != null && dtjs.Rows.Count > 0)
             {
@@ -398,9 +395,9 @@ public class UserMag
     }
 
     [CSMethod("SaveUser")]
-    public bool SaveUser(JSReader jsr, JSReader yhjs,JSReader yhjsdw,JSReader qxids)
+    public bool SaveUser(JSReader jsr)
     {
-        if (jsr["LoginName"].IsNull || jsr["LoginName"].IsEmpty)
+        if (jsr["UserName"].IsNull || jsr["UserName"].IsEmpty)
         {
             throw new Exception("用户名不能为空");
         }
@@ -409,213 +406,95 @@ public class UserMag
             throw new Exception("密码不能为空");
         }
 
-        if (yhjs.ToArray().Length == 0)
+        if (jsr["roleId"].IsNull || jsr["roleId"].IsEmpty)
         {
             throw new Exception("没有用户角色！");
         }
 
-        var EditUser = SystemUser.CurrentUser;
-
+        var companyId = SystemUser.CurrentUser.CompanyID;
         using (DBConnection dbc = new DBConnection())
         {
             dbc.BeginTransaction();
             try
             {
-                if (jsr["User_ID"].ToString() == "")
+                if (jsr["UserID"].ToString() == "")
                 {
-                    DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_Users where LoginName='" + jsr["LoginName"].ToString() + "' and User_DelFlag=0");
+                    DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + jsr["UserName"].ToString() + "'");
                     if (dt_user.Rows.Count > 0)
                     {
                         throw new Exception("该用户名已存在！");
                     }
-
+                    //用户表
                     var YHID = Guid.NewGuid().ToString();
-                    //建立用户
-                    string sqlStr = "";
-                    if (jsr["QY_ID"].ToString() != "")
-                    {
-                        sqlStr = "insert into tb_b_Users (User_ID,LoginName,Password,User_DM,User_XM,User_ZW,User_DH,User_SJ,User_Email,User_DZ,User_Enable,User_DelFlag,addtime,updatetime,updateuser,QY_ID) " +
-                            "values (@User_ID,@LoginName,@Password,@User_DM,@User_XM,@User_ZW,@User_DH,@User_SJ,@User_Email,@User_DZ,@User_Enable,@User_DelFlag,@addtime,@updatetime,@updateuser,@qyid)";
-                    }
-                    else
-                    {
-                        sqlStr = "insert into tb_b_Users (User_ID,LoginName,Password,User_DM,User_XM,User_ZW,User_DH,User_SJ,User_Email,User_DZ,User_Enable,User_DelFlag,addtime,updatetime,updateuser) " +
-                            "values (@User_ID,@LoginName,@Password,@User_DM,@User_XM,@User_ZW,@User_DH,@User_SJ,@User_Email,@User_DZ,@User_Enable,@User_DelFlag,@addtime,@updatetime,@updateuser)";
-                    }
-                    SqlCommand cmd = new SqlCommand(sqlStr);
-                    cmd.Parameters.AddWithValue("@User_ID", YHID);
-                    cmd.Parameters.AddWithValue("@LoginName", jsr["LoginName"].ToString());
-                    cmd.Parameters.AddWithValue("@Password", jsr["Password"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DM", jsr["User_DM"].ToString());
-                    cmd.Parameters.AddWithValue("@User_XM", jsr["User_XM"].ToString());
-                    cmd.Parameters.AddWithValue("@User_ZW", jsr["User_ZW"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DH", jsr["User_DH"].ToString());
-                    cmd.Parameters.AddWithValue("@User_SJ", jsr["User_SJ"].ToString());
-                    cmd.Parameters.AddWithValue("@User_Email", jsr["User_Email"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DZ", jsr["User_DZ"].ToString());
-                    if (jsr["QY_ID"].ToString() != "")
-                    {
-                        cmd.Parameters.AddWithValue("@qyid", jsr["QY_ID"].ToString());
-                    }
-                    cmd.Parameters.AddWithValue("@User_Enable", Convert.ToInt32(jsr["User_Enable"].ToString()));
-                    cmd.Parameters.AddWithValue("@User_DelFlag", 0);
-                    cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = jsr["UserName"].ToString();
+                    dr["Password"] = jsr["Password"].ToString();
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 0;
+                    //dr["Discount"] = ;
+                    dr["UserXM"] = jsr["UserXM"].ToString();
+                    dr["UserTel"] = jsr["UserTel"].ToString();
+                    //dr["FromRoute"] = ;
+                    //dr["ToRoute"] = ;
+                    dr["companyId"] = companyId;
+                    //dr["PayPassword"] = ;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
 
-                    dbc.ExecuteNonQuery(cmd);
-
-                    //建立用户角色关联
-                    for (int i = 0; i < yhjs.ToArray().Length; i++)
-                    {
-                        string sqlstr_js = "insert into tb_b_User_JS_Gl (UserGl_id,User_ID,JS_ID,delflag,addtime,updatetime,updateuser) values(@UserGl_id,@User_ID,@JS_ID,@delflag,@addtime,@updatetime,@updateuser)";
-                        cmd = new SqlCommand(sqlstr_js);
-                        cmd.Parameters.AddWithValue("@UserGl_id", Guid.NewGuid());
-                        cmd.Parameters.AddWithValue("@User_ID", YHID);
-                        cmd.Parameters.AddWithValue("@JS_ID", yhjs.ToArray()[i].ToString());
-                        cmd.Parameters.AddWithValue("@delflag", 0);
-                        cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                        dbc.ExecuteNonQuery(cmd);
-                    }
-
-
-                    //建立用户单位关联
-                    for (int i = 0; i < yhjsdw.ToArray().Length; i++)
-                    {
-                        JSReader[] arr_dw = yhjsdw.ToArray()[i].ToArray();
-                        for (int k = 0; k < arr_dw.Length; k++)
-                        {
-                            string sqlstr_dw = "insert into tb_b_User_Dw_Gl(UserDwGL_id,User_ID,DW_ID,delflag,addtime,updatetime,updateuser) values(@UserDwGL_id,@User_ID,@DW_ID,@delflag,@addtime,@updatetime,@updateuser)";
-                            cmd = new SqlCommand(sqlstr_dw);
-                            cmd.Parameters.AddWithValue("@UserDwGL_id", Guid.NewGuid());
-                            cmd.Parameters.AddWithValue("@User_ID", YHID);
-                            cmd.Parameters.AddWithValue("@DW_ID", arr_dw[k].ToString());
-                            cmd.Parameters.AddWithValue("@delflag", 0);
-                            cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                            dbc.ExecuteNonQuery(cmd);
-                        }
-                    }
-
-                    //建立用户权限关联
-                    for (int i = 0; i < qxids.ToArray().Length; i++)
-                    {
-                        string sqlstr_qx = "insert into tb_b_YH_YHQX (PRIVILEGECODE,USERID) values(@PRIVILEGECODE,@USERID)";
-                        cmd = new SqlCommand(sqlstr_qx);
-                        cmd.Parameters.AddWithValue("@PRIVILEGECODE", new Guid(qxids.ToArray()[i]));
-                        cmd.Parameters.AddWithValue("@USERID", YHID);
-                        dbc.ExecuteNonQuery(cmd);
-                    }
+                    //角色用户关联表
+                    var rdt = dbc.GetEmptyDataTable("tb_b_user_role");
+                    var rdr = rdt.NewRow();
+                    rdr["userroleId"] = Guid.NewGuid().ToString();
+                    rdr["userId"] = new Guid(YHID);
+                    rdr["roleId"] = jsr["roleId"].ToString();
+                    rdr["companyId"] = companyId;
+                    rdt.Rows.Add(rdr);
+                    dbc.InsertTable(rdt);
 
                 }
                 else
                 {
-                    var YHID = jsr["User_ID"].ToString();
-                    var oldname = dbc.ExecuteScalar("select LoginName from tb_b_Users where User_ID='" + YHID + "'");
-                    if (!jsr["LoginName"].ToString().Equals(oldname.ToString()))
+                    var YHID = jsr["UserID"].ToString();
+                    var oldname = dbc.ExecuteScalar("select UserName from tb_b_user where UserID='" + YHID + "'");
+                    if (!jsr["UserName"].ToString().Equals(oldname.ToString()))
                     {
-                        DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_Users where LoginName='" + jsr["LoginName"].ToString() + "' and User_DelFlag=0");
+                        DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + jsr["UserName"].ToString() + "'");
                         if (dt_user.Rows.Count > 0)
                         {
                             throw new Exception("该用户名已存在！");
                         }
                     }
-                    var con = "";
-                    if (jsr["QY_ID"].ToString() != "")
-                    {
-                        con = ",QY_ID='" + jsr["QY_ID"].ToString() + "'";
-                    }
-                    else
-                    {
-                        con = ",QY_ID=null";
-                        
-                    }
-                    string sqlstr = "update tb_b_Users set LoginName=@LoginName,Password=@Password,User_DM=@User_DM,User_XM=@User_XM,User_ZW=@User_ZW,User_DH=@User_DH,User_SJ=@User_SJ,User_Email=@User_Email,User_DZ=@User_DZ,User_Enable=@User_Enable,updatetime=@updatetime,updateuser=@updateuser " + con + " where User_ID=@User_ID";
-                    SqlCommand cmd = new SqlCommand(sqlstr);
-                    cmd.Parameters.AddWithValue("@LoginName", jsr["LoginName"].ToString());
-                    cmd.Parameters.AddWithValue("@Password", jsr["Password"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DM", jsr["User_DM"].ToString());
-                    cmd.Parameters.AddWithValue("@User_XM", jsr["User_XM"].ToString());
-                    cmd.Parameters.AddWithValue("@User_ZW", jsr["User_ZW"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DH", jsr["User_DH"].ToString());
-                    cmd.Parameters.AddWithValue("@User_SJ", jsr["User_SJ"].ToString());
-                    cmd.Parameters.AddWithValue("@User_Email", jsr["User_Email"].ToString());
-                    cmd.Parameters.AddWithValue("@User_DZ", jsr["User_DZ"].ToString());
-                    cmd.Parameters.AddWithValue("@User_Enable", Convert.ToInt32(jsr["User_Enable"].ToString()));
-                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                    cmd.Parameters.AddWithValue("@User_ID", YHID);
-                    dbc.ExecuteNonQuery(cmd);
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = jsr["UserName"].ToString();
+                    dr["Password"] = jsr["Password"].ToString();
+                    dr["UserXM"] = jsr["UserXM"].ToString();
+                    dr["UserTel"] = jsr["UserTel"].ToString();
+                    dt.Rows.Add(dr);
+                    dbc.UpdateTable(dt, dtt);
 
                     //删除用户的角色关联
-                    string del_js = "update tb_b_User_JS_Gl set delflag=1,updatetime=@updatetime,updateuser=@updateuser where User_ID=@User_ID";
-                    cmd = new SqlCommand(del_js);
-                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                    cmd.Parameters.AddWithValue("@User_ID", YHID);
-                    dbc.ExecuteNonQuery(cmd);
-                    //删除用户的单位关联
-                    string del_dw = "update tb_b_User_Dw_Gl set delflag=1,updatetime=@updatetime,updateuser=@updateuser where User_ID=@User_ID";
-                    cmd = new SqlCommand(del_dw);
-                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                    cmd.Parameters.AddWithValue("@User_ID", YHID);
-                    dbc.ExecuteNonQuery(cmd);
-                    //删除用户的权限关联
-                    string del_qx = "delete from tb_b_YH_YHQX where USERID=@USERID";
-                    cmd = new SqlCommand(del_qx);
-                    cmd.Parameters.AddWithValue("@USERID", YHID);
+                    string del_js = "delete from tb_b_user_role where userId=@userId";
+                    SqlCommand cmd = new SqlCommand(del_js);
+                    cmd.Parameters.AddWithValue("@userId", YHID);
                     dbc.ExecuteNonQuery(cmd);
 
                     //建立用户角色关联
-                    for (int i = 0; i < yhjs.ToArray().Length; i++)
-                    {
-                        string sqlstr_js = "insert into tb_b_User_JS_Gl (UserGl_id,User_ID,JS_ID,delflag,addtime,updatetime,updateuser) values(@UserGl_id,@User_ID,@JS_ID,@delflag,@addtime,@updatetime,@updateuser)";
-                        cmd = new SqlCommand(sqlstr_js);
-                        cmd.Parameters.AddWithValue("@UserGl_id", Guid.NewGuid());
-                        cmd.Parameters.AddWithValue("@User_ID", YHID);
-                        cmd.Parameters.AddWithValue("@JS_ID", yhjs.ToArray()[i].ToString());
-                        cmd.Parameters.AddWithValue("@delflag", 0);
-                        cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                        dbc.ExecuteNonQuery(cmd);
-                    }
-
-
-                    //建立用户单位关联
-                    for (int i = 0; i < yhjsdw.ToArray().Length; i++)
-                    {
-                        JSReader[] arr_dw = yhjsdw.ToArray()[i].ToArray();
-                        for (int k = 0; k < arr_dw.Length; k++)
-                        {
-                            string sqlstr_dw = "insert into tb_b_User_Dw_Gl(UserDwGL_id,User_ID,DW_ID,delflag,addtime,updatetime,updateuser) values(@UserDwGL_id,@User_ID,@DW_ID,@delflag,@addtime,@updatetime,@updateuser)";
-                            cmd = new SqlCommand(sqlstr_dw);
-                            cmd.Parameters.AddWithValue("@UserDwGL_id", Guid.NewGuid());
-                            cmd.Parameters.AddWithValue("@User_ID", YHID);
-                            cmd.Parameters.AddWithValue("@DW_ID", arr_dw[k].ToString());
-                            cmd.Parameters.AddWithValue("@delflag", 0);
-                            cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
-                            dbc.ExecuteNonQuery(cmd);
-                        }
-                    }
-
-                    //建立用户权限关联
-                    for (int i = 0; i < qxids.ToArray().Length; i++)
-                    {
-                        string sqlstr_qx = "insert into tb_b_YH_YHQX (PRIVILEGECODE,USERID) values(@PRIVILEGECODE,@USERID)";
-                        cmd = new SqlCommand(sqlstr_qx);
-                        cmd.Parameters.AddWithValue("@PRIVILEGECODE", new Guid(qxids.ToArray()[i]));
-                        cmd.Parameters.AddWithValue("@USERID", YHID);
-                        dbc.ExecuteNonQuery(cmd);
-                    }
+                    var rdt = dbc.GetEmptyDataTable("tb_b_user_role");
+                    var rdr = rdt.NewRow();
+                    rdr["userroleId"] = Guid.NewGuid().ToString();
+                    rdr["userId"] = new Guid(YHID);
+                    rdr["roleId"] = jsr["roleId"].ToString();
+                    rdr["companyId"] = companyId;
+                    rdt.Rows.Add(rdr);
+                    dbc.InsertTable(rdt);
                 }
-
                 dbc.CommitTransaction();
                 return true;
             }
@@ -625,7 +504,237 @@ public class UserMag
                 throw ex;
             }
         }
+
     }
+    //[CSMethod("SaveUser")]
+    //public bool SaveUser(JSReader jsr, JSReader yhjs,JSReader yhjsdw,JSReader qxids)
+    //{
+    //    if (jsr["LoginName"].IsNull || jsr["LoginName"].IsEmpty)
+    //    {
+    //        throw new Exception("用户名不能为空");
+    //    }
+    //    if (jsr["Password"].IsNull || jsr["Password"].IsEmpty)
+    //    {
+    //        throw new Exception("密码不能为空");
+    //    }
+
+    //    if (yhjs.ToArray().Length == 0)
+    //    {
+    //        throw new Exception("没有用户角色！");
+    //    }
+
+    //    var EditUser = SystemUser.CurrentUser;
+
+    //    using (DBConnection dbc = new DBConnection())
+    //    {
+    //        dbc.BeginTransaction();
+    //        try
+    //        {
+    //            if (jsr["User_ID"].ToString() == "")
+    //            {
+    //                DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_Users where LoginName='" + jsr["LoginName"].ToString() + "' and User_DelFlag=0");
+    //                if (dt_user.Rows.Count > 0)
+    //                {
+    //                    throw new Exception("该用户名已存在！");
+    //                }
+
+    //                var YHID = Guid.NewGuid().ToString();
+    //                //建立用户
+    //                string sqlStr = "";
+    //                if (jsr["QY_ID"].ToString() != "")
+    //                {
+    //                    sqlStr = "insert into tb_b_Users (User_ID,LoginName,Password,User_DM,User_XM,User_ZW,User_DH,User_SJ,User_Email,User_DZ,User_Enable,User_DelFlag,addtime,updatetime,updateuser,QY_ID) " +
+    //                        "values (@User_ID,@LoginName,@Password,@User_DM,@User_XM,@User_ZW,@User_DH,@User_SJ,@User_Email,@User_DZ,@User_Enable,@User_DelFlag,@addtime,@updatetime,@updateuser,@qyid)";
+    //                }
+    //                else
+    //                {
+    //                    sqlStr = "insert into tb_b_Users (User_ID,LoginName,Password,User_DM,User_XM,User_ZW,User_DH,User_SJ,User_Email,User_DZ,User_Enable,User_DelFlag,addtime,updatetime,updateuser) " +
+    //                        "values (@User_ID,@LoginName,@Password,@User_DM,@User_XM,@User_ZW,@User_DH,@User_SJ,@User_Email,@User_DZ,@User_Enable,@User_DelFlag,@addtime,@updatetime,@updateuser)";
+    //                }
+    //                SqlCommand cmd = new SqlCommand(sqlStr);
+    //                cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                cmd.Parameters.AddWithValue("@LoginName", jsr["LoginName"].ToString());
+    //                cmd.Parameters.AddWithValue("@Password", jsr["Password"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DM", jsr["User_DM"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_XM", jsr["User_XM"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_ZW", jsr["User_ZW"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DH", jsr["User_DH"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_SJ", jsr["User_SJ"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_Email", jsr["User_Email"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DZ", jsr["User_DZ"].ToString());
+    //                if (jsr["QY_ID"].ToString() != "")
+    //                {
+    //                    cmd.Parameters.AddWithValue("@qyid", jsr["QY_ID"].ToString());
+    //                }
+    //                cmd.Parameters.AddWithValue("@User_Enable", Convert.ToInt32(jsr["User_Enable"].ToString()));
+    //                cmd.Parameters.AddWithValue("@User_DelFlag", 0);
+    //                cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
+    //                cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+
+    //                dbc.ExecuteNonQuery(cmd);
+
+    //                //建立用户角色关联
+    //                for (int i = 0; i < yhjs.ToArray().Length; i++)
+    //                {
+    //                    string sqlstr_js = "insert into tb_b_User_JS_Gl (UserGl_id,User_ID,JS_ID,delflag,addtime,updatetime,updateuser) values(@UserGl_id,@User_ID,@JS_ID,@delflag,@addtime,@updatetime,@updateuser)";
+    //                    cmd = new SqlCommand(sqlstr_js);
+    //                    cmd.Parameters.AddWithValue("@UserGl_id", Guid.NewGuid());
+    //                    cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                    cmd.Parameters.AddWithValue("@JS_ID", yhjs.ToArray()[i].ToString());
+    //                    cmd.Parameters.AddWithValue("@delflag", 0);
+    //                    cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
+    //                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                    dbc.ExecuteNonQuery(cmd);
+    //                }
+
+
+    //                //建立用户单位关联
+    //                for (int i = 0; i < yhjsdw.ToArray().Length; i++)
+    //                {
+    //                    JSReader[] arr_dw = yhjsdw.ToArray()[i].ToArray();
+    //                    for (int k = 0; k < arr_dw.Length; k++)
+    //                    {
+    //                        string sqlstr_dw = "insert into tb_b_User_Dw_Gl(UserDwGL_id,User_ID,DW_ID,delflag,addtime,updatetime,updateuser) values(@UserDwGL_id,@User_ID,@DW_ID,@delflag,@addtime,@updatetime,@updateuser)";
+    //                        cmd = new SqlCommand(sqlstr_dw);
+    //                        cmd.Parameters.AddWithValue("@UserDwGL_id", Guid.NewGuid());
+    //                        cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                        cmd.Parameters.AddWithValue("@DW_ID", arr_dw[k].ToString());
+    //                        cmd.Parameters.AddWithValue("@delflag", 0);
+    //                        cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
+    //                        cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                        cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                        dbc.ExecuteNonQuery(cmd);
+    //                    }
+    //                }
+
+    //                //建立用户权限关联
+    //                for (int i = 0; i < qxids.ToArray().Length; i++)
+    //                {
+    //                    string sqlstr_qx = "insert into tb_b_YH_YHQX (PRIVILEGECODE,USERID) values(@PRIVILEGECODE,@USERID)";
+    //                    cmd = new SqlCommand(sqlstr_qx);
+    //                    cmd.Parameters.AddWithValue("@PRIVILEGECODE", new Guid(qxids.ToArray()[i]));
+    //                    cmd.Parameters.AddWithValue("@USERID", YHID);
+    //                    dbc.ExecuteNonQuery(cmd);
+    //                }
+
+    //            }
+    //            else
+    //            {
+    //                var YHID = jsr["User_ID"].ToString();
+    //                var oldname = dbc.ExecuteScalar("select LoginName from tb_b_Users where User_ID='" + YHID + "'");
+    //                if (!jsr["LoginName"].ToString().Equals(oldname.ToString()))
+    //                {
+    //                    DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_Users where LoginName='" + jsr["LoginName"].ToString() + "' and User_DelFlag=0");
+    //                    if (dt_user.Rows.Count > 0)
+    //                    {
+    //                        throw new Exception("该用户名已存在！");
+    //                    }
+    //                }
+    //                var con = "";
+    //                if (jsr["QY_ID"].ToString() != "")
+    //                {
+    //                    con = ",QY_ID='" + jsr["QY_ID"].ToString() + "'";
+    //                }
+    //                else
+    //                {
+    //                    con = ",QY_ID=null";
+                        
+    //                }
+    //                string sqlstr = "update tb_b_Users set LoginName=@LoginName,Password=@Password,User_DM=@User_DM,User_XM=@User_XM,User_ZW=@User_ZW,User_DH=@User_DH,User_SJ=@User_SJ,User_Email=@User_Email,User_DZ=@User_DZ,User_Enable=@User_Enable,updatetime=@updatetime,updateuser=@updateuser " + con + " where User_ID=@User_ID";
+    //                SqlCommand cmd = new SqlCommand(sqlstr);
+    //                cmd.Parameters.AddWithValue("@LoginName", jsr["LoginName"].ToString());
+    //                cmd.Parameters.AddWithValue("@Password", jsr["Password"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DM", jsr["User_DM"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_XM", jsr["User_XM"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_ZW", jsr["User_ZW"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DH", jsr["User_DH"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_SJ", jsr["User_SJ"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_Email", jsr["User_Email"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_DZ", jsr["User_DZ"].ToString());
+    //                cmd.Parameters.AddWithValue("@User_Enable", Convert.ToInt32(jsr["User_Enable"].ToString()));
+    //                cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                dbc.ExecuteNonQuery(cmd);
+
+    //                //删除用户的角色关联
+    //                string del_js = "update tb_b_User_JS_Gl set delflag=1,updatetime=@updatetime,updateuser=@updateuser where User_ID=@User_ID";
+    //                cmd = new SqlCommand(del_js);
+    //                cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                dbc.ExecuteNonQuery(cmd);
+    //                //删除用户的单位关联
+    //                string del_dw = "update tb_b_User_Dw_Gl set delflag=1,updatetime=@updatetime,updateuser=@updateuser where User_ID=@User_ID";
+    //                cmd = new SqlCommand(del_dw);
+    //                cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                dbc.ExecuteNonQuery(cmd);
+    //                //删除用户的权限关联
+    //                string del_qx = "delete from tb_b_YH_YHQX where USERID=@USERID";
+    //                cmd = new SqlCommand(del_qx);
+    //                cmd.Parameters.AddWithValue("@USERID", YHID);
+    //                dbc.ExecuteNonQuery(cmd);
+
+    //                //建立用户角色关联
+    //                for (int i = 0; i < yhjs.ToArray().Length; i++)
+    //                {
+    //                    string sqlstr_js = "insert into tb_b_User_JS_Gl (UserGl_id,User_ID,JS_ID,delflag,addtime,updatetime,updateuser) values(@UserGl_id,@User_ID,@JS_ID,@delflag,@addtime,@updatetime,@updateuser)";
+    //                    cmd = new SqlCommand(sqlstr_js);
+    //                    cmd.Parameters.AddWithValue("@UserGl_id", Guid.NewGuid());
+    //                    cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                    cmd.Parameters.AddWithValue("@JS_ID", yhjs.ToArray()[i].ToString());
+    //                    cmd.Parameters.AddWithValue("@delflag", 0);
+    //                    cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
+    //                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                    cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                    dbc.ExecuteNonQuery(cmd);
+    //                }
+
+
+    //                //建立用户单位关联
+    //                for (int i = 0; i < yhjsdw.ToArray().Length; i++)
+    //                {
+    //                    JSReader[] arr_dw = yhjsdw.ToArray()[i].ToArray();
+    //                    for (int k = 0; k < arr_dw.Length; k++)
+    //                    {
+    //                        string sqlstr_dw = "insert into tb_b_User_Dw_Gl(UserDwGL_id,User_ID,DW_ID,delflag,addtime,updatetime,updateuser) values(@UserDwGL_id,@User_ID,@DW_ID,@delflag,@addtime,@updatetime,@updateuser)";
+    //                        cmd = new SqlCommand(sqlstr_dw);
+    //                        cmd.Parameters.AddWithValue("@UserDwGL_id", Guid.NewGuid());
+    //                        cmd.Parameters.AddWithValue("@User_ID", YHID);
+    //                        cmd.Parameters.AddWithValue("@DW_ID", arr_dw[k].ToString());
+    //                        cmd.Parameters.AddWithValue("@delflag", 0);
+    //                        cmd.Parameters.AddWithValue("@addtime", DateTime.Now);
+    //                        cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
+    //                        cmd.Parameters.AddWithValue("@updateuser", EditUser.UserID);
+    //                        dbc.ExecuteNonQuery(cmd);
+    //                    }
+    //                }
+
+    //                //建立用户权限关联
+    //                for (int i = 0; i < qxids.ToArray().Length; i++)
+    //                {
+    //                    string sqlstr_qx = "insert into tb_b_YH_YHQX (PRIVILEGECODE,USERID) values(@PRIVILEGECODE,@USERID)";
+    //                    cmd = new SqlCommand(sqlstr_qx);
+    //                    cmd.Parameters.AddWithValue("@PRIVILEGECODE", new Guid(qxids.ToArray()[i]));
+    //                    cmd.Parameters.AddWithValue("@USERID", YHID);
+    //                    dbc.ExecuteNonQuery(cmd);
+    //                }
+    //            }
+
+    //            dbc.CommitTransaction();
+    //            return true;
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            dbc.RoolbackTransaction();
+    //            throw ex;
+    //        }
+    //    }
+    //}
 
     //[CSMethod("SaveUser")]
     //public bool SaveUser(JSReader jsr, string[] Privileges)
@@ -678,19 +787,52 @@ public class UserMag
     //    return UserEditSuccess;
     //}
 
+    //[CSMethod("DelUser")]
+    //public bool DelUser(string userid)
+    //{
+    //    if (userid.Trim() == "")
+    //        return false;
+    //    using (DBConnection dbc = new DBConnection())
+    //    {
+    //        int retInt = dbc.ExecuteNonQuery("update tb_b_Users set User_DelFlag = 1 where user_id = '" + userid + "'");
+    //        if (retInt > 0)
+    //            return true;
+    //        return false;
+    //    }
+    //}
+
     [CSMethod("DelUser")]
-    public bool DelUser(string userid)
+    public bool DelUser(JSReader jsr)
     {
-        if (userid.Trim() == "")
-            return false;
         using (DBConnection dbc = new DBConnection())
         {
-            int retInt = dbc.ExecuteNonQuery("update tb_b_Users set User_DelFlag = 1 where user_id = '" + userid + "'");
-            if (retInt > 0)
+            dbc.BeginTransaction();
+            try
+            {
+                for (int i = 0; i < jsr.ToArray().Length; i++)
+                {
+                    string delstr = "delete from tb_b_user_role where userId=@userId";
+                    SqlCommand cmd = new SqlCommand(delstr);
+                    cmd.Parameters.AddWithValue("@userId", jsr.ToArray()[i].ToString());
+                    dbc.ExecuteNonQuery(cmd);
+
+                    string str = "delete from tb_b_user where UserID=@UserID";
+                    SqlCommand ucmd = new SqlCommand(str);
+                    ucmd.Parameters.AddWithValue("@UserID", jsr.ToArray()[i].ToString());
+                    dbc.ExecuteNonQuery(ucmd);
+                }
+
+                dbc.CommitTransaction();
                 return true;
-            return false;
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                throw ex;
+            }
         }
     }
+
 
     [CSMethod("DelUserByids")]
     public bool DelUserByids(JSReader jsr)
