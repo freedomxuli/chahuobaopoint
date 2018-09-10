@@ -2,7 +2,7 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
     mui.showLoading("正在加载..", "div");
 	var ajax_sign;
 	var ajax_msg;
-	mui.ajax("http://192.168.199.218:8083/InterFaceHandler.ashx", {
+	mui.ajax(grobal_url, {
 		dataType: "json",
 		type: "post",
 		data: {
