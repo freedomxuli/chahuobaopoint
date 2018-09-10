@@ -14,6 +14,18 @@ public class InterFaceHandler : IHttpHandler {
             case "getyanzhengma":
                 str = getyanzhengma(context);
                 break;
+            case "ZhuCe"://专线注册
+                str = ZhuCe(context);
+                break;
+            case "ZhuCe1"://三方注册
+                str = ZhuCe1(context);
+                break;
+            case "login_confirm"://登录
+                str = login_confirm(context);
+                break;
+            case "ChongZhiMiMa"://重置密码
+                str = ChongZhiMiMa(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -24,7 +36,7 @@ public class InterFaceHandler : IHttpHandler {
             return false;
         }
     }
-
+    
     public string getyanzhengma(HttpContext context)
     {
         context.Response.ContentType = "text/plain";
@@ -93,5 +105,227 @@ public class InterFaceHandler : IHttpHandler {
         }
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
+    
+    public string ZhuCe(HttpContext context)
+    {
 
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string UserXM = context.Request["UserXM"];
+        string FromRoute = context.Request["FromRoute"];
+        string ToRoute = context.Request["ToRoute"];
+        string UserPassword = context.Request["UserPassword"];
+        string PayPassword = context.Request["PayPassword"];
+
+        string type = context.Request["type"];
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "注册失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + UserName + "'");
+                if (dt_user.Rows.Count > 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户名已存在！";
+                }
+                //用户表
+                var YHID = Guid.NewGuid().ToString();
+                var dt = dbc.GetEmptyDataTable("tb_b_user");
+                var dr = dt.NewRow();
+                dr["UserID"] = new Guid(YHID);
+                dr["UserName"] = UserName;
+                dr["Password"] = UserPassword;
+                dr["AddTime"] = DateTime.Now;
+                dr["IsSHPass"] = 1;
+                dr["Points"] = 0;
+                dr["ClientKind"] = 1;
+                //dr["Discount"] = ;
+                dr["UserXM"] = UserXM;
+                dr["UserTel"] = UserName;
+                dr["FromRoute"] =FromRoute ;
+                dr["ToRoute"] = ToRoute;
+                //dr["companyId"] =;
+                dr["PayPassword"] = PayPassword;
+                dt.Rows.Add(dr);
+                dbc.InsertTable(dt);
+
+                dbc.CommitTransaction();
+
+                hash["sign"] = "1";
+                hash["msg"] = "注册成功！";
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        
+
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+
+    public string ZhuCe1(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string UserPassword = context.Request["UserPassword"];
+        string PayPassword = context.Request["PayPassword"];
+
+        string type = context.Request["type"];
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "注册失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count > 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户名已存在！";
+                }
+                //用户表
+                var YHID = Guid.NewGuid().ToString();
+                var dt = dbc.GetEmptyDataTable("tb_b_user");
+                var dr = dt.NewRow();
+                dr["UserID"] = new Guid(YHID);
+                dr["UserName"] = UserName;
+                dr["Password"] = UserPassword;
+                dr["AddTime"] = DateTime.Now;
+                dr["IsSHPass"] = 1;
+                dr["Points"] = 0;
+                dr["ClientKind"] = 2;
+                //dr["Discount"] = ;
+                //dr["UserXM"] = UserXM;
+                dr["UserTel"] = UserName;
+                //dr["FromRoute"] = FromRoute;
+                //dr["ToRoute"] = ToRoute;
+                //dr["companyId"] =;
+                dr["PayPassword"] = PayPassword;
+                dt.Rows.Add(dr);
+                dbc.InsertTable(dt);
+
+                dbc.CommitTransaction();
+
+                hash["sign"] = "1";
+                hash["msg"] = "注册成功！";
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+
+
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string login_confirm(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string UserPassword = context.Request["UserPassword"];
+
+        string type = context.Request["type"];
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "登录失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=@UserName and Password=@Password";
+                System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(str);
+                cmd.Parameters.AddWithValue("@UserName", UserName);
+                cmd.Parameters.AddWithValue("@Password", UserPassword);
+                System.Data.DataTable dt = dbc.ExecuteDataTable(cmd);
+                if (dt.Rows.Count > 0)
+                {
+                    hash["sign"] = "1";
+                    hash["msg"] = "注册成功！";
+                }
+                else
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "用户名或密码错误！";
+                }
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+
+
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string ChongZhiMiMa(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string UserPassword = context.Request["UserPassword"];
+
+        string type = context.Request["type"];
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "重置密码失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count==0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+
+                string str = "update tb_b_user set Password=" + dbc.ToSqlValue(UserPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
+                dbc.ExecuteDataTable(str);
+                
+                dbc.CommitTransaction();
+
+                hash["sign"] = "1";
+                hash["msg"] = "修改成功！";
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+
+
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
 }

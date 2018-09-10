@@ -96,7 +96,9 @@
 		</div>
 		<script src="../js/mui.min.js"></script>
 		<script src="../js/mui.enterfocus.js"></script>
+        <script src="../js/mui.showLoading.js"></script>
 		<script src="../js/app.js"></script>
+        <script src="../js/MyOwnJS/Login.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 		    (function ($, doc) {
 		        var mainPage = $.preload({
@@ -120,11 +122,11 @@
 		            localStorage.setItem("mgps_UserName", UserNameBox.value);
 		            localStorage.setItem("mgps_UserPassword", UserPasswordBox.value);
 		            if (UserNameBox.value == "" || UserPasswordBox.value == "") {
-		                plus.nativeUI.toast('账号或密码存在空值');
+		                $.toast('账号或密码存在空值');
 		                return;
 		            }
 		            if (UserNameBox.value.length != 11) {
-		                plus.nativeUI.toast('请输入正确格式的手机号');
+		                $.toast('请输入正确格式的手机号');
 		                return;
 		            }
 		            var loginInfo = {

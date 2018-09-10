@@ -1,10 +1,109 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
-</head>
-<body>
+<html class="ui-page-login">
 
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>注册</title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+        <link href="../css/mui.showLoading.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+
+	<body>
+<!--		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">注册</h1>
+		</header>-->
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;">手机号码:</label>
+							<input id='UserName' style="width: 63%; float: left;" type="tel" class="mui-input-clear mui-input" placeholder="请输入账号">
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;">登录密码:</label>
+							<input id='Password' style="width: 63%; float: left;" type="password" class="mui-input-clear mui-input" placeholder="请输入登录密码">
+
+						</div>
+					</li>
+                    <li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;">支付密码:</label>
+							<input id='PayPassword' style="width: 63%; float: left;" type="password" class="mui-input-clear mui-input" placeholder="请输入支付密码">
+
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;" class="iconfont_log_reg">验 证 码 :</label>
+							<input id='yanzhengma' style="width: 40%; float: left;" type="number" class="mui-input-clear  mui-input" placeholder="请输入验证码" style="width:80px;margin-left: 30px;">
+							<div id="send" style="float: left;width: 23%;" class="mui-btn mui-btn-primary mui-btn-outlined">
+								发送
+							</div>
+						</div>
+					</li>
+
+				</ul>
+			</form>
+			<div class="mui-content-padded">
+				<button id='reg' class="mui-btn mui-btn-block mui-btn-primary">注册</button>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+        <script src="../js/mui.showLoading.js"></script>
+        <script src="../js/app.js"></script>
+        <script src="../js/MyOwnJS/ZhuCe.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/MyOwnJS/yanzhengma.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+		    (function ($, doc) {
+		        var regButton = doc.getElementById('reg');
+		        var UserNameBox = doc.getElementById('UserName');
+		        var UserPasswordBox = doc.getElementById('Password');
+		        var PayPasswordBox = doc.getElementById('PayPassword');
+		        var sendbutton = document.getElementById("send");
+		        sendbutton.addEventListener('tap', function (e) {
+		            var UserNamevalue = UserNameBox.value;
+		            if (UserNamevalue.length == 11) {
+		                senmobile(60);
+		                getyanzhengma(UserNamevalue, 'zhuce');
+		            } else {
+		                $.toast('请输入正确格式的手机号');
+		                return;
+		            }
+		        });
+		        regButton.addEventListener('tap', function (event) {
+		            var UserNamevalue = UserNameBox.value;
+		            var UserPasswordvalue = UserPasswordBox.value;
+		            var PayPasswordvalue = PayPasswordBox.value;
+		            var yanzhengmavalue = doc.getElementById('yanzhengma').value;
+		            var yanzhengmavalue_old = localStorage.getItem("yanzhengma_zhuce");
+		            if (UserNamevalue == "" || UserPasswordvalue == "" || PayPasswordvalue == "" || yanzhengmavalue == "") {
+		                $.toast('每个信息都必须填写');
+		                return;
+		            }
+		            if (UserNamevalue.length != 11) {
+		                $.toast('请输入正确格式的手机号');
+		                return;
+		            }
+		            if (yanzhengmavalue != yanzhengmavalue_old) {
+		                $.toast('验证码超时，请重新发送');
+		                return;
+		            }
+		            ZhuCe1(UserNamevalue,UserPasswordvalue, PayPasswordvalue);
+		        });
+		    }(mui, document));
+		</script>
+	</body>
+
 </html>
