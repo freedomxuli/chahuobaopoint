@@ -76,6 +76,60 @@
 	            });
 	        }, false);
 
+	        var MyOrdersButton = doc.getElementById('MyOrders');
+	        MyOrdersButton.addEventListener('tap', function (event) {
+	            $.openWindow({
+	                url: 'MyOrders.html',
+	                id: 'MyOrders',
+	                preload: true,
+	                show: {
+	                    aniShow: 'pop-in'
+	                },
+	                styles: {
+	                    popGesture: 'hide'
+	                },
+	                waiting: {
+	                    autoShow: false
+	                }
+	            });
+	        }, false);
+
+	        var TransactionRecordsButton = doc.getElementById('TransactionRecords');
+	        TransactionRecordsButton.addEventListener('tap', function (event) {
+	            $.openWindow({
+	                url: 'OrderList.html',
+	                id: 'OrderList',
+	                preload: true,
+	                show: {
+	                    aniShow: 'pop-in'
+	                },
+	                styles: {
+	                    popGesture: 'hide'
+	                },
+	                waiting: {
+	                    autoShow: false
+	                }
+	            });
+	        }, false);
+
+	        var MyCardsButton = doc.getElementById('MyCards');
+	        MyCardsButton.addEventListener('tap', function (event) {
+	            $.openWindow({
+	                url: 'MyCards.html',
+	                id: 'MyCards',
+	                preload: true,
+	                show: {
+	                    aniShow: 'pop-in'
+	                },
+	                styles: {
+	                    popGesture: 'hide'
+	                },
+	                waiting: {
+	                    autoShow: false
+	                }
+	            });
+	        }, false);
+
 	        var PayPointsButton = doc.getElementById('PayPoints');
 	        PayPointsButton.addEventListener('tap', function (event) {
 	            $.openWindow({
