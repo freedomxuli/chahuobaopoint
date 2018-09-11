@@ -1,4 +1,4 @@
-function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
+function tijiaoshenqing(UserName, PointsBoxvalue, ApplyMemovalue) {
     mui.showLoading("正在加载..", "div");
 	var ajax_sign;
 	var ajax_msg;
@@ -6,20 +6,19 @@ function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
 		dataType: "json",
 		type: "post",
 		data: {
-		    "action": "ChongZhiMiMa",
+		    "action": "tijiaoshenqing",
 			"UserName": UserName,
-			"UserPassword": UserPassword,
-			"UserLeiXing":UserLeiXing
+			"sqjf": PointsBoxvalue,
+			"memo": ApplyMemovalue
 		},
 		success: function(data, status, xhr) {
 			ajax_sign = data.sign;
 			ajax_msg = data.msg;
 			if (ajax_sign == '1') {
-			    localStorage.setItem("tuichudenglu", "true");
 				mui.alert(ajax_msg);
 				mui.openWindow({
-					id: 'MGps_login',
-					url: 'MGps_login.html',
+				    id: 'MGps_main',
+				    url: 'MGps_main.html',
 					show: {
 						aniShow: 'pop-in'
 					},

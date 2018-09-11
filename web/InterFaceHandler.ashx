@@ -26,6 +26,12 @@ public class InterFaceHandler : IHttpHandler {
             case "ChongZhiMiMa"://重置密码
                 str = ChongZhiMiMa(context);
                 break;
+            case "ChongZhiMiMaZF"://重置支付密码
+                str = ChongZhiMiMaZF(context);
+                break;
+            case "tijiaoshenqing"://申请积分
+                str = tijiaoshenqing(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -135,31 +141,36 @@ public class InterFaceHandler : IHttpHandler {
                     hash["sign"] = "0";
                     hash["msg"] = "该用户名已存在！";
                 }
-                //用户表
-                var YHID = Guid.NewGuid().ToString();
-                var dt = dbc.GetEmptyDataTable("tb_b_user");
-                var dr = dt.NewRow();
-                dr["UserID"] = new Guid(YHID);
-                dr["UserName"] = UserName;
-                dr["Password"] = UserPassword;
-                dr["AddTime"] = DateTime.Now;
-                dr["IsSHPass"] = 1;
-                dr["Points"] = 0;
-                dr["ClientKind"] = 1;
-                //dr["Discount"] = ;
-                dr["UserXM"] = UserXM;
-                dr["UserTel"] = UserName;
-                dr["FromRoute"] =FromRoute ;
-                dr["ToRoute"] = ToRoute;
-                //dr["companyId"] =;
-                dr["PayPassword"] = PayPassword;
-                dt.Rows.Add(dr);
-                dbc.InsertTable(dt);
+                else
+                {
+                    //用户表
+                    var YHID = Guid.NewGuid().ToString();
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = UserName;
+                    dr["Password"] = UserPassword;
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 1;
+                    //dr["Discount"] = ;
+                    dr["UserXM"] = UserXM;
+                    dr["UserTel"] = UserName;
+                    dr["FromRoute"] = FromRoute;
+                    dr["ToRoute"] = ToRoute;
+                    //dr["companyId"] =;
+                    dr["PayPassword"] = PayPassword;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "注册成功！";
+                }
 
                 dbc.CommitTransaction();
 
-                hash["sign"] = "1";
-                hash["msg"] = "注册成功！";
+                
             }
             catch (Exception ex)
             {
@@ -200,31 +211,35 @@ public class InterFaceHandler : IHttpHandler {
                     hash["sign"] = "0";
                     hash["msg"] = "该用户名已存在！";
                 }
-                //用户表
-                var YHID = Guid.NewGuid().ToString();
-                var dt = dbc.GetEmptyDataTable("tb_b_user");
-                var dr = dt.NewRow();
-                dr["UserID"] = new Guid(YHID);
-                dr["UserName"] = UserName;
-                dr["Password"] = UserPassword;
-                dr["AddTime"] = DateTime.Now;
-                dr["IsSHPass"] = 1;
-                dr["Points"] = 0;
-                dr["ClientKind"] = 2;
-                //dr["Discount"] = ;
-                //dr["UserXM"] = UserXM;
-                dr["UserTel"] = UserName;
-                //dr["FromRoute"] = FromRoute;
-                //dr["ToRoute"] = ToRoute;
-                //dr["companyId"] =;
-                dr["PayPassword"] = PayPassword;
-                dt.Rows.Add(dr);
-                dbc.InsertTable(dt);
+                else
+                {
+                    //用户表
+                    var YHID = Guid.NewGuid().ToString();
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = UserName;
+                    dr["Password"] = UserPassword;
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 2;
+                    //dr["Discount"] = ;
+                    //dr["UserXM"] = UserXM;
+                    dr["UserTel"] = UserName;
+                    //dr["FromRoute"] = FromRoute;
+                    //dr["ToRoute"] = ToRoute;
+                    //dr["companyId"] =;
+                    dr["PayPassword"] = PayPassword;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
 
+                    hash["sign"] = "1";
+                    hash["msg"] = "注册成功！";
+                }
                 dbc.CommitTransaction();
 
-                hash["sign"] = "1";
-                hash["msg"] = "注册成功！";
+                
             }
             catch (Exception ex)
             {
@@ -285,7 +300,7 @@ public class InterFaceHandler : IHttpHandler {
 
     public string ChongZhiMiMa(HttpContext context)
     {
-
+        
         context.Response.ContentType = "text/plain";
         //用户名
         System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
@@ -303,19 +318,21 @@ public class InterFaceHandler : IHttpHandler {
             try
             {
                 System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
-                if (dt_user.Rows.Count==0)
+                if (dt_user.Rows.Count == 0)
                 {
                     hash["sign"] = "0";
                     hash["msg"] = "该用户不存在，请注册！";
                 }
+                else
+                {
 
-                string str = "update tb_b_user set Password=" + dbc.ToSqlValue(UserPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
-                dbc.ExecuteDataTable(str);
-                
+                    string str = "update tb_b_user set Password=" + dbc.ToSqlValue(UserPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
+                    dbc.ExecuteDataTable(str);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "修改成功！";
+                }
                 dbc.CommitTransaction();
-
-                hash["sign"] = "1";
-                hash["msg"] = "修改成功！";
             }
             catch (Exception ex)
             {
@@ -326,6 +343,108 @@ public class InterFaceHandler : IHttpHandler {
         }
 
 
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string ChongZhiMiMaZF(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string PayPassword = context.Request["PayPassword"];
+
+        string type = context.Request["type"];
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "重置支付密码失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    string str = "update tb_b_user set PayPassword=" + dbc.ToSqlValue(PayPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
+                    dbc.ExecuteDataTable(str);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "修改成功！";
+                }
+                dbc.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string tijiaoshenqing(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string sqjf = context.Request["sqjf"];
+        string memo = context.Request["memo"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "申请失败！";
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+
+                    var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
+                    var dr = dt.NewRow();
+                    dr["sqId"] = Guid.NewGuid().ToString();
+                    dr["userId"] = dt_user.Rows[0]["UserID"];
+                    dr["sqrq"] = DateTime.Now;
+                    dr["memo"] = memo;
+                    dr["sqjf"] = sqjf;
+                    dr["issq"] = 0;
+                    //dr["shtime"] = ;
+                    //dr["shuserId"] = ;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "申请成功！";
+                }
+                dbc.CommitTransaction();
+
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 }
