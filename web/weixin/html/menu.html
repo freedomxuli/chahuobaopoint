@@ -93,6 +93,43 @@
 	                }
 	            });
 	        }, false);
+
+	        var MySettingsButton = doc.getElementById('MySettings');
+	        MySettingsButton.addEventListener('tap', function (event) {
+	            $.openWindow({
+	                url: 'MySettings.html',
+	                id: 'MySettings',
+	                preload: true,
+	                show: {
+	                    aniShow: 'pop-in'
+	                },
+	                styles: {
+	                    popGesture: 'hide'
+	                },
+	                waiting: {
+	                    autoShow: false
+	                }
+	            });
+	        }, false);
+
+	        var ApplyPointsButton = doc.getElementById('ApplyPoints');
+	        ApplyPointsButton.addEventListener('tap', function (event) {
+	            $.openWindow({
+	                url: 'ApplyPoints.html',
+	                id: 'ApplyPoints',
+	                preload: true,
+	                show: {
+	                    aniShow: 'pop-in'
+	                },
+	                styles: {
+	                    popGesture: 'hide'
+	                },
+	                waiting: {
+	                    autoShow: false
+	                }
+	            });
+	        }, false);
+
 	    }(mui, document));
 	</script>
 </html>
