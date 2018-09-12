@@ -3,7 +3,7 @@
  * 当您要参考这个演示程序进行相关 app 的开发时，
  * 请注意将相关方法调整成 “基于服务端Service” 的实现。
  **/
-var grobal_url = "http://192.168.199.218:8083/InterFaceHandler.ashx";
+var grobal_url = "http://wx.chahuobao.net/InterFaceHandler.ashx";
 
 Date.prototype.Format = function (fmt) {
     var o = {

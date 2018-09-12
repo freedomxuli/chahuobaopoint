@@ -27,7 +27,7 @@
 		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="BuyPoints">
 		                    <span class="mui-icon-extra mui-icon-extra-cart"></span>
 		                    <div class="mui-media-body">购买积分</div></a></li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="PayPoints">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" onclick="PayPoints();"><a href="#" id="PayPoints">
 		                    <span class="mui-icon-extra mui-icon-extra-sweep"></span>
 		                    <div class="mui-media-body">支付积分</div></a></li>
 		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="ReceivePoints">
@@ -59,120 +59,44 @@
     <script src="../js/app.js"></script>
     <script src="../js/MyOwnJS/tijiaoshenqing.js"></script>
 	<script type="text/javascript">
-	    (function ($, doc) {
-	        var BuyPointsButton = doc.getElementById('BuyPoints');
-	        BuyPointsButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'BuyPointsList.html',
-	                id: 'BuyPointsList',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    //var BuyPointsButton = doc.getElementById('BuyPoints');
+	    //BuyPointsButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "BuyPointsList.html";
+	    //}, false);
 
-	        var MyOrdersButton = doc.getElementById('MyOrders');
-	        MyOrdersButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'MyOrders.html',
-	                id: 'MyOrders',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    //var MyOrdersButton = doc.getElementById('MyOrders');
+	    //MyOrdersButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "MyOrders.html";
+	    //}, false);
 
-	        var TransactionRecordsButton = doc.getElementById('TransactionRecords');
-	        TransactionRecordsButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'OrderList.html',
-	                id: 'OrderList',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    //var TransactionRecordsButton = doc.getElementById('TransactionRecords');
+	    //TransactionRecordsButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "OrderList.html";
+	    //}, false);
 
-	        var MyCardsButton = doc.getElementById('MyCards');
-	        MyCardsButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'MyCards.html',
-	                id: 'MyCards',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    //var MyCardsButton = doc.getElementById('MyCards');
+	    //MyCardsButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "MyCards.html";
+	    //}, false);
 
-	        var PayPointsButton = doc.getElementById('PayPoints');
-	        PayPointsButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'PayPoints.html',
-	                id: 'PayPoints',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    function PayPoints()
+	    {
+	        document.location.href = "PayPoints.aspx";
+	    }
 
-	        var MySettingsButton = doc.getElementById('MySettings');
-	        MySettingsButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'MySettings.html',
-	                id: 'MySettings',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
+	    //var PayPointsButton = doc.getElementById('PayPoints');
+	    //PayPointsButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "PayPoints.aspx";
+	    //}, false);
 
-	        var ApplyPointsButton = doc.getElementById('ApplyPoints');
-	        ApplyPointsButton.addEventListener('tap', function (event) {
-	            panduanyh(localStorage.getItem("mgps_UserName"));
-	        }, false);
+	    //var MySettingsButton = doc.getElementById('MySettings');
+	    //MySettingsButton.addEventListener('tap', function (event) {
+	    //    document.location.href = "MySettings.html";
+	    //}, false);
 
-	    }(mui, document));
+	    //var ApplyPointsButton = doc.getElementById('ApplyPoints');
+	    //ApplyPointsButton.addEventListener('tap', function (event) {
+	    //    panduanyh(localStorage.getItem("mgps_UserName"));
+	    //}, false);
 	</script>
 </html>

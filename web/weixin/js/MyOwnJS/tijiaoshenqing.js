@@ -14,20 +14,7 @@ function panduanyh(UserNamevalue) {
             ajax_sign = data.sign;
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
-                $.openWindow({
-                    url: 'ApplyPoints.html',
-                    id: 'ApplyPoints',
-                    preload: true,
-                    show: {
-                        aniShow: 'pop-in'
-                    },
-                    styles: {
-                        popGesture: 'hide'
-                    },
-                    waiting: {
-                        autoShow: false
-                    }
-                });
+                document.location.href = "ApplyPoints.html";
             } else {
                 mui.alert(ajax_msg)
             }

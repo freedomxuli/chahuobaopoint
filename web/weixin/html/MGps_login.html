@@ -141,52 +141,13 @@
 		            $.trigger(loginButton, 'tap');
 		        });
 		        regButton.addEventListener('tap', function (event) {
-		            $.openWindow({
-		                url: 'MGps_reg.html',
-		                id: 'MGps_reg',
-		                preload: true,
-		                show: {
-		                    aniShow: 'pop-in'
-		                },
-		                styles: {
-		                    popGesture: 'hide'
-		                },
-		                waiting: {
-		                    autoShow: false
-		                }
-		            });
+		            document.location.href = "MGps_reg.html";
 		        }, false);
 		        regButton1.addEventListener('tap', function (event) {
-		            $.openWindow({
-		                url: 'MGps_reg1.html',
-		                id: 'MGps_reg1',
-		                preload: true,
-		                show: {
-		                    aniShow: 'pop-in'
-		                },
-		                styles: {
-		                    popGesture: 'hide'
-		                },
-		                waiting: {
-		                    autoShow: false
-		                }
-		            });
+		            document.location.href = "MGps_reg1.html";
 		        }, false);
 		        forgetButton.addEventListener('tap', function (event) {
-		            $.openWindow({
-		                url: 'MGps_forget_password.html',
-		                id: 'MGps_forget_password',
-		                preload: true,
-		                show: {
-		                    aniShow: 'pop-in'
-		                },
-		                styles: {
-		                    popGesture: 'hide'
-		                },
-		                waiting: {
-		                    autoShow: false
-		                }
-		            });
+		            document.location.href = "MGps_forget_password.html";
 		        }, false);
 		        window.addEventListener("show", function (e) {
 		            doc.getElementById('UserName').value = '';

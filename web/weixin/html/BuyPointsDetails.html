@@ -1,0 +1,58 @@
+﻿
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>购买积分</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="../css/app.css"/>
+	</head>
+	<body>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+                <br />
+				<h3>XXX物流　　电子券</h3>
+                <br />
+				<p>
+					电子券可抵扣相关物流产品。
+				</p>
+                <p style="color:red;">
+					自下单起，请于5分钟内付款，否则订单失效！
+				</p>
+                <br />
+                <div class="mui-input-row">
+					<input type="number" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
+				</div>
+                <br />
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay">支付订单</button>
+                <button type="button" class="mui-btn mui-btn-danger mui-btn-block" id="Cancel">取消订单</button>
+			</div>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script>
+	    mui.init({
+	        swipeBack: true //启用右滑关闭功能
+	    });
+
+	    //document.getElementById("Pay").addEventListener('tap', function (e) {
+	    //    e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+	    //    var btnArray = ['确定', '取消'];
+	    //    mui.prompt('请输入支付密码：', '', '提示', btnArray, function (e) {
+	    //        if (e.index == 0) {
+	    //            //info.innerText = '谢谢你的评语：' + e.value;
+	    //        } else {
+	    //            //info.innerText = '你点了取消按钮';
+	    //        }
+	    //    })
+	    //});
+
+	</script>
+</html>

@@ -93,17 +93,17 @@ public partial class GetMessage : System.Web.UI.Page
             }
 
             //post method - 当有用户想公众账号发送消息时触发
-            var postModel = new PostModel()
-            {
-                Signature = Request.QueryString["signature"],
-                Msg_Signature = Request.QueryString["msg_signature"],
-                Timestamp = Request.QueryString["timestamp"],
-                Nonce = Request.QueryString["nonce"],
-                //以下保密信息不会（不应该）在网络上传播，请注意
-                Token = Token,
-                EncodingAESKey = "OOUa8906bBKb8l6aaMJTKyM5iIFJcI5PZkpWXZtIbNq",//根据自己后台的设置保持一致
-                AppId = "wx422044a7a4be9609"//根据自己后台的设置保持一致
-            };
+            //var postModel = new PostModel()
+            //{
+            //    Signature = Request.QueryString["signature"],
+            //    Msg_Signature = Request.QueryString["msg_signature"],
+            //    Timestamp = Request.QueryString["timestamp"],
+            //    Nonce = Request.QueryString["nonce"],
+            //    //以下保密信息不会（不应该）在网络上传播，请注意
+            //    Token = Token,
+            //    EncodingAESKey = "OOUa8906bBKb8l6aaMJTKyM5iIFJcI5PZkpWXZtIbNq",//根据自己后台的设置保持一致
+            //    AppId = "wx422044a7a4be9609"//根据自己后台的设置保持一致
+            //};
 
             //var maxRecordCount = 10;
 

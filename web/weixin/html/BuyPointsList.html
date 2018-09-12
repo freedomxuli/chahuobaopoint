@@ -73,7 +73,7 @@
                                                 '<h5>上架日期：' + new Date().Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
                                             '</div>' +
                                             '<div class="mui-table-cell mui-col-xs-2 mui-text-center">'+
-                                                '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined">'+
+                                                '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" data-index="wl" onClick="BuyPoints(\'22\');">' +
                                                     '购买'+
                                                 '</button>'+
 		                                    '</div>'+
@@ -82,6 +82,25 @@
 		            }
 		        }, 1500);
 		    }
+
+		    function BuyPoints(val)
+		    {
+		        mui.openWindow({
+		            url: 'BuyPointsDetails.html',
+		            id: 'BuyPointsDetails',
+		            preload: true,
+		            show: {
+		                aniShow: 'pop-in'
+		            },
+		            styles: {
+		                popGesture: 'hide'
+		            },
+		            waiting: {
+		                autoShow: false
+		            }
+		        });
+		    }
+
 		    if (mui.os.plus) {
 		        mui.plusReady(function () {
 		            setTimeout(function () {
