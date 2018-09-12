@@ -32,6 +32,12 @@ public class InterFaceHandler : IHttpHandler {
             case "tijiaoshenqing"://申请积分
                 str = tijiaoshenqing(context);
                 break;
+            case "GetMyCardsList"://申请积分
+                str = GetMyCardsList(context);
+                break;
+            case "panduanyh"://申请积分
+                str = panduanyh(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -418,22 +424,29 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
+                    if (Convert.ToInt32(dt_user.Rows[0]["ClientKind"]) != 1)
+                    {
+                        hash["sign"] = "0";
+                        hash["msg"] = "对不起，您的账号无法申请积分！";
+                    }
+                    else
+                    {
+                        var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
+                        var dr = dt.NewRow();
+                        dr["sqId"] = Guid.NewGuid().ToString();
+                        dr["userId"] = dt_user.Rows[0]["UserID"];
+                        dr["sqrq"] = DateTime.Now;
+                        dr["memo"] = memo;
+                        dr["sqjf"] = sqjf;
+                        dr["issq"] = 0;
+                        //dr["shtime"] = ;
+                        //dr["shuserId"] = ;
+                        dt.Rows.Add(dr);
+                        dbc.InsertTable(dt);
 
-                    var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
-                    var dr = dt.NewRow();
-                    dr["sqId"] = Guid.NewGuid().ToString();
-                    dr["userId"] = dt_user.Rows[0]["UserID"];
-                    dr["sqrq"] = DateTime.Now;
-                    dr["memo"] = memo;
-                    dr["sqjf"] = sqjf;
-                    dr["issq"] = 0;
-                    //dr["shtime"] = ;
-                    //dr["shuserId"] = ;
-                    dt.Rows.Add(dr);
-                    dbc.InsertTable(dt);
-
-                    hash["sign"] = "1";
-                    hash["msg"] = "申请成功！";
+                        hash["sign"] = "1";
+                        hash["msg"] = "申请成功！";
+                    }
                 }
                 dbc.CommitTransaction();
 
@@ -441,6 +454,106 @@ public class InterFaceHandler : IHttpHandler {
             catch (Exception ex)
             {
                 dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string GetMyCardsList(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+
+        int cp = Convert.ToInt32(context.Request["pagnum"]);
+        int pagesize=Convert.ToInt32(context.Request["pagesize"]);
+        int ac = 0;
+        
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+        
+        hash["value"] = new object();
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    str = @"select a.*,b.UserXM as zxmc,c.UserName as syr from tb_b_mycard a left join tb_b_user b  on a.UserID=b.UserID
+                            left join tb_b_user c on a.CardUserID=c.UserID
+                             where a.CardUserID='" + udt.Rows[0]["UserID"] + "' and a.status=0 order by a.points";
+                    System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "获取成功！";
+                    hash["value"] = new  { dt = dtPage, cp = cp, ac = ac };
+                    
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string panduanyh(HttpContext context)
+    {
+
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    if (Convert.ToInt32(udt.Rows[0]["ClientKind"]) == 1)
+                    {
+                        hash["sign"] = "1";
+                        hash["msg"] = "请申请积分";
+                    }
+                    else
+                    {
+                        hash["sign"] = "0";
+                        hash["msg"] = "对不起，您的账号无法申请积分！";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
                 hash["sign"] = "0";
                 hash["msg"] = "内部错误:" + ex.Message;
             }

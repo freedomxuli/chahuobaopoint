@@ -52,23 +52,6 @@ function sq(id) {
         });
     }
 }
-
-function qxsq(id) {
-    if (privilege("申请积分_积分授权_编辑")) {
-        Ext.MessageBox.confirm('提示', '是否取消授权!', function (obj) {
-            if (obj == "yes") {
-                CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
-                    if (retVal) {
-                        getList(1);
-                    }
-                }, CS.onError, id, 0);
-            }
-            else {
-                return;
-            }
-        });
-    }
-}
 //************************************页面方法***************************************
 
 //************************************弹出界面***************************************
@@ -146,13 +129,10 @@ Ext.onReady(function () {
                             dataIndex: 'sqId',
                             text: '操作',
                             renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
-                                
                                 str = "";
                                 if (record.data.issq == 0) {
                                     str = "<a href='JavaScript:void(0)' onclick='sq(\"" + value + "\")'>授权</a>";
-                                } else {
-                                    str = "<a href='JavaScript:void(0)' onclick='qxsq(\"" + value + "\")'>取消授权</a>";
-                                }
+                                } 
                                 return str;
                             }
                         }

@@ -114,9 +114,9 @@
 		        var forgetButton = doc.getElementById('forgetPassword');
 		        doc.getElementById('UserName').value = localStorage.getItem("mgps_UserName");
 		        doc.getElementById('UserPassword').value = localStorage.getItem("mgps_UserPassword");
-		        if (localStorage.getItem("tuichudenglu") == "false") {
-		            login_confirm(localStorage.getItem("mgps_UserName"), localStorage.getItem("mgps_UserPassword"), "APP");
-		        }
+		        //if (localStorage.getItem("tuichudenglu") == "false") {
+		        //    login_confirm(localStorage.getItem("mgps_UserName"), localStorage.getItem("mgps_UserPassword"), "APP");
+		        //}
 
 		        loginButton.addEventListener('tap', function (event) {
 		            localStorage.setItem("mgps_UserName", UserNameBox.value);

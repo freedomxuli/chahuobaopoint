@@ -1,5 +1,43 @@
+function panduanyh(UserNamevalue) {
+    //mui.showLoading("正在加载..", "div");
+    var ajax_sign;
+    var ajax_msg;
+    mui.ajax(grobal_url, {
+        dataType: "json",
+        type: "post",
+        data: {
+            "action": "panduanyh",
+            "UserName": UserNamevalue
+        },
+        success: function (data, status, xhr) {
+            //mui.hideLoading();
+            ajax_sign = data.sign;
+            ajax_msg = data.msg;
+            if (ajax_sign == '1') {
+                $.openWindow({
+                    url: 'ApplyPoints.html',
+                    id: 'ApplyPoints',
+                    preload: true,
+                    show: {
+                        aniShow: 'pop-in'
+                    },
+                    styles: {
+                        popGesture: 'hide'
+                    },
+                    waiting: {
+                        autoShow: false
+                    }
+                });
+            } else {
+                mui.alert(ajax_msg)
+            }
+        }
+    });
+}
+
+
 function tijiaoshenqing(UserName, PointsBoxvalue, ApplyMemovalue) {
-    mui.showLoading("正在加载..", "div");
+    //mui.showLoading("正在加载..", "div");
 	var ajax_sign;
 	var ajax_msg;
 	mui.ajax(grobal_url, {
@@ -11,7 +49,8 @@ function tijiaoshenqing(UserName, PointsBoxvalue, ApplyMemovalue) {
 			"sqjf": PointsBoxvalue,
 			"memo": ApplyMemovalue
 		},
-		success: function(data, status, xhr) {
+		success: function (data, status, xhr) {
+		    //mui.hideLoading();
 			ajax_sign = data.sign;
 			ajax_msg = data.msg;
 			if (ajax_sign == '1') {
@@ -35,7 +74,7 @@ function tijiaoshenqing(UserName, PointsBoxvalue, ApplyMemovalue) {
 }
 
 function ChongZhiMiMaZF(UserName, PayPassword, UserLeiXing) {
-    mui.showLoading("正在加载..", "div");
+    //mui.showLoading("正在加载..", "div");
     var ajax_sign;
     var ajax_msg;
     mui.ajax(grobal_url, {
@@ -48,6 +87,7 @@ function ChongZhiMiMaZF(UserName, PayPassword, UserLeiXing) {
             "UserLeiXing": UserLeiXing
         },
         success: function (data, status, xhr) {
+            //mui.hideLoading();
             ajax_sign = data.sign;
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
