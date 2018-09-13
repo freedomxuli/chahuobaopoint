@@ -12,18 +12,10 @@ public interface IConfig
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置），请妥善保管，避免密钥泄露
         */
 
-         string GetAppID(){
-             return "wx422044a7a4be9609";
-         }
-         string GetMchID() {
-             return "1514474141";
-         }
-         string GetKey() {
-             return "chb7390fhunxg16sdjlkxnfhjdsk3gaz";
-         }
-         string GetAppSecret() {
-             return "a12eca08b53a58d3806c6226efbb1364";
-         }
+         string GetAppID();
+         string GetMchID();
+         string GetKey();
+         string GetAppSecret();
 
 
 
@@ -41,9 +33,7 @@ public interface IConfig
         //=======【支付结果通知url】===================================== 
         /* 支付结果通知回调url，用于商户接收支付结果
         */
-         string GetNotifyUrl() { 
-            return  "http://wx.chahuobao.net/weixin/Notify.aspx";
-         }
+         string GetNotifyUrl();
      
         //=======【商户系统后台机器IP】===================================== 
         /* 此参数可手动配置也可在程序中自动获取

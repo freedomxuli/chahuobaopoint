@@ -85,20 +85,7 @@
 
 		    function BuyPoints(val)
 		    {
-		        mui.openWindow({
-		            url: 'BuyPointsDetails.html',
-		            id: 'BuyPointsDetails',
-		            preload: true,
-		            show: {
-		                aniShow: 'pop-in'
-		            },
-		            styles: {
-		                popGesture: 'hide'
-		            },
-		            waiting: {
-		                autoShow: false
-		            }
-		        });
+		        document.location.href = "BuyPointsDetails.html";
 		    }
 
 		    if (mui.os.plus) {

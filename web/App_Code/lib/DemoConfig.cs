@@ -17,16 +17,16 @@ namespace WxPayAPI.lib
         */
 
         public string GetAppID(){
-            return "";
+            return "wx422044a7a4be9609";
         }
         public string GetMchID(){
-            return "";
+            return "1514474141";
         }
         public string GetKey(){
-            return "";
+            return "chb7390fhunxg16sdjlkxnfhjdsk3gaz";
         }
         public string GetAppSecret(){
-            return "";
+            return "a12eca08b53a58d3806c6226efbb1364";
         }
 
 
@@ -50,14 +50,14 @@ namespace WxPayAPI.lib
         /* 支付结果通知回调url，用于商户接收支付结果
         */
         public string GetNotifyUrl(){
-            return "";
+            return "http://wx.chahuobao.net/weixin/html/Notify.aspx";
         }
 
         //=======【商户系统后台机器IP】===================================== 
         /* 此参数可手动配置也可在程序中自动获取
         */
         public string GetIp(){
-            return "0.0.0.0";
+            return "127.0.0.1";
         }
 
 

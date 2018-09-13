@@ -31,16 +31,17 @@
 					<input type="number" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
 				</div>
                 <br />
-                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay">确认订单</button>
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay" onclick="Pay();">确认订单</button>
                 <button type="button" class="mui-btn mui-btn-danger mui-btn-block" id="Cancel">取消订单</button>
 			</div>
 		</div>
 	</body>
 	<script src="../js/mui.min.js"></script>
 	<script>
-	    mui.init({
-	        swipeBack: true //启用右滑关闭功能
-	    });
+	    function Pay()
+	    {
+	        document.location.href = "BuyPointsStart.aspx";
+	    }
 
 	    //document.getElementById("Pay").addEventListener('tap', function (e) {
 	    //    e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了

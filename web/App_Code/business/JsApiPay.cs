@@ -154,6 +154,7 @@ namespace WxPayAPI
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
             data.SetValue("goods_tag", "test");
+            data.SetValue("notify_url", "http://wx.chahuobao.net/weixin/Notify.aspx");
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 
