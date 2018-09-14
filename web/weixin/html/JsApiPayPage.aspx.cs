@@ -9,13 +9,14 @@ using WxPayAPI;
 public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
 {
     public static string wxJsApiParam { get; set; } //H5调起JS API参数
-    string total_fee_yuan = "";
+    public string total_fee_yuan = "";
     protected void Page_Load(object sender, EventArgs e)
     {
         Log.Info(this.GetType().ToString(), "page load");
         if (!IsPostBack)
         {
             string openid = Request.QueryString["openid"];
+            string orderid = Request.QueryString["ordercode"];
             total_fee_yuan = Request.QueryString["total_fee"];
             string total_fee = (100 * Convert.ToInt32(total_fee_yuan)).ToString();
             //检测是否给当前页面传递了相关参数
@@ -31,6 +32,7 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
             JsApiPay jsApiPay = new JsApiPay(this);
             jsApiPay.openid = openid;
             jsApiPay.total_fee = int.Parse(total_fee);
+            jsApiPay.orderid = orderid;
 
             //JSAPI支付预处理
             try

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using SmartFramework4v2.Data.SqlServer;
+using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data;
 
 namespace WxPayAPI
 {
@@ -52,6 +54,25 @@ namespace WxPayAPI
                 res.SetValue("return_code", "SUCCESS");
                 res.SetValue("return_msg", "OK");
                 Log.Info(this.GetType().ToString(), "order query success : " + res.ToXml());
+
+                using (var db = new DBConnection())
+                {
+                    string ordercode = notifyData.GetValue("out_trade_no").ToString();
+                    string sql = "select * from tb_b_order where OrderCode =" + db.ToSqlValue(ordercode);
+                    DataTable dt = db.ExecuteDataTable(sql);
+                    sql = "update tb_b_order set ZhiFuZT = 1 where OrderCode =" + db.ToSqlValue(ordercode);
+                    db.ExecuteNonQuery(sql);
+                    DataTable dt_new = db.GetEmptyDataTable("tb_b_mycard");
+                    SmartFramework4v2.Data.DataTableTracker dtt_new = new SmartFramework4v2.Data.DataTableTracker(dt_new);
+                    DataRow dr = dt_new.NewRow();
+                    dr["mycardId"] = Guid.NewGuid();
+                    dr["points"] = dt.Rows[0]["Points"];
+                    dr["UserID"] = dt.Rows[0]["BuyUserID"];
+                    dr["CardUserID"] = dt.Rows[0]["SaleUserID"];
+                    dr["status"] = 0;
+                    dt_new.Rows.Add(dr);
+
+                }
                 page.Response.Write(res.ToXml());
                 page.Response.End();
             }

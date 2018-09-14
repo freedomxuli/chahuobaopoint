@@ -92,6 +92,7 @@
 </script>
 <script>
     var money = 0;
+    var ordercode = "";
     mui.ready(function () {
     	var UserName = localStorage.getItem("mgps_UserName");
     	var OrderID = localStorage.getItem("OrderID");
@@ -109,6 +110,7 @@
     	            jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
     	            jQuery("#points").val(data.dt[0]["Points"]);
     	            money = parseFloat(data.dt[0]["Money"]);
+    	            ordercode = data.dt[0]["OrderCode"];
     	        } else {
     	            mui.alert("获取失败！");
     	        }
@@ -117,7 +119,7 @@
     });
 
     function Pay() {
-        var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + localStorage.getItem("OrderID");
+        var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + ordercode;
         document.location.href = url;
     }
     function Cancel() {

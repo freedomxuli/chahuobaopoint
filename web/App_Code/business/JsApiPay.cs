@@ -34,6 +34,8 @@ namespace WxPayAPI
         /// </summary>
         public int total_fee { get; set; }
 
+        public string orderid { get; set; }
+
         /// <summary>
         /// 统一下单接口返回结果
         /// </summary>
@@ -147,14 +149,15 @@ namespace WxPayAPI
         {
             //统一下单
             WxPayData data = new WxPayData();
-            data.SetValue("body", "test");
-            data.SetValue("attach", "test");
-            data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
+            data.SetValue("body", "电子券支付");
+            data.SetValue("attach", "电子券支付");
+            //data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
+            data.SetValue("out_trade_no", orderid);
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
-            data.SetValue("goods_tag", "test");
-            data.SetValue("notify_url", "http://wx.chahuobao.net/weixin/Notify.aspx");
+            data.SetValue("goods_tag", "电子券支付");
+            data.SetValue("notify_url", "http://wx.chahuobao.net/weixin/html/Notify.aspx");
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 

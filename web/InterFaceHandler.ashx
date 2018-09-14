@@ -65,6 +65,9 @@ public class InterFaceHandler : IHttpHandler {
             case "PayPointsList":
                 str = PayPointsList(context);
                 break;
+            case "JudgeTelByPayPoints":
+                str = JudgeTelByPayPoints(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -1061,6 +1064,20 @@ public class InterFaceHandler : IHttpHandler {
     }
 
     public string PayPointsList(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string JudgeTelByPayPoints(HttpContext context)
     {
         context.Response.ContentType = "text/plain";
         //用户名
