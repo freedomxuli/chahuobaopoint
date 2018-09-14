@@ -763,9 +763,51 @@ public class InterFaceHandler : IHttpHandler {
 
     public string GetPayRecordList(HttpContext context)
     {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+
+        int cp = Convert.ToInt32(context.Request["pagnum"]);
+        int pagesize = Convert.ToInt32(context.Request["pagesize"]);
+        int ac = 0;
+
         Hashtable hash = new Hashtable();
         hash["sign"] = "0";
         hash["msg"] = "获取失败！";
+
+        hash["value"] = new object();
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    str = @"select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                             left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID='" + udt.Rows[0]["UserID"] + "' order by AddTime desc";
+                    System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "获取成功！";
+                    hash["value"] = new { dt = dtPage, cp = cp, ac = ac };
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 

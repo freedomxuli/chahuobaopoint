@@ -23,8 +23,15 @@
 			</div>
 		</div>
 		<script src="../js/mui.min.js"></script>
+        <script src="../js/mui.showLoading.js"></script>
         <script src="../js/app.js"></script>
 		<script>
+
+		    var list;
+		    var pagnum = 1;
+		    var pagesize = 2;
+		    var totalcount = 0;
+		    var flag = false;
 		    mui.init({
 		        pullRefresh: {
 		            container: '#pullrefresh',
@@ -35,29 +42,55 @@
 		        }
 		    });
 
-		    var count = 0;
 		    /**
 			 * 上拉加载具体业务实现
 			 */
 		    function pullupRefresh() {
-		        setTimeout(function () {
-		            mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
-		            var table = document.body.querySelector('.mui-table-view');
-		            var cells = document.body.querySelectorAll('.mui-table-view-cell');
-		            for (var i = cells.length, len = i + 20; i < len; i++) {
-		                var li = document.createElement('li');
-		                li.className = 'mui-table-view-cell';
-		                //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
-		                li.innerHTML = '<div class="mui-table">' +
-		                                    '<div class="mui-table-cell">' +
-		                                        '<h4 class="mui-ellipsis">XX物流　　电子券　　<span style="color:red;">2000分</span></h4>' +
-                                                '<h5>交易对象：XXX</h5>' +
-		                                        '<h5>交易日期：' + new Date().Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
-		                                    '</div>' +
-		                               '</div>';
-		                table.appendChild(li);
+		        mui.showLoading("正在加载..", "div");
+		        var ajax_sign;
+		        var ajax_msg;
+		        mui.ajax(grobal_url, {
+		            dataType: "json",
+		            type: "post",
+		            data: {
+		                "action": "GetPayRecordList",
+		                "UserName": localStorage.getItem("mgps_UserName"),
+		                "pagnum": pagnum,
+		                "pagesize": pagesize
+		            },
+		            success: function (data, status, xhr) {
+		                ajax_sign = data.sign;
+		                ajax_msg = data.msg;
+		                if (ajax_sign == '1') {
+		                    list = data.value.dt;
+		                    pagnum = (data.value.cp + 1);
+		                    totalcount = data.value.ac;
+		                    if (totalcount <= (pagnum - 1) * pagesize) {
+		                        flag = true;
+		                    }
+		                    setTimeout(function () {
+		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
+		                        var table = document.body.querySelector('.mui-table-view');
+		                        var cells = document.body.querySelectorAll('.mui-table-view-cell');
+		                        for (var i = 0; i < list.length; i++) {
+		                            var li = document.createElement('li');
+		                            li.className = 'mui-table-view-cell';
+		                            //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
+		                            li.innerHTML = '<div class="mui-table">' +
+                                                        '<div class="mui-table-cell">' +
+                                                            '<h4 class="mui-ellipsis">' + list[i]["wuliu"] + '　　电子券　　<span style="color:red;">' + list[i]["Points"] + '分</span></h4>' +
+                                                            '<h5>交易对象：' + list[i]["jydx"] + '</h5>' +
+                                                            '<h5>交易日期：' + new Date(list[i]["AddTime"]).Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
+                                                        '</div>' +
+                                                   '</div>';
+		                            table.appendChild(li);
+		                        }
+		                    }, 1500);
+		                } else {
+		                    mui.alert(ajax_msg)
+		                }
 		            }
-		        }, 1500);
+		        });
 		    }
 		    if (mui.os.plus) {
 		        mui.plusReady(function () {
