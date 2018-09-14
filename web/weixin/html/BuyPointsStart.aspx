@@ -55,25 +55,29 @@
 	    </script>
 
 <body>
-    <div class="mui-content">
-		<div class="mui-content-padded">
-            <br />
-			<h3 id="title"></h3>
-            <br />
-			<p>
-				电子券可抵扣相关物流产品。
-			</p>
-            <p style="color:red;">
-				自下单起，请于5分钟内付款，否则订单失效！
-			</p>
-            <br />
-            <div class="mui-input-row">
-				<input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
-			</div>
-            <br />
-            <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay" onclick="Pay();">确认支付</button>
-		</div>
-	</div>
+    <form id="Form1" runat="server">
+        <div class="mui-content">
+		    <div class="mui-content-padded">
+                <br />
+			    <h3 id="title"></h3>
+                <br />
+			    <p>
+				    电子券可抵扣相关物流产品。
+			    </p>
+                <p style="color:red;">
+				    自下单起，请于5分钟内付款，否则订单失效！
+			    </p>
+                <br />
+                <div class="mui-input-row">
+				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
+			    </div>
+                <br />
+                <asp:TextBox ID="total_fee" runat="server" style="display:block;" class="total_fee"></asp:TextBox>
+                <asp:TextBox ID="ordercode" runat="server" style="display:block;" class="ordercode"></asp:TextBox>
+                <asp:Button ID="Pay" runat="server" type="button" class="mui-btn mui-btn-primary mui-btn-block" style="height:50px;" OnClick="Button1_Click" Text="确认支付"></asp:Button>
+		    </div>
+	    </div>
+     </form>
     <%--<form id="Form1" runat="server">
         <br/>
         <div>
@@ -111,6 +115,8 @@
     	            jQuery("#points").val(data.dt[0]["Points"]);
     	            money = parseFloat(data.dt[0]["Money"]);
     	            ordercode = data.dt[0]["OrderCode"];
+    	            jQuery(".total_fee").val(money);
+    	            jQuery(".ordercode").val(ordercode);
     	        } else {
     	            mui.alert("获取失败！");
     	        }
@@ -119,8 +125,8 @@
     });
 
     function Pay() {
-        var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + ordercode;
-        document.location.href = url;
+        //var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + ordercode;
+        //document.location.href = url;
     }
     function Cancel() {
     	document.location.href = "BuyPointsList.html";

@@ -60,18 +60,33 @@ namespace WxPayAPI
                     string ordercode = notifyData.GetValue("out_trade_no").ToString();
                     string sql = "select * from tb_b_order where OrderCode =" + db.ToSqlValue(ordercode);
                     DataTable dt = db.ExecuteDataTable(sql);
+
                     sql = "update tb_b_order set ZhiFuZT = 1 where OrderCode =" + db.ToSqlValue(ordercode);
                     db.ExecuteNonQuery(sql);
+
+                    sql = "select * from tb_b_mycard where status = 0 and CardUserID = '" + dt.Rows[0]["SaleUserID"].ToString() + "' and UserID = '" + dt.Rows[0]["BuyUserID"].ToString() + "'";
+                    DataTable dt_card = db.ExecuteDataTable(sql);
+
                     DataTable dt_new = db.GetEmptyDataTable("tb_b_mycard");
                     SmartFramework4v2.Data.DataTableTracker dtt_new = new SmartFramework4v2.Data.DataTableTracker(dt_new);
+
                     DataRow dr = dt_new.NewRow();
-                    dr["mycardId"] = Guid.NewGuid();
-                    dr["points"] = dt.Rows[0]["Points"];
+                    if(dt_card.Rows.Count == 0)
+                        dr["mycardId"] = Guid.NewGuid();
+                    else
+                        dr["mycardId"] = dt_card.Rows[0]["mycardId"].ToString();
+                    if (dt_card.Rows.Count == 0)
+                        dr["points"] = dt.Rows[0]["Points"];
+                    else
+                        dr["points"] = Convert.ToInt32(dt_card.Rows[0]["points"]) + Convert.ToInt32(dt.Rows[0]["Points"]);
                     dr["UserID"] = dt.Rows[0]["BuyUserID"];
                     dr["CardUserID"] = dt.Rows[0]["SaleUserID"];
                     dr["status"] = 0;
                     dt_new.Rows.Add(dr);
-
+                    if (dt_card.Rows.Count == 0)
+                        db.InsertTable(dt_new);
+                    else
+                        db.UpdateTable(dt_new, dtt_new);
                 }
                 page.Response.Write(res.ToXml());
                 page.Response.End();

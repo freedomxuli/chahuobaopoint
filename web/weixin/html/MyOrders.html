@@ -35,50 +35,68 @@
 		        }
 		    });
 
-		    var count = 0;
+		    var list;
+		    var pagnum = 1;
+		    var pagesize = 10;
+		    var totalcount = 0;
+		    var flag = false;
 		    /**
 			 * 上拉加载具体业务实现
 			 */
 		    function pullupRefresh() {
-		        setTimeout(function () {
-		            mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
-		            var table = document.body.querySelector('.mui-table-view');
-		            var cells = document.body.querySelectorAll('.mui-table-view-cell');
-		            for (var i = cells.length, len = i + 20; i < len; i++) {
-		                var li = document.createElement('li');
-		                li.className = 'mui-table-view-cell';
-		                li.innerHTML = '<div class="mui-table">' +
-		                                    '<div class="mui-table-cell">' +
-		                                        '<h4 class="mui-ellipsis">XX物流　　电子券　　<span style="color:red;">2000分</span></h4>' +
-                                                '<h5>购买金额：10000元</h5>' +
-		                                        '<h5>购买日期：' + new Date().Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
-		                                    '</div>' +
-                                            '<div class="mui-table-cell mui-col-xs-2 mui-text-right">' +
-                                                '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'22\');">' +
-                                                    '支付' +
-                                                '</button>' +
-		                                    '</div>' +
-		                               '</div>';
-		                table.appendChild(li);
+		        mui.ajax(grobal_url, {
+		            dataType: "json",
+		            type: "post",
+		            data: {
+		                "action": "MyOrderList",
+		                "UserName": localStorage.getItem("mgps_UserName"),
+		                "pagnum": pagnum,
+		                "pagesize": pagesize
+		            },
+		            success: function (data, status, xhr) {
+		                if (data.sign == '1') {
+		                    if (localStorage.getItem("PlatToSaleId"))
+		                        localStorage.removeItem("PlatToSaleId");
+		                    if (localStorage.getItem("OrderID"))
+		                        localStorage.removeItem("OrderID");
+		                    list = data.value.dt;
+		                    pagnum = (data.value.cp + 1);
+		                    totalcount = data.value.ac;
+		                    if (totalcount <= (pagnum - 1) * pagesize) {
+		                        flag = true;
+		                    }
+		                    setTimeout(function () {
+		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
+		                        var table = document.body.querySelector('.mui-table-view');
+		                        var cells = document.body.querySelectorAll('.mui-table-view-cell');
+		                        for (var i = 0; i < list.length; i++) {
+		                            var li = document.createElement('li');
+		                            li.className = 'mui-table-view-cell';
+		                            li.innerHTML = '<div class="mui-table">' +
+                                                        '<div class="mui-table-cell">' +
+                                                            '<h4 class="mui-ellipsis">' + list[i]["UserXM"] + '　　电子券　　<span style="color:red;">' + list[i]["Points"] + '分</span></h4>' +
+                                                            '<h5>购买金额：' + list[i]["Money"] + '元</h5>' +
+                                                            '<h5>购买日期：' + new Date(list[i]["AddTime"]).Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
+                                                        '</div>' +
+                                                        '<div class="mui-table-cell mui-col-xs-2 mui-text-right">' +
+                                                            '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["OrderID"] + '\');">' +
+                                                                '支付' +
+                                                            '</button>' +
+                                                        '</div>' +
+                                                   '</div>';
+		                            table.appendChild(li);
+		                        }
+		                    }, 1500);
+		                } else {
+		                    mui.alert(data.msg)
+		                }
 		            }
-		        }, 1500);
+		        });
 		    }
 
 		    function BuyPoints(val) {
-		        mui.openWindow({
-		            url: 'BuyPointsDetails.html',
-		            id: 'BuyPointsDetails',
-		            preload: true,
-		            show: {
-		                aniShow: 'pop-in'
-		            },
-		            styles: {
-		                popGesture: 'hide'
-		            },
-		            waiting: {
-		                autoShow: false
-		            }
-		        });
+		        localStorage.setItem("OrderID", val);
+		        document.location.href = "BuyPointsStart.aspx";
 		    }
 
 		    if (mui.os.plus) {
