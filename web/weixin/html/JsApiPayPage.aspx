@@ -16,11 +16,10 @@
                {
                    WeixinJSBridge.invoke(
                    'getBrandWCPayRequest',
-                   <%=wxJsApiParam%>,//josn串
                     function (res)
                     {
                         WeixinJSBridge.log(res.err_msg);
-                        alert(res.err_code + res.err_desc + res.err_msg);
+                        //alert(res.err_code + res.err_desc + res.err_msg);
                     }
                     );
                }
@@ -51,6 +50,7 @@
     <form id="Form1" runat="server">
         <br/>
 	    <div align="center">
+            <span style="text-align:center;font-size:25px;">本单支付金额：</span><span style="text-align:center;font-size:25px;color:red;"><%= %>元</span>
 		    <br/><br/><br/>
             <asp:Button ID="submit" runat="server" Text="立即支付" OnClientClick="callpay()" style="width:210px; height:50px; border-radius: 15px;background-color:#00CD00; border:0px #FE6714 solid; cursor: pointer;  color:white;  font-size:16px;" />
 	    </div>

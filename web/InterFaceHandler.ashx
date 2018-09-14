@@ -59,6 +59,9 @@ public class InterFaceHandler : IHttpHandler {
             case "OrderPlat":
                 str = OrderPlat(context);
                 break;
+            case "GetOrderDetail":
+                str = GetOrderDetail(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -952,6 +955,59 @@ public class InterFaceHandler : IHttpHandler {
             catch (Exception ex)
             {
                 db.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string GetOrderDetail(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        var OrderID = context.Request["OrderID"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
+        hash["value"] = new object();
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    str = @"select a.*,b.UserXM from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                             where a.status=0 and a.OrderID = " + dbc.ToSqlValue(OrderID);
+                    System.Data.DataTable dt = dbc.ExecuteDataTable(str);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        hash["sign"] = "1";
+                        hash["msg"] = "获取成功！";
+                        hash["dt"] = dt;
+                    }
+                    else
+                    {
+                        hash["sign"] = "2";
+                        hash["msg"] = "电子券已被抢空！";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
                 hash["sign"] = "0";
                 hash["msg"] = "内部错误:" + ex.Message;
             }

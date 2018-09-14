@@ -9,13 +9,15 @@ using WxPayAPI;
 public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
 {
     public static string wxJsApiParam { get; set; } //H5调起JS API参数
+    string total_fee_yuan = "";
     protected void Page_Load(object sender, EventArgs e)
     {
         Log.Info(this.GetType().ToString(), "page load");
         if (!IsPostBack)
         {
             string openid = Request.QueryString["openid"];
-            string total_fee = Request.QueryString["total_fee"];
+            total_fee_yuan = Request.QueryString["total_fee"];
+            string total_fee = (100 * Convert.ToInt32(total_fee_yuan)).ToString();
             //检测是否给当前页面传递了相关参数
             if (string.IsNullOrEmpty(openid) || string.IsNullOrEmpty(total_fee))
             {
@@ -37,8 +39,8 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                 wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数
                 Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
                 //在页面上显示订单信息
-                Response.Write("<span style='color:#00CD00;font-size:20px'>订单详情：</span><br/>");
-                Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
+                //Response.Write("<span style='color:#00CD00;font-size:20px'>订单详情：</span><br/>");
+                //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
 
             }
             catch (Exception ex)

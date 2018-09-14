@@ -2,9 +2,15 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/> 
-    <title>电子券支付</title>
+    <title>订单详情</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../css/mui.min.css">
+	<!--App自定义的css-->
+	<link rel="stylesheet" type="text/css" href="../css/app.css"/>
 </head>
 
        <script type="text/javascript">
@@ -49,6 +55,25 @@
 	    </script>
 
 <body>
+    <div class="mui-content">
+		<div class="mui-content-padded">
+            <br />
+			<h3 id="title"></h3>
+            <br />
+			<p>
+				电子券可抵扣相关物流产品。
+			</p>
+            <p style="color:red;">
+				自下单起，请于5分钟内付款，否则订单失效！
+			</p>
+            <br />
+            <div class="mui-input-row">
+				<input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
+			</div>
+            <br />
+            <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay" onclick="Pay();">确认支付</button>
+		</div>
+	</div>
     <%--<form id="Form1" runat="server">
         <br/>
         <div>
@@ -59,4 +84,44 @@
 	    </div>
     </form>--%>
 </body>
+<script src="../js/mui.min.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/jquery.1.9.1.js"></script>
+<script type="text/javascript">
+    var jQuery = jQuery.noConflict();
+</script>
+<script>
+    var money = 0;
+    mui.ready(function () {
+    	var UserName = localStorage.getItem("mgps_UserName");
+    	var OrderID = localStorage.getItem("OrderID");
+
+    	mui.ajax(grobal_url, {
+    	    dataType: "json",
+    	    type: "post",
+    	    data: {
+    	        "action": "GetOrderDetail",
+    	        "UserName": UserName,
+    	        "OrderID": OrderID
+    	    },
+    	    success: function (data, status, xhr) {
+    	        if (data.sign == '1') {
+    	            jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
+    	            jQuery("#points").val(data.dt[0]["Points"]);
+    	            money = parseFloat(data.dt[0]["Money"]);
+    	        } else {
+    	            mui.alert("获取失败！");
+    	        }
+    	    }
+    	});
+    });
+
+    function Pay() {
+        var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + localStorage.getItem("OrderID");
+        document.location.href = url;
+    }
+    function Cancel() {
+    	document.location.href = "BuyPointsList.html";
+    }
+</script>
 </html>
