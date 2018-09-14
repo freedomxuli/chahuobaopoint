@@ -108,36 +108,56 @@
 	                    scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
 	                    success: function (res) {
 	                        var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-
-
 	                        var btnArray = ['确定', '取消'];
-	                        mui.prompt('请输入支付密码', '', '提示', btnArray, function (e) {
-	                            var PayPassword = e.value;
-	                            if (e.index == 0) {
-	                                mui.ajax(grobal_url, {
-	                                    dataType: "json",
-	                                    type: "post",
-	                                    data: {
-	                                        "action": "GivePointsToCHB",
-	                                        "Points": jQuery("#GivePoints").val(),
-	                                        "PayPassword": PayPassword,
-	                                        "ReceiveUser": result,
-	                                        "UserName": localStorage.getItem("mgps_UserName")
-	                                    },
-	                                    success: function (data, status, xhr) {
-	                                        if (data.sign == '1') {
-	                                            mui.alert('支付成功', '提示', function () {
-	                                                document.location.href = "menu.html";
-	                                            });
-	                                        } else {
-	                                            mui.alert(data.msg);
-	                                        }
+
+	                        if (result.length == 11 && result != localStorage.getItem("mgps_UserName")) {
+
+	                            mui.ajax(grobal_url, {
+	                                dataType: "json",
+	                                type: "post",
+	                                data: {
+	                                    "action": "JudgeTelByPayPoints",
+	                                    "ReceiveUser": result,
+	                                    "UserName": localStorage.getItem("mgps_UserName")
+	                                },
+	                                success: function (data, status, xhr) {
+	                                    if (data.sign == '1') {
+	                                        mui.prompt('请输入支付密码', '', '提示', btnArray, function (e) {
+	                                            var PayPassword = e.value;
+	                                            if (e.index == 0) {
+	                                                mui.ajax(grobal_url, {
+	                                                    dataType: "json",
+	                                                    type: "post",
+	                                                    data: {
+	                                                        "action": "PayPointsList",
+	                                                        "Points": jQuery("#GivePoints").val(),
+	                                                        "PayPassword": PayPassword,
+	                                                        "ReceiveUser": result,
+	                                                        "UserName": localStorage.getItem("mgps_UserName"),
+	                                                        "CardUserID": localStorage.getItem("PPCardUserID")
+	                                                    },
+	                                                    success: function (data, status, xhr) {
+	                                                        if (data.sign == '1') {
+	                                                            mui.alert('支付成功', '提示', function () {
+	                                                                document.location.href = "menu.html";
+	                                                            });
+	                                                        } else {
+	                                                            mui.alert(data.msg);
+	                                                        }
+	                                                    }
+	                                                });
+	                                            }
+	                                        })
+	                                    } else {
+	                                        mui.alert(data.msg);
 	                                    }
-	                                });
-	                            }
-	                        })
-	                        //alert(result);
-	                        //window.location.href = result;//因为我这边是扫描后有个链接，然后跳转到该页面
+	                                }
+	                            });
+	                            //alert(result);
+	                            //window.location.href = result;//因为我这边是扫描后有个链接，然后跳转到该页面
+	                        } else {
+	                            mui.alert("请扫描有效的二维码！");
+	                        }
 	                    }
 	                });
 	            } else {
