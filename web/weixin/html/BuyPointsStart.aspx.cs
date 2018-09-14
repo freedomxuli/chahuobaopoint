@@ -34,11 +34,12 @@ public partial class weixin_html_BuyPointsStart : System.Web.UI.Page
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        string total_fee = "1";
+        string total_fee = totalfee.Text;
+        string code = ordercode.Text;
         if (ViewState["openid"] != null)
         {
             string openid = ViewState["openid"].ToString();
-            string url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + openid + "&total_fee=" + total_fee;
+            string url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + openid + "&total_fee=" + total_fee + "&orderid=" + code;
             Response.Redirect(url);
         }
         else

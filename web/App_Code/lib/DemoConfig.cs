@@ -57,7 +57,7 @@ namespace WxPayAPI.lib
         /* 此参数可手动配置也可在程序中自动获取
         */
         public string GetIp(){
-            return "127.0.0.1";
+            return "47.96.248.12";
         }
 
 

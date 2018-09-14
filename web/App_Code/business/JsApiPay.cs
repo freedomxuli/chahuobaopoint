@@ -149,15 +149,15 @@ namespace WxPayAPI
         {
             //统一下单
             WxPayData data = new WxPayData();
-            data.SetValue("body", "电子券支付");
-            data.SetValue("attach", "电子券支付");
+            data.SetValue("body", "查货宝-电子券支付");
+            //data.SetValue("attach", "电子券支付");
             //data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("out_trade_no", orderid);
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
-            data.SetValue("goods_tag", "电子券支付");
-            data.SetValue("notify_url", "http://wx.chahuobao.net/weixin/html/Notify.aspx");
+            //data.SetValue("goods_tag", "电子券支付");
+            //data.SetValue("notify_url", "http://wx.chahuobao.net/weixin/html/Notify.aspx");
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 

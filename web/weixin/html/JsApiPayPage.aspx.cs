@@ -16,7 +16,7 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
         if (!IsPostBack)
         {
             string openid = Request.QueryString["openid"];
-            string orderid = Request.QueryString["ordercode"];
+            string orderid = Request.QueryString["orderid"];
             total_fee_yuan = Request.QueryString["total_fee"];
             string total_fee = (100 * Convert.ToInt32(total_fee_yuan)).ToString();
             //检测是否给当前页面传递了相关参数
@@ -47,7 +47,7 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
             }
             catch (Exception ex)
             {
-                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + "</span>");
+                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + ex + "</span>");
                 submit.Visible = false;
             }
         }

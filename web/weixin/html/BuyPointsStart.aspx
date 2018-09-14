@@ -72,8 +72,8 @@
 				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
 			    </div>
                 <br />
-                <asp:TextBox ID="total_fee" runat="server" style="display:block;" class="total_fee"></asp:TextBox>
-                <asp:TextBox ID="ordercode" runat="server" style="display:block;" class="ordercode"></asp:TextBox>
+                <asp:TextBox ID="totalfee" runat="server" style="display:none;" class="total_fee"></asp:TextBox>
+                <asp:TextBox ID="ordercode" runat="server" style="display:none;" class="ordercode"></asp:TextBox>
                 <asp:Button ID="Pay" runat="server" type="button" class="mui-btn mui-btn-primary mui-btn-block" style="height:50px;" OnClick="Button1_Click" Text="确认支付"></asp:Button>
 		    </div>
 	    </div>
