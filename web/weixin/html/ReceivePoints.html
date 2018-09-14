@@ -5,21 +5,50 @@
 		<meta charset="utf-8" />
 		<title></title>
 	</head>
-	<body>
+	<body style="background-color:#efeff4">
 		<script type="text/javascript" src="../js/qrcode/jquery-1.8.3.min.js" ></script>
 		<script type="text/javascript" src="../js/qrcode/jquery.qrcode.js" ></script>
         <script type="text/javascript" src="../js/qrcode/qrcode.js" ></script> 
         <script type="text/javascript" src="../js/qrcode/utf.js" ></script>
-		 <p>Render in table</p>
-		 <div id="qrcodeTable"></div>
+
+         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:50px;margin-bottom:50px;">
+            <tr>
+                <td align="center" style="font-size:30px;color:#007aff;font-weight:bold;">我的收券码</td>
+            </tr>
+        </table>
+
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+                <td align="center"> <div id="qrcodeTable"></div></td>
+            </tr>
+        </table>
+		
 		 <!--<p>Render in canvas</p>
 		 <div id="qrcodeCanvas"></div>-->
 		 <script> 
+
+		     /*setInterval(function () {
+             var iw = window.innerWidth;
+             var r = iw / dw;
+             if (document.body.style.zoom != r)
+             document.body.style.zoom = r;
+             }, 50);*/
+		     var fnZoom = function (dw) {
+		         var iw = $(window).width();// document.documentElement.clientWidth;
+		         var r = iw / dw;
+		         if (document.body.style.zoom != r)
+		             document.body.style.zoom = r;
+		     };
+		     fnZoom(480);
+		     setInterval(function () {
+		         fnZoom(480);
+		     }, 50);
+
 		     jQuery('#qrcodeTable').qrcode({
 		         render    : "table",                
 		         text    : "31231231" ,
-		         width : "200",               //二维码的宽度
-		         height : "200",
+		         width : "350",               //二维码的宽度
+		         height : "350",
 		     });    
 		     //jQuery('#qrcodeCanvas').qrcode({
 		     //    render    : "canvas",
