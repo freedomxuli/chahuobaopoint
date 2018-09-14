@@ -9,6 +9,7 @@ using WxPayAPI;
 public partial class weixin_html_BuyPointsStart : System.Web.UI.Page
 {
     public static string wxEditAddrParam { get; set; }
+    public string openid = "";
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -21,7 +22,7 @@ public partial class weixin_html_BuyPointsStart : System.Web.UI.Page
 
                 //获取收货地址js函数入口参数
                 wxEditAddrParam = jsApiPay.GetEditAddressParameters();
-                ViewState["openid"] = jsApiPay.openid;
+                openid = jsApiPay.openid;
             }
             catch (Exception ex)
             {

@@ -21,61 +21,63 @@
 			
 		</style>
 	</head>
-	<body>
+	<body onload="StartFunc();">
 		<div class="mui-content">
 			<ul class="mui-table-view">
-				<li class="mui-table-view-cell">
-					<a class="mui-navigate-right" id="EditLoginPassword">
+				<li class="mui-table-view-cell" onclick="EditLoginPassword();" id="EditLoginPassword">
+					<a class="mui-navigate-right">
 						登录密码修改
 					</a>
 				</li>
-				<li class="mui-table-view-cell">
-					<a class="mui-navigate-right" id="PayLoginPassword">
+				<li class="mui-table-view-cell" onclick="PayLoginPassword();" id="PayLoginPassword">
+					<a class="mui-navigate-right">
 						支付密码修改
+					</a>
+				</li>
+                <li class="mui-table-view-cell" style="display:none;" onclick="MyPoints();" id="MyPoints">
+					<a class="mui-navigate-right">
+						我的专线积分
 					</a>
 				</li>
 			</ul>
 		</div>
 	</body>
 	<script src="../js/mui.min.js"></script>
+    <script src="../js/jquery.1.9.1.js"></script>
+    <script src="../js/app.js"></script>
+    <script type="text/javascript">
+        var jQuery = jQuery.noConflict();
+	</script>
 	<script>
-	    (function ($, doc) {
-	        var EditLoginPasswordButton = doc.getElementById('EditLoginPassword');
-	        EditLoginPasswordButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'EditLoginPassword.html',
-	                id: 'EditLoginPassword',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
+	    function StartFunc()
+	    {
+	        var UserName = localStorage.getItem("mgps_UserName");
+	        mui.ajax(grobal_url, {
+	            dataType: "json",
+	            type: "post",
+	            data: {
+	                "action": "JudgeIsZX",
+	                "UserName": UserName
+	            },
+	            success: function (data, status, xhr) {
+	                if (data.sign == '1') {
+	                    jQuery("#MyPoints").show();
 	                }
-	            });
-	        }, false);
+	            }
+	        });
+	    }
 
-	        var PayLoginPasswordButton = doc.getElementById('PayLoginPassword');
-	        PayLoginPasswordButton.addEventListener('tap', function (event) {
-	            $.openWindow({
-	                url: 'PayLoginPassword.html',
-	                id: 'PayLoginPassword',
-	                preload: true,
-	                show: {
-	                    aniShow: 'pop-in'
-	                },
-	                styles: {
-	                    popGesture: 'hide'
-	                },
-	                waiting: {
-	                    autoShow: false
-	                }
-	            });
-	        }, false);
-	    }(mui, document))
+	    function EditLoginPassword()
+	    {
+	        document.location.href = "EditLoginPassword.html";
+	    }
 
+	    function PayLoginPassword() {
+	        document.location.href = "PayLoginPassword.html";
+	    }
+
+	    function MyPoints() {
+	        document.location.href = "MyPoints.aspx";
+	    }
 	</script>
 </html>

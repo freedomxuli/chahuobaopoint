@@ -42,7 +42,7 @@
 		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="TransactionRecords">
 		                    <span class="mui-icon-extra mui-icon-extra-topic"></span>
 		                    <div class="mui-media-body">交易记录</div></a></li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="MySettings">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" onclick="MySettings();"><a href="#" id="MySettings">
 		                    <span class="mui-icon mui-icon-gear"></span>
 		                    <div class="mui-media-body">我的设置</div></a></li>
 		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#" id="ApplyPoints">
@@ -94,7 +94,10 @@
 	    //PayPointsButton.addEventListener('tap', function (event) {
 	    //    document.location.href = "PayPoints.aspx";
 	    //}, false);
-
+	    function MySettings()
+	    {
+	        document.location.href = "MySettings.html";
+	    }
 	    //var MySettingsButton = doc.getElementById('MySettings');
 	    //MySettingsButton.addEventListener('tap', function (event) {
 	    //    document.location.href = "MySettings.html";

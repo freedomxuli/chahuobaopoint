@@ -4,7 +4,7 @@
 <head id="Head1" runat="server">
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/> 
-    <title>微信支付样例-JSAPI支付</title>
+    <title>电子券支付</title>
 </head>
 
        <script type="text/javascript">
@@ -13,7 +13,6 @@
            {
                WeixinJSBridge.invoke(
                    'editAddress',
-                   <%=wxEditAddrParam%>,//josn串
                    function (res)
                    {
                        var addr1 = res.proviceFirstStageName;
@@ -22,7 +21,7 @@
                        var addr4 = res.addressDetailInfo;
                        var tel = res.telNumber;
                        var addr = addr1 + addr2 + addr3 + addr4;
-                       alert(addr + ":" + tel);
+                       //alert(addr + ":" + tel);
                    }
                );
          }
@@ -50,7 +49,7 @@
 	    </script>
 
 <body>
-    <form id="Form1" runat="server">
+    <%--<form id="Form1" runat="server">
         <br/>
         <div>
             <asp:Label ID="Label1" runat="server" style="color:#00CD00;"><b>商品一：价格为<span style="color:#f00;font-size:50px">1分</span>钱</b></asp:Label><br/><br/>
@@ -58,6 +57,6 @@
 	    <div align="center">
             <asp:Button ID="Button1" runat="server" Text="立即购买" style="width:210px; height:50px; border-radius: 15px;background-color:#00CD00; border:0px #FE6714 solid; cursor: pointer;  color:white;  font-size:16px;" OnClick="Button1_Click" />
 	    </div>
-    </form>
+    </form>--%>
 </body>
 </html>
