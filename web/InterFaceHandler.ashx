@@ -62,6 +62,9 @@ public class InterFaceHandler : IHttpHandler {
             case "GetOrderDetail":
                 str = GetOrderDetail(context);
                 break;
+            case "PayPointsList":
+                str = PayPointsList(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -1054,6 +1057,20 @@ public class InterFaceHandler : IHttpHandler {
                 hash["msg"] = "内部错误:" + ex.Message;
             }
         }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string PayPointsList(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 }
