@@ -524,7 +524,7 @@ public class InterFaceHandler : IHttpHandler {
                 {
                     str = @"select a.*,b.UserName as syr,c.UserXM as zxmc from tb_b_mycard a left join tb_b_user b  on a.UserID=b.UserID
                             left join tb_b_user c on a.CardUserID=c.UserID
-                             where a.CardUserID='" + udt.Rows[0]["UserID"] + "' and a.status=0 order by a.points";
+                             where a.UserID='" + udt.Rows[0]["UserID"] + "' and a.status=0 order by a.points";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     hash["sign"] = "1";
