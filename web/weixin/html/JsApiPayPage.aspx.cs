@@ -41,7 +41,7 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                 wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
                 Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
                 //在页面上显示订单信息
-                Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
+                //Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
                 //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
 
             }

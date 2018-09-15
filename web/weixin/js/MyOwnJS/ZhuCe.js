@@ -19,17 +19,18 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
 		    ajax_msg = data.msg;
 		    if(ajax_sign == '1') {
 		        mui.alert(ajax_msg);
-		        mui.openWindow({
-		            id: 'MGps_login',
-		            url: 'MGps_login.html',
-		            show: {
-		                aniShow: 'pop-in'
-		            },
-		            waiting: {
-		                autoShow: false
-		            },
-		            extras: {} //额外扩展参数
-		        });
+		        document.location.href = "MGps_login.html";
+		        //mui.openWindow({
+		        //    id: 'MGps_login',
+		        //    url: 'MGps_login.html',
+		        //    show: {
+		        //        aniShow: 'pop-in'
+		        //    },
+		        //    waiting: {
+		        //        autoShow: false
+		        //    },
+		        //    extras: {} //额外扩展参数
+		        //});
 		    } else {
 		        mui.alert(ajax_msg)
 		    }
@@ -55,17 +56,18 @@ function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue) {
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
                 mui.alert(ajax_msg);
-                mui.openWindow({
-                    id: 'MGps_login',
-                    url: 'MGps_login.html',
-                    show: {
-                        aniShow: 'pop-in'
-                    },
-                    waiting: {
-                        autoShow: false
-                    },
-                    extras: {} //额外扩展参数
-                });
+                document.location.href = "MGps_login.html";
+                //mui.openWindow({
+                //    id: 'MGps_login',
+                //    url: 'MGps_login.html',
+                //    show: {
+                //        aniShow: 'pop-in'
+                //    },
+                //    waiting: {
+                //        autoShow: false
+                //    },
+                //    extras: {} //额外扩展参数
+                //});
             } else {
                 mui.alert(ajax_msg)
             }

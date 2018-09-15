@@ -21,11 +21,11 @@ public partial class weixin_html_PayPoints : System.Web.UI.Page
     public string signature;
     protected void Page_Load(object sender, EventArgs e)
     {
-        string ticket = string.Empty;
-        timestamp = JSSDKHelper.GetTimestamp();
-        nonceStr = JSSDKHelper.GetNoncestr();
-        appID = "wx422044a7a4be9609";
-        ticket = JsApiTicketContainer.GetJsApiTicket(appID);
-        signature = JSSDKHelper.GetSignature(ticket, nonceStr, timestamp, Request.Url.AbsoluteUri.ToString());
+        //string ticket = string.Empty;
+        //timestamp = JSSDKHelper.GetTimestamp();
+        //nonceStr = JSSDKHelper.GetNoncestr();
+        //appID = "wx422044a7a4be9609";
+        //ticket = JsApiTicketContainer.GetJsApiTicket(appID);
+        //signature = JSSDKHelper.GetSignature(ticket, nonceStr, timestamp, Request.Url.AbsoluteUri.ToString());
     }
 }

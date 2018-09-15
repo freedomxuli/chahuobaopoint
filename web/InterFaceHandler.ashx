@@ -1087,109 +1087,117 @@ public class InterFaceHandler : IHttpHandler {
                 db.BeginTransaction();
 
                 string sql = @"select a.PayPassword,a.UserID,b.points,b.mycardId from tb_b_user a left join tb_b_mycard b on a.UserID=b.UserID
-                                where and b.status=0 b.CardUserID=" + db.ToSqlValue(CardUserID) + " and a.UserName=" + db.ToSqlValue(UserName);
+                                where b.status=0 and b.CardUserID=" + db.ToSqlValue(CardUserID) + " and a.UserName=" + db.ToSqlValue(UserName);
                     System.Data.DataTable dt = db.ExecuteDataTable(sql);
                     if (dt.Rows.Count > 0)
                     {
-                        string str = "select * from tb_b_user where UserName<>" + db.ToSqlValue(UserName) + "and  UserName=" + db.ToSqlValue(ReceiveUser);
-                        System.Data.DataTable rdt = db.ExecuteDataTable(str);
-                        if (rdt.Rows.Count > 0)
+                        if (!string.IsNullOrEmpty(dt.Rows[0]["mycardId"].ToString()))
                         {
-                            if (dt.Rows[0]["PayPassword"].ToString() == PayPassword)
+                            string str = "select * from tb_b_user where UserName<>" + db.ToSqlValue(UserName) + "and  UserName=" + db.ToSqlValue(ReceiveUser);
+                            System.Data.DataTable rdt = db.ExecuteDataTable(str);
+                            if (rdt.Rows.Count > 0)
                             {
-                                if (Convert.ToInt32(dt.Rows[0]["Points"].ToString()) < Convert.ToInt32(Points))
+                                if (dt.Rows[0]["PayPassword"].ToString() == PayPassword)
                                 {
-                                    System.Data.DataTable paydt = db.GetEmptyDataTable("tb_b_pay");
-                                    var paydr = paydt.NewRow();
-                                    paydr["PayID"] = Guid.NewGuid();
-                                    paydr["PayUserID"] = dt.Rows[0]["UserID"].ToString();
-                                    paydr["ReceiveUserID"] = rdt.Rows[0]["UserID"].ToString();
-                                    paydr["Points"] = Convert.ToInt32(Points);
-                                    paydr["AddTime"] = new DateTime();
-                                    //paydr["Memo"] =
-                                    paydr["CardUserID"] = CardUserID;
-                                    paydt.Rows.Add(paydr);
-                                    db.InsertTable(paydt);
+                                    if (Convert.ToInt32(dt.Rows[0]["Points"].ToString()) >= Convert.ToInt32(Points))
+                                    {
+                                        System.Data.DataTable paydt = db.GetEmptyDataTable("tb_b_pay");
+                                        var paydr = paydt.NewRow();
+                                        paydr["PayID"] = Guid.NewGuid();
+                                        paydr["PayUserID"] = dt.Rows[0]["UserID"].ToString();
+                                        paydr["ReceiveUserID"] = rdt.Rows[0]["UserID"].ToString();
+                                        paydr["Points"] = Convert.ToDecimal(Points);
+                                        paydr["AddTime"] = DateTime.Now;
+                                        //paydr["Memo"] =
+                                        paydr["CardUserID"] = CardUserID;
+                                        paydt.Rows.Add(paydr);
+                                        db.InsertTable(paydt);
 
-                                    //我的账户
-                                    if (Convert.ToInt32(dt.Rows[0]["Points"].ToString()) == Convert.ToInt32(Points))
-                                    {
-                                        System.Data.DataTable deldt = db.GetEmptyDataTable("tb_b_mycard");
-                                        SmartFramework4v2.Data.DataTableTracker deldtt = new SmartFramework4v2.Data.DataTableTracker(deldt);
-                                        var deldr = deldt.NewRow();
-                                        deldr["UserID"] = dt.Rows[0]["mycardId"].ToString();
-                                        deldr["status"] = 1;
-                                        deldt.Rows.Add(deldr);
-                                        db.UpdateTable(deldt, deldtt);
-                                    }
-                                    else {
-                                        System.Data.DataTable cdt = db.GetEmptyDataTable("tb_b_mycard");
-                                        SmartFramework4v2.Data.DataTableTracker cdtt = new SmartFramework4v2.Data.DataTableTracker(cdt);
-                                        var cdr = cdt.NewRow();
-                                        cdr["mycardId"] = dt.Rows[0]["mycardId"].ToString();
-                                        cdr["points"] = Convert.ToInt32(dt.Rows[0]["Points"].ToString()) - Convert.ToInt32(Points);
-                                        cdt.Rows.Add(cdr);
-                                        db.UpdateTable(cdt,cdtt);
-                                    }
-
-                                    if (rdt.Rows[0]["ClientKind"].ToString() == "1")
-                                    {
-                                        //专线
-                                        System.Data.DataTable zudt = db.GetEmptyDataTable("tb_b_user");
-                                        SmartFramework4v2.Data.DataTableTracker zudtt = new SmartFramework4v2.Data.DataTableTracker(zudt);
-                                        var zudr = zudt.NewRow();
-                                        zudr["UserID"] = rdt.Rows[0]["UserID"].ToString();
-                                        zudr["Points"] = Convert.ToInt32(rdt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points);
-                                        zudt.Rows.Add(zudr);
-                                        db.UpdateTable(zudt, zudtt);
-                                    }
-                                    else
-                                    {
-                                        //三方
-                                        var rmcardstr = "select * from tb_b_mycard where UserID=" + db.ToSqlValue(rdt.Rows[0]["UserID"].ToString()) + " and CardUserID=" + db.ToSqlValue(CardUserID) + " and status=0";
-                                        System.Data.DataTable rmcarddt = db.ExecuteDataTable(rmcardstr);
-                                        if (rmcarddt.Rows.Count > 0)
+                                        //我的账户
+                                        if (Convert.ToInt32(dt.Rows[0]["Points"].ToString()) == Convert.ToInt32(Points))
                                         {
-                                            System.Data.DataTable rmdt = db.GetEmptyDataTable("tb_b_mycard");
-                                            SmartFramework4v2.Data.DataTableTracker rmdtt = new SmartFramework4v2.Data.DataTableTracker(rmdt);
-                                            var rmdr = rmdt.NewRow();
-                                            rmdr["mycardId"] = rmcarddt.Rows[0]["mycardId"].ToString();
-                                            rmdr["points"] = Convert.ToInt32(dt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points);
-                                            rmdt.Rows.Add(rmdr);
-                                            db.UpdateTable(rmdt, rmdtt);
+                                            System.Data.DataTable deldt = db.GetEmptyDataTable("tb_b_mycard");
+                                            SmartFramework4v2.Data.DataTableTracker deldtt = new SmartFramework4v2.Data.DataTableTracker(deldt);
+                                            var deldr = deldt.NewRow();
+                                            deldr["mycardId"] = dt.Rows[0]["mycardId"].ToString();
+                                            deldr["status"] = 1;
+                                            deldt.Rows.Add(deldr);
+                                            db.UpdateTable(deldt, deldtt);
                                         }
                                         else
                                         {
-                                            System.Data.DataTable rmidt = db.GetEmptyDataTable("tb_b_mycard");
-                                            var rmidr = rmidt.NewRow();
-                                            rmidr["mycardId"]=Guid.NewGuid();
-                                            rmidr["points"] = Convert.ToInt32(Points);
-                                            rmidr["UserID"]=db.ToSqlValue(rdt.Rows[0]["UserID"].ToString());
-                                            rmidr["CardUserID"]=db.ToSqlValue(CardUserID);
-                                            rmidr["status"]=0;
-                                            rmidt.Rows.Add(rmidr);
-                                            db.InsertTable(rmidt);
+                                            System.Data.DataTable cdt = db.GetEmptyDataTable("tb_b_mycard");
+                                            SmartFramework4v2.Data.DataTableTracker cdtt = new SmartFramework4v2.Data.DataTableTracker(cdt);
+                                            var cdr = cdt.NewRow();
+                                            cdr["mycardId"] = dt.Rows[0]["mycardId"].ToString();
+                                            cdr["points"] = Convert.ToDecimal(Convert.ToInt32(dt.Rows[0]["Points"].ToString()) - Convert.ToInt32(Points));
+                                            cdt.Rows.Add(cdr);
+                                            db.UpdateTable(cdt, cdtt);
                                         }
+
+                                        if (rdt.Rows[0]["ClientKind"].ToString() == "1")
+                                        {
+                                            //专线
+                                            System.Data.DataTable zudt = db.GetEmptyDataTable("tb_b_user");
+                                            SmartFramework4v2.Data.DataTableTracker zudtt = new SmartFramework4v2.Data.DataTableTracker(zudt);
+                                            var zudr = zudt.NewRow();
+                                            zudr["UserID"] = rdt.Rows[0]["UserID"].ToString();
+                                            zudr["Points"] = Convert.ToDecimal(Convert.ToInt32(rdt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points));
+                                            zudt.Rows.Add(zudr);
+                                            db.UpdateTable(zudt, zudtt);
+                                        }
+                                        else
+                                        {
+                                            //三方
+                                            var rmcardstr = "select * from tb_b_mycard where UserID=" + db.ToSqlValue(rdt.Rows[0]["UserID"].ToString()) + " and CardUserID=" + db.ToSqlValue(CardUserID) + " and status=0";
+                                            System.Data.DataTable rmcarddt = db.ExecuteDataTable(rmcardstr);
+                                            if (rmcarddt.Rows.Count > 0)
+                                            {
+                                                System.Data.DataTable rmdt = db.GetEmptyDataTable("tb_b_mycard");
+                                                SmartFramework4v2.Data.DataTableTracker rmdtt = new SmartFramework4v2.Data.DataTableTracker(rmdt);
+                                                var rmdr = rmdt.NewRow();
+                                                rmdr["mycardId"] = rmcarddt.Rows[0]["mycardId"].ToString();
+                                                rmdr["points"] = Convert.ToDecimal(Convert.ToInt32(dt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points));
+                                                rmdt.Rows.Add(rmdr);
+                                                db.UpdateTable(rmdt, rmdtt);
+                                            }
+                                            else
+                                            {
+                                                System.Data.DataTable rmidt = db.GetEmptyDataTable("tb_b_mycard");
+                                                var rmidr = rmidt.NewRow();
+                                                rmidr["mycardId"] = Guid.NewGuid();
+                                                rmidr["points"] = Convert.ToDecimal(Points);
+                                                rmidr["UserID"] = rdt.Rows[0]["UserID"].ToString();
+                                                rmidr["CardUserID"] = CardUserID;
+                                                rmidr["status"] = 0;
+                                                rmidt.Rows.Add(rmidr);
+                                                db.InsertTable(rmidt);
+                                            }
+                                        }
+                                        hash["sign"] = "1";
+                                        hash["msg"] = "支付成功！";
                                     }
-                                    hash["sign"] = "1";
-                                    hash["msg"] = "支付成功！";
+                                    else
+                                    {
+                                        hash["sign"] = "5";
+                                        hash["msg"] = "您输入的积分数不足，支付失败！";
+                                    }
                                 }
                                 else
                                 {
-                                    hash["sign"] = "5";
-                                    hash["msg"] = "您输入的积分数不足，支付失败！";
+                                    hash["sign"] = "4";
+                                    hash["msg"] = "您输入的支付密码错误，支付失败！";
                                 }
                             }
                             else
                             {
-                                hash["sign"] = "4";
-                                hash["msg"] = "您输入的支付密码错误，支付失败！";
+                                hash["sign"] = "3";
+                                hash["msg"] = "请扫描有效二维码！";
                             }
                         }
-                        else
-                        {
-                            hash["sign"] = "3";
-                            hash["msg"] = "请扫描有效二维码！";
+                        else {
+                            hash["sign"] = "7";
+                            hash["msg"] = "你没有该用户卡包！";
                         }
                     }
                     else
@@ -1285,7 +1293,7 @@ public class InterFaceHandler : IHttpHandler {
                 else
                 {
                     str = @"select a.*,b.UserXM from tb_b_order a left join tb_b_user b on a.BuyUserID=b.UserID
-                             where a.status=0 and a.BuyUserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " order by a.addtime desc";
+                             where a.ZhiFuZT<>1 and a.status=0 and a.BuyUserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     hash["sign"] = "1";

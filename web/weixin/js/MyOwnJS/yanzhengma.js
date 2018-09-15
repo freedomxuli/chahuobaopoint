@@ -1,5 +1,5 @@
 function getyanzhengma(UserName, type) {
-    alert(1);
+    //alert(1);
 	var ajax_sign;
 	var ajax_msg;
 	mui.ajax(grobal_url, {

@@ -76,9 +76,9 @@ namespace WxPayAPI
                     else
                         dr["mycardId"] = dt_card.Rows[0]["mycardId"].ToString();
                     if (dt_card.Rows.Count == 0)
-                        dr["points"] = dt.Rows[0]["Points"];
+                        dr["points"] = Convert.ToDecimal(dt.Rows[0]["Points"]);
                     else
-                        dr["points"] = Convert.ToInt32(dt_card.Rows[0]["points"]) + Convert.ToInt32(dt.Rows[0]["Points"]);
+                        dr["points"] = Convert.ToDecimal(Convert.ToInt32(dt_card.Rows[0]["points"]) + Convert.ToInt32(dt.Rows[0]["Points"]));
                     dr["UserID"] = dt.Rows[0]["BuyUserID"];
                     dr["CardUserID"] = dt.Rows[0]["SaleUserID"];
                     dr["status"] = 0;
@@ -90,6 +90,7 @@ namespace WxPayAPI
                 }
                 page.Response.Write(res.ToXml());
                 page.Response.End();
+                page.Response.Redirect("http://wx.chahuobao.net/weixin/html/menu.html");
             }
         }
 
