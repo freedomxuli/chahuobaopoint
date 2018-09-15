@@ -57,7 +57,7 @@ namespace WxPayAPI
 
                 using (var db = new DBConnection())
                 {
-                    string ordercode = notifyData.GetValue("out_trade_no").ToString();
+                    string ordercode = notifyData.GetValue("attach").ToString();
                     string sql = "select * from tb_b_order where OrderCode =" + db.ToSqlValue(ordercode);
                     DataTable dt = db.ExecuteDataTable(sql);
 

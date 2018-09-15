@@ -32,22 +32,22 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
             JsApiPay jsApiPay = new JsApiPay(this);
             jsApiPay.openid = openid;
             jsApiPay.total_fee = int.Parse(total_fee);
-            jsApiPay.orderid = orderid;
+            jsApiPay.out_trade_no = orderid;
 
             //JSAPI支付预处理
             try
             {
                 WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult();
-                wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数
+                wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
                 Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
                 //在页面上显示订单信息
-                //Response.Write("<span style='color:#00CD00;font-size:20px'>订单详情：</span><br/>");
+                Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
                 //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
 
             }
             catch (Exception ex)
             {
-                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + ex + "</span>");
+                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + "</span>");
                 submit.Visible = false;
             }
         }

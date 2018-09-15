@@ -15,12 +15,10 @@
 
        <script type="text/javascript">
            //获取共享地址
-           function editAddress()
-           {
+           function editAddress() {
                WeixinJSBridge.invoke(
                    'editAddress',
-                   function (res)
-                   {
+                   function (res) {
                        var addr1 = res.proviceFirstStageName;
                        var addr2 = res.addressCitySecondStageName;
                        var addr3 = res.addressCountiesThirdStageName;
@@ -30,27 +28,22 @@
                        //alert(addr + ":" + tel);
                    }
                );
-         }
+           }
 
-         window.onload = function ()
-         {
-             if (typeof WeixinJSBridge == "undefined")
-             {
-                 if (document.addEventListener)
-                 {
-                     document.addEventListener('WeixinJSBridgeReady', editAddress, false);
-                 }
-                 else if (document.attachEvent)
-                 {
-                     document.attachEvent('WeixinJSBridgeReady', editAddress);
-                     document.attachEvent('onWeixinJSBridgeReady', editAddress);
-                 }
-             }
-             else
-             {
-                 editAddress();
-             }
-         };
+           window.onload = function () {
+               if (typeof WeixinJSBridge == "undefined") {
+                   if (document.addEventListener) {
+                       document.addEventListener('WeixinJSBridgeReady', editAddress, false);
+                   }
+                   else if (document.attachEvent) {
+                       document.attachEvent('WeixinJSBridgeReady', editAddress);
+                       document.attachEvent('onWeixinJSBridgeReady', editAddress);
+                   }
+               }
+               else {
+                   editAddress();
+               }
+           };
 
 	    </script>
 
@@ -98,38 +91,37 @@
     var money = 0;
     var ordercode = "";
     mui.ready(function () {
-    	var UserName = localStorage.getItem("mgps_UserName");
-    	var OrderID = localStorage.getItem("OrderID");
+        var UserName = localStorage.getItem("mgps_UserName");
+        var OrderID = localStorage.getItem("OrderID");
 
-    	mui.ajax(grobal_url, {
-    	    dataType: "json",
-    	    type: "post",
-    	    data: {
-    	        "action": "GetOrderDetail",
-    	        "UserName": UserName,
-    	        "OrderID": OrderID
-    	    },
-    	    success: function (data, status, xhr) {
-    	        if (data.sign == '1') {
-    	            jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
-    	            jQuery("#points").val(data.dt[0]["Points"]);
-    	            money = parseFloat(data.dt[0]["Money"]);
-    	            ordercode = data.dt[0]["OrderCode"];
-    	            jQuery(".total_fee").val(money);
-    	            jQuery(".ordercode").val(ordercode);
-    	        } else {
-    	            mui.alert("获取失败！");
-    	        }
-    	    }
-    	});
+        mui.ajax(grobal_url, {
+            dataType: "json",
+            type: "post",
+            data: {
+                "action": "GetOrderDetail",
+                "UserName": UserName,
+                "OrderID": OrderID
+            },
+            success: function (data, status, xhr) {
+                if (data.sign == '1') {
+                    jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
+                    jQuery("#points").val(data.dt[0]["Points"]);
+                    money = parseFloat(data.dt[0]["Money"]);
+                    ordercode = data.dt[0]["OrderCode"];
+                    jQuery(".total_fee").val(money);
+                    jQuery(".ordercode").val(ordercode);
+                } else {
+                    mui.alert("获取失败！");
+                }
+            }
+        });
     });
 
     function Pay() {
-        //var url = "http://wx.chahuobao.net/weixin/html/JsApiPayPage.aspx?openid=" + <%=openid %> + "&total_fee=" + money + "&orderid=" + ordercode;
-        //document.location.href = url;
+        
     }
     function Cancel() {
-    	document.location.href = "BuyPointsList.html";
+        document.location.href = "BuyPointsList.html";
     }
 </script>
 </html>
