@@ -19,7 +19,7 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
 		    ajax_msg = data.msg;
 		    if(ajax_sign == '1') {
 		        mui.alert(ajax_msg);
-		        document.location.href = "MGps_login.html";
+		        document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
 		        //mui.openWindow({
 		        //    id: 'MGps_login',
 		        //    url: 'MGps_login.html',
@@ -56,7 +56,7 @@ function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue) {
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
                 mui.alert(ajax_msg);
-                document.location.href = "MGps_login.html";
+                document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
                 //mui.openWindow({
                 //    id: 'MGps_login',
                 //    url: 'MGps_login.html',

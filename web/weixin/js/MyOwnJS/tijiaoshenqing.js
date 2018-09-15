@@ -14,7 +14,7 @@ function panduanyh(UserNamevalue) {
             ajax_sign = data.sign;
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
-                document.location.href = "ApplyPoints.html";
+                document.location.href = "http://wx.chahuobao.net/weixin/html/ApplyPoints.html";
             } else {
                 mui.alert(ajax_msg)
             }
@@ -42,7 +42,7 @@ function tijiaoshenqing(UserName, PointsBoxvalue, ApplyMemovalue) {
 			ajax_msg = data.msg;
 			if (ajax_sign == '1') {
 			    mui.alert(ajax_msg);
-			    document.location.href = "menu.html";
+			    document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
 				//mui.openWindow({
 				//    id: 'MGps_main',
 				//    url: 'MGps_main.html',
@@ -80,7 +80,7 @@ function ChongZhiMiMaZF(UserName, PayPassword, UserLeiXing) {
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
                 mui.alert(ajax_msg);
-                document.location.href = "menu.html";
+                document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
                 //mui.openWindow({
                 //    id: 'MGps_main',
                 //    url: 'MGps_main.html',

@@ -17,7 +17,7 @@ function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
 			if (ajax_sign == '1') {
 			    localStorage.setItem("tuichudenglu", "true");
 			    mui.alert(ajax_msg);
-			    document.location.href = "MGps_login.html";
+			    document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
 				//mui.openWindow({
 				//	id: 'MGps_login',
 				//	url: 'MGps_login.html',
@@ -54,7 +54,7 @@ function ChongZhiMiMaZF(UserName, PayPassword, UserLeiXing) {
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
                 mui.alert(ajax_msg);
-                document.location.href = "menu.html";
+                document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
                 //mui.openWindow({
                 //    id: 'MGps_main',
                 //    url: 'MGps_main.html',

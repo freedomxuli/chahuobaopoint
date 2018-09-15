@@ -1135,7 +1135,7 @@ public class InterFaceHandler : IHttpHandler {
                                             db.UpdateTable(cdt, cdtt);
                                         }
 
-                                        if (rdt.Rows[0]["ClientKind"].ToString() == "1")
+                                        if (rdt.Rows[0]["ClientKind"].ToString() == "1" && rdt.Rows[0]["UserID"].ToString() == CardUserID)
                                         {
                                             //专线
                                             System.Data.DataTable zudt = db.GetEmptyDataTable("tb_b_user");
