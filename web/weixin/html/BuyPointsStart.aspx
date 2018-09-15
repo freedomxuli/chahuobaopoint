@@ -62,7 +62,7 @@
 			    </p>
                 <br />
                 <div class="mui-input-row">
-				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
+				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的电子券，100起拍">
 			    </div>
                 <br />
                 <asp:TextBox ID="totalfee" runat="server" style="display:none;" class="total_fee"></asp:TextBox>

@@ -25,7 +25,7 @@ public class JFSQMag
 
 
     [CSMethod("GetList")]
-    public object GetList(int pagnum, int pagesize,string yhm)
+    public object GetList(int pagnum, int pagesize,string yhm,string xm)
     {
 
         using (DBConnection dbc = new DBConnection())
@@ -40,8 +40,12 @@ public class JFSQMag
                 {
                     where += " and " + dbc.C_Like("b.UserName", yhm.Trim(), LikeStyle.LeftAndRightLike);
                 }
+                if (!string.IsNullOrEmpty(xm.Trim()))
+                {
+                    where += " and " + dbc.C_Like("b.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
+                }
 
-                string str = @"select a.*,b.UserName from tb_b_jfsq a left join tb_b_user b on a.userId=b.userId where 1=1  ";
+                string str = @"select a.*,b.UserName,b.UserXM from tb_b_jfsq a left join tb_b_user b on a.userId=b.userId where 1=1  ";
                 str += where;
 
                 //开始取分页数据

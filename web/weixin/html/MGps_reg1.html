@@ -30,6 +30,12 @@
 							<input id='UserName' style="width: 63%; float: left;" type="tel" class="mui-input-clear mui-input" placeholder="请输入账号">
 						</div>
 					</li>
+                    <!--<li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;">真实姓名:</label>
+							<input id='UserXM' style="width: 63%; float: left;" type="text" class="mui-input-clear mui-input" placeholder="请输入真实姓名">
+						</div>
+					</li>-->
 					<li class="mui-table-view-cell">
 						<div class="mui-input-row">
 							<label style="width: 37%;">登录密码:</label>
@@ -69,6 +75,7 @@
 		    (function ($, doc) {
 		        var regButton = doc.getElementById('reg');
 		        var UserNameBox = doc.getElementById('UserName');
+		        //var UserXMBox = doc.getElementById('UserXM');
 		        var UserPasswordBox = doc.getElementById('Password');
 		        var PayPasswordBox = doc.getElementById('PayPassword');
 		        var sendbutton = document.getElementById("send");
@@ -84,6 +91,7 @@
 		        });
 		        regButton.addEventListener('tap', function (event) {
 		            var UserNamevalue = UserNameBox.value;
+		            //var UserXMvalue = UserXMBox.value;
 		            var UserPasswordvalue = UserPasswordBox.value;
 		            var PayPasswordvalue = PayPasswordBox.value;
 		            var yanzhengmavalue = doc.getElementById('yanzhengma').value;

@@ -17,7 +17,7 @@ function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
 			if (ajax_sign == '1') {
 			    localStorage.setItem("tuichudenglu", "true");
 			    mui.alert(ajax_msg);
-			    document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
+			    document.location.href = "http://wx.chahuobao.net/weixin/html/MGps_login.html";
 				//mui.openWindow({
 				//	id: 'MGps_login',
 				//	url: 'MGps_login.html',

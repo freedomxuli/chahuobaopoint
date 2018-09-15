@@ -5,7 +5,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>支付积分</title>
+		<title>支付电子券</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -54,7 +54,7 @@
                 <br />
                 <form class="mui-input-group">
                     <div class="mui-input-row">
-					    <label>支付积分</label>
+					    <label>支付电子券</label>
 					    <input id="GivePoints" type="text" class="mui-input-clear" placeholder="请填入大于100的整数">
 				    </div>
                 </form>

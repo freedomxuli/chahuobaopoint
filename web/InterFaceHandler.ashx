@@ -232,6 +232,7 @@ public class InterFaceHandler : IHttpHandler {
         System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
         string UserName = context.Request["UserName"];
         UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        //string UserXM = context.Request["UserXM"];
         string UserPassword = context.Request["UserPassword"];
         string PayPassword = context.Request["PayPassword"];
 
@@ -803,8 +804,12 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
-                             left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID='" + udt.Rows[0]["UserID"] + "' order by AddTime desc";
+                    str = @"select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points,'付' as flag  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID='"+udt.Rows[0]["UserID"]+@"'
+                            union all 
+                            select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points,'收' as flag  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID='"+udt.Rows[0]["UserID"]+@"'
+                            order by AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     hash["sign"] = "1";

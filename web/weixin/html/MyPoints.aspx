@@ -5,7 +5,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>我的积分</title>
+		<title>我的电子券</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -50,20 +50,20 @@
 		<div class="mui-content">
 			<div class="mui-content-padded">
                 <br />
-				<h3>我的专线积分：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
+				<h3>我的专线电子券：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
                 <br />
                 <form class="mui-input-group">
                     <div class="mui-input-row">
-					    <label>授予积分</label>
+					    <label>授予电子券</label>
 					    <input id="GivePoints" type="text" class="mui-input-clear" placeholder="请填入大于100的整数">
 				    </div>
                 </form>
                 <br />
 				<p>
-					仅可用于扫平台二维码，授予平台积分。
+					仅可用于扫平台二维码，授予平台电子券。
 				</p>
                 <br />
-                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="GiveToPoints();">扫码授分</button>
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="GiveToPoints();">扫码授券</button>
                 <br />
 			</div>
 		</div>

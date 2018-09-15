@@ -43,10 +43,9 @@
 		     setInterval(function () {
 		         fnZoom(480);
 		     }, 50);
-
 		     jQuery('#qrcodeTable').qrcode({
 		         render    : "table",                
-		         text    : "31231231" ,
+		         text: localStorage.getItem("mgps_UserName"),
 		         width : "350",               //二维码的宽度
 		         height : "350",
 		     });    

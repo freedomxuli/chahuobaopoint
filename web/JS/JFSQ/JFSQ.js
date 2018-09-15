@@ -12,6 +12,7 @@ var store = createSFW4Store({
        { name: 'sqId' },
        { name: 'userId' },
        { name: 'UserName' },
+       { name: 'UserXM' },
        { name: 'sqrq' },
        { name: 'memo' },
        { name: 'sqjf' },
@@ -32,7 +33,7 @@ function getList(nPage) {
             total: retVal.ac,
             currentPage: retVal.cp
         });
-    }, CS.onError, nPage, pageSize,  Ext.getCmp("cx_yhm").getValue());
+    }, CS.onError, nPage, pageSize, Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
 }
 
 
@@ -78,6 +79,14 @@ Ext.onReady(function () {
                     columnLines: 1,
                     border: 1,
                     columns: [Ext.create('Ext.grid.RowNumberer'),
+                         {
+                             xtype: 'gridcolumn',
+                             dataIndex: 'UserXM',
+                             sortable: false,
+                             menuDisabled: true,
+                             width: 400,
+                             text: '物流名称'
+                         },
                         {
                             xtype: 'gridcolumn',
                             dataIndex: 'UserName',
@@ -147,9 +156,16 @@ Ext.onReady(function () {
                             items: [
                                 {
                                     xtype: 'textfield',
+                                    id: 'cx_xm',
+                                    width: 140,
+                                    labelWidth: 60,
+                                    fieldLabel: '物流名称'
+                                },
+                                {
+                                    xtype: 'textfield',
                                     id: 'cx_yhm',
                                     width: 140,
-                                    labelWidth: 50,
+                                    labelWidth: 60,
                                     fieldLabel: '用户名'
                                 },
                                 {

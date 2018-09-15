@@ -28,7 +28,7 @@
 				</p>
                 <br />
                 <div class="mui-input-row">
-					<input id="points" type="number" class="mui-input-clear" placeholder="填写需要购买的积分，100起拍">
+					<input id="points" type="number" class="mui-input-clear" placeholder="填写需要购买的电子券，100起拍">
 				</div>
                 <br />
                 <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay" onclick="Pay();">确认订单</button>
@@ -90,13 +90,13 @@
 	                        }
 	                    });
 	                } else {
-	                    mui.alert("请输入整数数字,并积分大于100！");
+	                    mui.alert("请输入整数数字,并电子券舒数量大于100！");
 	                }
 	            } else {
 	                mui.alert("订单失效！");
 	            }
 	        } else {
-	            mui.alert("请输入需购买的积分！");
+	            mui.alert("请输入需购买的电子券数量！");
 	        }
 	    }
 	    function Cancel()
