@@ -76,7 +76,7 @@
                                                         '<div class="mui-table-cell">' +
                                                             '<h4 class="mui-ellipsis">' + list[i]["UserXM"] + '　　电子券　　<span style="color:red;">' + list[i]["Points"] + '分</span></h4>' +
                                                             '<h5>购买金额：' + list[i]["Money"] + '元</h5>' +
-                                                            '<h5>购买日期：' + new Date(list[i]["AddTime"]).Format("yyyy-MM-dd hh:mm:ss") + '</h5>' +
+                                                            '<h5>购买日期：' + new Date(list[i]["AddTime"]).Format("yyyy-MM-dd HH:mm:ss") + '</h5>' +
                                                         '</div>' +
                                                         '<div class="mui-table-cell mui-col-xs-2 mui-text-right">' +
                                                             '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["OrderID"] + '\');">' +

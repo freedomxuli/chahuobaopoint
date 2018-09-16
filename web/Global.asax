@@ -11,7 +11,8 @@
         RegexRouteModule.AddRouter(new FileRouteExecutor());
         RegexRouteModule.AddRouter(new CallServerModule());
         SmartFramework4v2.DocumentOnline.DocServer.InitServer(null);
-      
+
+        FluentScheduler.JobManager.Initialize(new PlanTime()); 
     }
     
     void Application_End(object sender, EventArgs e) 
