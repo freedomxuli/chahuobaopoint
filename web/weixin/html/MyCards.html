@@ -4,13 +4,20 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>我的卡包</title>
+		<title>电子券余额</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 		<link rel="stylesheet" href="../css/mui.min.css">
         <link href="../css/style.css" rel="stylesheet" />
+        <style type="text/css">
+            .menuClass {
+                position:absolute;
+                left:0;
+                top:80px;
+            }
+        </style>
 	</head>
 
 	<body>
@@ -28,7 +35,11 @@
 		</div>
 		<script src="../js/mui.min.js"></script>
         <script src="../js/mui.showLoading.js"></script>
+        <script src="../js/jquery.1.9.1.js"></script>
         <script src="../js/app.js"></script>
+        <script type="text/javascript">
+            var jQuery = jQuery.noConflict();
+	    </script>
 		<script>
 		    var list;
 		    var pagnum = 1;
@@ -56,6 +67,7 @@
 		                        success: function (data1, status, xhr) {
 		                            if (data1.sign == '1') {
 		                                jQuery("#MyPoints").html(data1.points + "分");
+		                                jQuery("#pullrefresh").addClass("menuClass");
 		                            } else {
 		                                mui.alert(data1.msg);
 		                            }
