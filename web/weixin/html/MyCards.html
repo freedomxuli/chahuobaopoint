@@ -14,6 +14,9 @@
 	</head>
 
 	<body>
+        <br />
+		<div style="display:none;" class="myPoints"><h3>我的专线电子券：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3></div>
+        <br />
 		<!--下拉刷新容器-->
 		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
 			<div class="mui-scroll">
@@ -32,6 +35,36 @@
 		    var pagesize = 10;
 		    var totalcount = 0;
 		    var flag = false;
+		    mui.ready(function () {
+		        mui.ajax(grobal_url, {
+		            dataType: "json",
+		            type: "post",
+		            data: {
+		                "action": "JudgeIsZX",
+		                "UserName": localStorage.getItem("mgps_UserName")
+		            },
+		            success: function (data, status, xhr) {
+		                if (data.sign == '1') {
+		                    jQuery(".myPoints").show();
+		                    mui.ajax(grobal_url, {
+		                        dataType: "json",
+		                        type: "post",
+		                        data: {
+		                            "action": "MyZXPoints",
+		                            "UserName": localStorage.getItem("mgps_UserName")
+		                        },
+		                        success: function (data1, status, xhr) {
+		                            if (data1.sign == '1') {
+		                                jQuery("#MyPoints").html(data1.points + "分");
+		                            } else {
+		                                mui.alert(data1.msg);
+		                            }
+		                        }
+		                    });
+		                }
+		            }
+		        });
+		    });
 		    mui.init({
 		        pullRefresh: {
 		            container: '#pullrefresh',

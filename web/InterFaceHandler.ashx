@@ -697,6 +697,17 @@ public class InterFaceHandler : IHttpHandler {
                             {
                                 if (Convert.ToInt32(dt.Rows[0]["Points"].ToString()) >= Convert.ToInt32(Points))
                                 {
+                                    System.Data.DataTable dt_give = db.GetEmptyDataTable("tb_b_givetoplat");
+                                    System.Data.DataRow dr_give = dt_give.NewRow();
+                                    dr_give["GiveToPlatId"] = Guid.NewGuid();
+                                    dr_give["UserID"] = dt.Rows[0]["UserID"].ToString();
+                                    dr_give["points"] = Convert.ToInt32(Points);
+                                    dr_give["Addtime"] = DateTime.Now;
+                                    dr_give["IsSH"] = 1;
+                                    dr_give["Status"] = 0;
+                                    dt_give.Rows.Add(dr_give);
+                                    db.InsertTable(dt_give);
+                                    
                                     System.Data.DataTable dt_new = db.GetEmptyDataTable("tb_b_platpoints");
                                     SmartFramework4v2.Data.DataTableTracker dtt = new SmartFramework4v2.Data.DataTableTracker(dt_new);
                                     
@@ -812,6 +823,8 @@ public class InterFaceHandler : IHttpHandler {
                             union all 
 	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'进' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
                             where a.BuyUserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.ZhiFuZT=1
+                            select b.UserXM as wuliu,'查货宝' as jydx,a.AddTime,a.points Points,'受' as flag  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
+                            where a.UserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.IsSH=1
                             order by AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
