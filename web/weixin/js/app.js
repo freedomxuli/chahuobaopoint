@@ -5,7 +5,7 @@
  **/
 var grobal_url = "http://wx.chahuobao.net/InterFaceHandler.ashx";
 
-Date.prototype.format = function (mask) {
+Date.prototype.Format = function (mask) {
     var d = this;
     var zeroize = function (value, length) {
         if (!length) length = 2;
