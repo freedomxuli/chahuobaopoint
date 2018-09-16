@@ -1018,7 +1018,7 @@ public class InterFaceHandler : IHttpHandler {
                         else
                         {
                             hash["sign"] = "3";
-                            hash["msg"] = "亲 ~你手慢了！电子券已抢完咯！";
+                            hash["msg"] = "亲~~您手慢了！请减少购买数量重新尝试！";
                         }
                     }
                     else
