@@ -810,7 +810,7 @@ public class InterFaceHandler : IHttpHandler {
                             select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points,'收' as flag  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
                             left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID='"+udt.Rows[0]["UserID"]+ @"'
                             union all 
-	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'付' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'进' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
                             where a.BuyUserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.ZhiFuZT=1
                             order by AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
