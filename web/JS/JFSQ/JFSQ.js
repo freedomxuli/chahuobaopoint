@@ -38,7 +38,7 @@ function getList(nPage) {
 
 
 function sq(id) {
-    if (privilege("申请积分_积分授权_编辑")){
+    if (privilege("申请电子券_电子券授权_编辑")) {
         Ext.MessageBox.confirm('提示', '是否要授权!', function (obj) {
             if (obj == "yes") {
                 CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
@@ -111,7 +111,7 @@ Ext.onReady(function () {
                             menuDisabled: true,
                             format: 'Y-m-d',
                             width: 200,
-                            text: '申请积分'
+                            text: '申请电子券'
                         },
                         {
                             xtype: 'datecolumn',

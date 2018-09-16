@@ -75,6 +75,7 @@
 		                        for (var i = 0; i < list.length; i++) {
 		                            var li = document.createElement('li');
 		                            li.className = 'mui-table-view-cell';
+		                            li.setAttribute('style', "padding-right:0px;");
 		                            //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
 		                            var color = "#999999";
 		                            if (list[i]["flag"] == "收") {
@@ -86,7 +87,7 @@
                                                         '<div class="mui-table-cell">' +
                                                             '<h4 style="line-height:150%"><font style="color:' + color + ';">[' + list[i]["flag"] + ']</font> ' + list[i]["wuliu"] + '-电子券-<span style="color:red;">' + list[i]["Points"] + '分</span></h4>' +
                                                             '<h5>交易对象：' + list[i]["jydx"] + '</h5>' +
-                                                            '<h5>交易日期：' + new Date(list[i]["AddTime"]).Format("yyyy-MM-dd HH:mm:ss") + '</h5>' +
+                                                            '<h5>交易日期：' + list[i]["sj"] + '</h5>' +
                                                         '</div>' +
                                                    '</div>';
 		                            table.appendChild(li);

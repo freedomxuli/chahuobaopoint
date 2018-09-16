@@ -50,7 +50,7 @@
 		<div class="mui-content">
 			<div class="mui-content-padded">
                 <br />
-				<h3><span id="zxmc"></span>积分：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
+				<h3><span id="zxmc"></span>电子券：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
                 <br />
                 <form class="mui-input-group">
                     <div class="mui-input-row">

@@ -461,7 +461,7 @@ public class InterFaceHandler : IHttpHandler {
                     if (Convert.ToInt32(dt_user.Rows[0]["ClientKind"]) != 1)
                     {
                         hash["sign"] = "0";
-                        hash["msg"] = "对不起，您的账号无法申请积分！";
+                        hash["msg"] = "对不起，您的账号无法申请电子券！";
                     }
                     else
                     {
@@ -576,12 +576,12 @@ public class InterFaceHandler : IHttpHandler {
                     if (Convert.ToInt32(udt.Rows[0]["ClientKind"]) == 1)
                     {
                         hash["sign"] = "1";
-                        hash["msg"] = "请申请积分";
+                        hash["msg"] = "请申请电子券";
                     }
                     else
                     {
                         hash["sign"] = "0";
-                        hash["msg"] = "对不起，您的账号无法申请积分！";
+                        hash["msg"] = "对不起，您的账号无法申请电子券！";
                     }
                 }
 
@@ -735,7 +735,7 @@ public class InterFaceHandler : IHttpHandler {
                                 else
                                 {
                                     hash["sign"] = "5";
-                                    hash["msg"] = "您输入的积分数不足，支付失败！";
+                                    hash["msg"] = "您输入的电子券数不足，支付失败！";
                                 }
                             }
                             else
@@ -808,9 +808,21 @@ public class InterFaceHandler : IHttpHandler {
                             left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID='"+udt.Rows[0]["UserID"]+@"'
                             union all 
                             select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points,'收' as flag  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
-                            left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID='"+udt.Rows[0]["UserID"]+@"'
+                            left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID='"+udt.Rows[0]["UserID"]+ @"'
+                            union all 
+	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'付' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            where a.BuyUserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.ZhiFuZT=1
                             order by AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                    dtPage.Columns.Add("sj");
+                    for (int i = 0; i < dtPage.Rows.Count; i++)
+                    {
+                        if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
+                        {
+                            dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                        }
+                    }
 
                     hash["sign"] = "1";
                     hash["msg"] = "获取成功！";
@@ -862,6 +874,15 @@ public class InterFaceHandler : IHttpHandler {
                     str = @"select a.*,b.UserXM from tb_b_plattosale a left join tb_b_user b on a.UserID=b.UserID
                              where a.status=0 and a.points > 0 order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                    dtPage.Columns.Add("sj");
+                    for (int i = 0; i < dtPage.Rows.Count; i++)
+                    {
+                        if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
+                        {
+                            dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                        }
+                    }
 
                     hash["sign"] = "1";
                     hash["msg"] = "获取成功！";
@@ -997,13 +1018,13 @@ public class InterFaceHandler : IHttpHandler {
                         else
                         {
                             hash["sign"] = "3";
-                            hash["msg"] = "你想购买的电子券已超过购买量，请重新确认购买量！";
+                            hash["msg"] = "亲 ~你手慢了！电子券已抢完咯！";
                         }
                     }
                     else
                     {
                         hash["sign"] = "2";
-                        hash["msg"] = "电子券已被抢空！";
+                        hash["msg"] = "亲 ~你手慢了！电子券已被抢空！";
                     }
                 }
                 db.CommitTransaction();
@@ -1185,7 +1206,7 @@ public class InterFaceHandler : IHttpHandler {
                                     else
                                     {
                                         hash["sign"] = "5";
-                                        hash["msg"] = "您输入的积分数不足，支付失败！";
+                                        hash["msg"] = "您输入的电子券数不足，支付失败！";
                                     }
                                 }
                                 else

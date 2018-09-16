@@ -4,7 +4,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>购买积分</title>
+		<title>购买电子券</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -74,7 +74,7 @@
                                                         '<div class="mui-table-cell">' +
                                                             '<h4 style="line-height:150%">' + list[i]["UserXM"] + '-电子券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
                                                             '<h5>折　　扣：' + list[i]["discountmemo"] + '</h5>' +
-                                                            '<h5>上架日期：' + new Date(list[i]["addtime"]).Format("yyyy-MM-dd HH:mm:ss") + '</h5>' +
+                                                            '<h5>上架日期：' + list[i]["sj"] + '</h5>' +
                                                         '</div>' +
                                                         '<div class="mui-table-cell mui-col-xs-2 mui-text-center">' +
                                                             '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +

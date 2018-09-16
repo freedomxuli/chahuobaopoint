@@ -88,8 +88,8 @@
 			<div class="mui-content-padded">
 				<button id='login' class="mui-btn mui-btn-block mui-btn-primary">登录</button>
 				<div class="link-area">
-					<a id='reg'>注册专线</a> <span class="spliter">|</span>
-                    <a id='reg1'>注册三方</a> <span class="spliter">|</span>
+					<a id='reg'>专线方注册</a> <span class="spliter">|</span>
+                    <a id='reg1'>发货方注册</a> <span class="spliter">|</span>
 					<a id='forgetPassword'>忘记密码</a>
 				</div>
 			</div>
@@ -102,8 +102,8 @@
 		<script type="text/javascript">
 		    (function ($, doc) {
 		        var mainPage = $.preload({
-		            "id": 'MGps_main',
-		            "url": 'MGps_main.html'
+		            "id": 'menu',
+		            "url": 'menu.html'
 		        });
 		        //检查 "登录状态/锁屏状态" 结束
 		        var loginButton = doc.getElementById('login');
@@ -114,9 +114,9 @@
 		        var forgetButton = doc.getElementById('forgetPassword');
 		        doc.getElementById('UserName').value = localStorage.getItem("mgps_UserName");
 		        doc.getElementById('UserPassword').value = localStorage.getItem("mgps_UserPassword");
-		        //if (localStorage.getItem("tuichudenglu") == "false") {
-		        //    login_confirm(localStorage.getItem("mgps_UserName"), localStorage.getItem("mgps_UserPassword"), "APP");
-		        //}
+		        if (localStorage.getItem("tuichudenglu") == "false") {
+		            login_confirm(localStorage.getItem("mgps_UserName"), localStorage.getItem("mgps_UserPassword"), "APP");
+		        }
 
 		        loginButton.addEventListener('tap', function (event) {
 		            localStorage.setItem("mgps_UserName", UserNameBox.value);

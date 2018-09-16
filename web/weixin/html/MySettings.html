@@ -40,6 +40,9 @@
 					</a>
 				</li>
 			</ul>
+            <div class="mui-content-padded">
+		        <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="tuichudenglu()">退出登录</button>
+		    </div>
 		</div>
 	</body>
 	<script src="../js/mui.min.js"></script>
@@ -78,6 +81,11 @@
 
 	    function MyPoints() {
 	        document.location.href = "MyPoints.aspx";
+	    }
+
+	    function tuichudenglu() {
+	        localStorage.setItem("tuichudenglu", "true");
+	        document.location.href = "MGps_login.html";
 	    }
 	</script>
 </html>

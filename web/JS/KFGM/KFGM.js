@@ -35,23 +35,6 @@ function getList(nPage) {
 }
 
 
-function sq(id) {
-    if (privilege("申请积分_积分授权_编辑")){
-        Ext.MessageBox.confirm('提示', '是否要授权!', function (obj) {
-            if (obj == "yes") {
-                CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
-                    if (retVal) {
-                        getList(1);
-                    }
-                }, CS.onError, id,1);
-            }
-            else {
-                return;
-            }
-        });
-    }
-}
-
 function kfgm(id) {
     var r = store.findRecord("PlatPointId", id).data;
     var win = new addWin();
@@ -76,7 +59,7 @@ Ext.define('addWin', {
     },
     closeAction: 'destroy',
     modal: true,
-    title: '开放购买积分',
+    title: '开放购买电子券',
 
     initComponent: function () {
         var me = this;
@@ -148,7 +131,7 @@ Ext.define('addWin', {
                             if (point > maxpoint) {
                                 Ext.Msg.show({
                                     title: '提示',
-                                    msg: '开放购买的积分不得超过其所有积分',
+                                    msg: '开放购买的电子券不得超过其所有电子券',
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
@@ -217,7 +200,7 @@ Ext.onReady(function () {
                             sortable: false,
                             menuDisabled: true,
                             width: 200,
-                            text: '积分'
+                            text: '电子券'
                         },
                         {
                             xtype: 'gridcolumn',
