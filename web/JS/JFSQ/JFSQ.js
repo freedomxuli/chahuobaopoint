@@ -182,7 +182,27 @@ Ext.onReady(function () {
                                         }
                                     ]
                                 },
+                                {
+                                    xtype: 'buttongroup',
+                                    title: '',
+                                    items: [
+                                        {
+                                            xtype: 'button',
+                                            text: '导出',
+                                            iconCls: 'download',
+                                            handler: function () {
+                                                DownloadFile("CZCLZ.JFSQMag.GetJFSQToFile", "电子券申请.xls", Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                            }
+                                        }
+                                    ]
+                                }
                             ]
+                        },
+                        {
+                            xtype: 'pagingtoolbar',
+                            displayInfo: true,
+                            store: store,
+                            dock: 'bottom'
                         }
                     ]
                 }

@@ -823,6 +823,7 @@ public class InterFaceHandler : IHttpHandler {
                             union all 
 	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'进' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
                             where a.BuyUserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.ZhiFuZT=1
+                            union all
                             select b.UserXM as wuliu,'查货宝' as jydx,a.AddTime,a.points Points,'受' as flag  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
                             where a.UserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.IsSH=1
                             order by AddTime desc";

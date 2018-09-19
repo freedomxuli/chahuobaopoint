@@ -90,6 +90,7 @@ Ext.define('addWin', {
                         allowBlank: false,
                         allowDecimals: false,
                         allowNegative: false,
+                        minValue: 0,
                         anchor: '100%'
                     },
                     
@@ -126,7 +127,17 @@ Ext.define('addWin', {
                         text: '确定',
                         iconCls: 'dropyes',
                         handler: function () {
-                            var point=Ext.getCmp("points").getValue();
+                            var point = Ext.getCmp("points").getValue();
+                            if (point < 0) {
+                                Ext.Msg.show({
+                                    title: '提示',
+                                    msg: '开放购买的电子券必须大于0',
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.INFO
+                                });
+                                return;
+                            }
+
                             var maxpoint = Ext.getCmp("MaxPoint").getValue();
                             if (point > maxpoint) {
                                 Ext.Msg.show({
@@ -238,6 +249,20 @@ Ext.onReady(function () {
                                             text: '查询',
                                             handler: function () {
                                                 getList(1);
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'buttongroup',
+                                    title: '',
+                                    items: [
+                                        {
+                                            xtype: 'button',
+                                            text: '导出',
+                                            iconCls: 'download',
+                                            handler: function () {
+                                                DownloadFile("CZCLZ.KFGMMag.GetKFGMToFile", "开放购买电子券.xls", Ext.getCmp("cx_yhm").getValue());
                                             }
                                         }
                                     ]
