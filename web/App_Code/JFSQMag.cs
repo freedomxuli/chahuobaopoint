@@ -89,6 +89,13 @@ public class JFSQMag
                 {
                     userId = sdt.Rows[0]["UserID"].ToString();
                     decimal points = 0;
+                    str = "select * from tb_b_user where UserID=" + dbc.ToSqlValue(userId);
+                    DataTable pdt = dbc.ExecuteDataTable(str);
+                    if (pdt.Rows.Count > 0)
+                    {
+                        points += Convert.ToDecimal(pdt.Rows[0]["Points"].ToString());
+                    }
+                    
                     points = points + Convert.ToDecimal(sdt.Rows[0]["sqjf"].ToString());
 
                     var udt = dbc.GetEmptyDataTable("tb_b_user");
