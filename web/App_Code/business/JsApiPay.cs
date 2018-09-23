@@ -149,7 +149,7 @@ namespace WxPayAPI
         {
             //统一下单
             WxPayData data = new WxPayData();
-            data.SetValue("body", "查货宝-电子券");
+            data.SetValue("body", "查货宝-运费券");
             data.SetValue("attach", out_trade_no);
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("total_fee", total_fee);

@@ -4,7 +4,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>购买电子券</title>
+		<title>购买运费券</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,14 +21,14 @@
 				<h3 id="title"></h3>
                 <br />
 				<p>
-					电子券可抵扣相关物流产品。
+					运费券可抵扣相关物流产品。
 				</p>
                 <p style="color:red;">
 					自下单起，请于5分钟内付款，否则订单失效！
 				</p>
                 <br />
                 <div class="mui-input-row">
-					<input id="points" type="number" class="mui-input-clear" placeholder="填写需要购买的电子券，100起拍">
+					<input id="points" type="number" class="mui-input-clear" placeholder="填写需要购买的运费券，50起拍">
 				</div>
                 <br />
                 <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="Pay" onclick="Pay();">确认订单</button>
@@ -57,7 +57,7 @@
 	            },
 	            success: function (data, status, xhr) {
 	                if (data.sign == '1') {
-	                    jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
+	                    jQuery("#title").html(data.dt[0]["UserXM"] + "　　运费券");
 	                } else {
 	                    mui.alert("获取失败！");
 	                }
@@ -70,7 +70,7 @@
 	        if (jQuery("#points").val()) {
 	            if (localStorage.getItem("PlatToSaleId")) {
 	                var ex = /^\d+$/;
-	                if (ex.test(jQuery("#points").val()) && parseInt(jQuery("#points").val()) >= 100) {
+	                if (ex.test(jQuery("#points").val()) && parseInt(jQuery("#points").val()) >= 50) {
 	                    mui.ajax(grobal_url, {
 	                        dataType: "json",
 	                        type: "post",
@@ -90,13 +90,13 @@
 	                        }
 	                    });
 	                } else {
-	                    mui.alert("请输入整数数字,并电子券舒数量大于100！");
+	                    mui.alert("请输入整数数字,并运费券舒数量大于50！");
 	                }
 	            } else {
 	                mui.alert("订单失效！");
 	            }
 	        } else {
-	            mui.alert("请输入需购买的电子券数量！");
+	            mui.alert("请输入需购买的运费券数量！");
 	        }
 	    }
 	    function Cancel()

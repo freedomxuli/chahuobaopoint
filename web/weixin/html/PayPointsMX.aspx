@@ -5,7 +5,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>支付电子券</title>
+		<title>支付运费券</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -50,17 +50,17 @@
 		<div class="mui-content">
 			<div class="mui-content-padded">
                 <br />
-				<h3><span id="zxmc"></span>电子券：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
+				<h3><span id="zxmc"></span>运费券：<span id="MyPoints" style="color:red;font-weight:bold;"></span></h3>
                 <br />
                 <form class="mui-input-group">
                     <div class="mui-input-row">
-					    <label>支付电子券</label>
-					    <input id="GivePoints" type="text" class="mui-input-clear" placeholder="请填入大于100的整数">
+					    <label>支付运费券</label>
+					    <input id="GivePoints" type="text" class="mui-input-clear" placeholder="请填入大于50的整数">
 				    </div>
                 </form>
                 <br />
 				<p>
-					仅可用于查货宝平台电子券支付。
+					仅可用于查货宝平台运费券支付。
 				</p>
                 <br />
                 <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="GiveToPoints();">扫码支付</button>
@@ -101,7 +101,7 @@
 	        //e.detail.gesture.preventDefault();
 	        var ex = /^\d+$/;
 	        if (ex.test(jQuery("#GivePoints").val())) {
-	            if (parseInt(jQuery("#GivePoints").val()) >= 100) {
+	            if (parseInt(jQuery("#GivePoints").val()) >= 50) {
 	                //点击按钮扫描二维码
 	                wx.scanQRCode({
 	                    needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
@@ -161,7 +161,7 @@
 	                    }
 	                });
 	            } else {
-	                mui.alert("请填入大于100的整数");
+	                mui.alert("请填入大于50的整数");
 	            }
 	        } else {
 	            mui.alert("请填入整数");
