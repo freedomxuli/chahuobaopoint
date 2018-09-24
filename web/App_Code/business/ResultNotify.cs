@@ -89,8 +89,9 @@ namespace WxPayAPI
                         db.UpdateTable(dt_new, dtt_new);
                 }
                 page.Response.Write(res.ToXml());
+                //page.Response.Redirect("http://wx.chahuobao.net/weixin/html/menu.html");
+                //page.Response.Write("<script>window.open('http://wx.chahuobao.net/weixin/html/menu.html');</script>");
                 page.Response.End();
-                page.Response.Redirect("http://wx.chahuobao.net/weixin/html/menu.html");
             }
         }
 

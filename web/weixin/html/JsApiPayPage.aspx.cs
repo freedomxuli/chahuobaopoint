@@ -65,5 +65,9 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                 }
             }
         }
+        else
+        {
+            Response.Redirect("http://wx.chahuobao.net/weixin/html/MyOrders.html");
+        }
     }
 }

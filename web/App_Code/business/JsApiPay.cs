@@ -149,13 +149,13 @@ namespace WxPayAPI
         {
             //统一下单
             WxPayData data = new WxPayData();
-            data.SetValue("body", "查货宝-电子券");
+            data.SetValue("body", "Freight-voucher");
             data.SetValue("attach", out_trade_no);
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
-            data.SetValue("goods_tag", "test");
+            data.SetValue("goods_tag", "Freight-voucher");
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 
