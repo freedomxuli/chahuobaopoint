@@ -119,7 +119,7 @@ Ext.define('addWin', {
                         fieldLabel: '优惠折扣备注',
                         allowBlank: false,
                         anchor: '100%'
-                    },
+                    }
                 ],
                 buttonAlign: 'center',
                 buttons: [
