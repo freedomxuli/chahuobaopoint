@@ -81,7 +81,7 @@ public class MyJob : IJob
 
                 for (var i = 0; i < dt_order.Rows.Count; i++)
                 {
-                    if ((DateTime.Now - Convert.ToDateTime(dt_order.Rows[i]["AddTime"].ToString())).TotalMinutes > 5)
+                    if ((DateTime.Now - Convert.ToDateTime(dt_order.Rows[i]["AddTime"].ToString())).TotalMinutes > 3)
                     {
                         DataRow dr_order = dt_order_update.NewRow();
                         dr_order["OrderID"] = dt_order.Rows[i]["OrderID"];

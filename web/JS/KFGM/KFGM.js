@@ -59,7 +59,7 @@ Ext.define('addWin', {
     },
     closeAction: 'destroy',
     modal: true,
-    title: '开放购买电子券',
+    title: '开放购买运费券',
 
     initComponent: function () {
         var me = this;
@@ -131,7 +131,7 @@ Ext.define('addWin', {
                             if (point < 0) {
                                 Ext.Msg.show({
                                     title: '提示',
-                                    msg: '开放购买的电子券必须大于0',
+                                    msg: '开放购买的运费券必须大于0',
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
@@ -142,7 +142,7 @@ Ext.define('addWin', {
                             if (point > maxpoint) {
                                 Ext.Msg.show({
                                     title: '提示',
-                                    msg: '开放购买的电子券不得超过其所有电子券',
+                                    msg: '开放购买的运费券不得超过其所有运费券',
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
@@ -211,7 +211,7 @@ Ext.onReady(function () {
                             sortable: false,
                             menuDisabled: true,
                             width: 200,
-                            text: '电子券'
+                            text: '运费券'
                         },
                         {
                             xtype: 'gridcolumn',
@@ -262,7 +262,7 @@ Ext.onReady(function () {
                                             text: '导出',
                                             iconCls: 'download',
                                             handler: function () {
-                                                DownloadFile("CZCLZ.KFGMMag.GetKFGMToFile", "开放购买电子券.xls", Ext.getCmp("cx_yhm").getValue());
+                                                DownloadFile("CZCLZ.KFGMMag.GetKFGMToFile", "开放购买运费券.xls", Ext.getCmp("cx_yhm").getValue());
                                             }
                                         }
                                     ]

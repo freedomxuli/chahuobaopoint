@@ -38,7 +38,7 @@ function getList(nPage) {
 
 
 function sq(id) {
-    if (privilege("申请电子券_电子券授权_编辑")) {
+    if (privilege("申请运费券_运费券授权_编辑")) {
         Ext.MessageBox.confirm('提示', '是否要授权!', function (obj) {
             if (obj == "yes") {
                 CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
@@ -111,7 +111,7 @@ Ext.onReady(function () {
                             menuDisabled: true,
                             format: 'Y-m-d',
                             width: 200,
-                            text: '申请电子券'
+                            text: '申请运费券'
                         },
                         {
                             xtype: 'datecolumn',
@@ -191,7 +191,7 @@ Ext.onReady(function () {
                                             text: '导出',
                                             iconCls: 'download',
                                             handler: function () {
-                                                DownloadFile("CZCLZ.JFSQMag.GetJFSQToFile", "电子券申请.xls", Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                DownloadFile("CZCLZ.JFSQMag.GetJFSQToFile", "运费券申请.xls", Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
                                             }
                                         }
                                     ]

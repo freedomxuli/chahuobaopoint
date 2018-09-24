@@ -55,14 +55,14 @@
 			    <h3 id="title"></h3>
                 <br />
 			    <p>
-				    电子券可抵扣相关物流产品。
+				    运费券可抵扣相关物流产品。
 			    </p>
                 <p style="color:red;">
-				    自下单起，请于5分钟内付款，否则订单失效！
+				    自下单起，请于3分钟内付款，否则订单失效！
 			    </p>
                 <br />
                 <div class="mui-input-row">
-				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的电子券，100起拍">
+				    <input id="points" type="number" readonly="readonly" class="mui-input-clear" placeholder="填写需要购买的运费券，50起拍">
 			    </div>
                 <br />
                 <asp:TextBox ID="totalfee" runat="server" style="display:none;" class="total_fee"></asp:TextBox>
@@ -104,7 +104,7 @@
             },
             success: function (data, status, xhr) {
                 if (data.sign == '1') {
-                    jQuery("#title").html(data.dt[0]["UserXM"] + "　　电子券");
+                    jQuery("#title").html(data.dt[0]["UserXM"] + "　　运费券");
                     jQuery("#points").val(data.dt[0]["Points"]);
                     money = parseFloat(data.dt[0]["Money"]);
                     ordercode = data.dt[0]["OrderCode"];

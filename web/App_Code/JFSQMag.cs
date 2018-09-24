@@ -177,7 +177,7 @@ public class JFSQMag
                 cells[0, 2].PutValue("申请日期");
                 cells[0, 2].SetStyle(style2);
                 cells.SetColumnWidth(2, 20);
-                cells[0, 3].PutValue("申请电子券");
+                cells[0, 3].PutValue("申请运费券");
                 cells[0, 3].SetStyle(style2);
                 cells.SetColumnWidth(3, 20);
                 cells[0, 4].PutValue("是否授权");

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>支付电子券</title>
+    <title>支付运费券</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -78,7 +78,7 @@
     	                        //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
     	                        li.innerHTML = '<div class="mui-table">' +
                                                     '<div class="mui-table-cell">' +
-                                                        '<h4 style="line-height:150%">' + list[i]["zxmc"] + '-电子券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
+                                                        '<h4 style="line-height:150%">' + list[i]["zxmc"] + '-运费券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
                                                         '<h5>所有人：' + list[i]["syr"] + '</h5>' +
                                                         '<p class="mui-h6 mui-ellipsis">备注：该券购买相关产品时可抵扣使用</p>' +
                                                     '</div>' +

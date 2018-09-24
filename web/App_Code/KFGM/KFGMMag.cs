@@ -180,7 +180,7 @@ public class KFGMMag
                 cells[0, 0].PutValue("物流名称");
                 cells[0, 0].SetStyle(style2);
                 cells.SetColumnWidth(0, 20);
-                cells[0, 1].PutValue("电子券");
+                cells[0, 1].PutValue("运费券");
                 cells[0, 1].SetStyle(style2);
                 cells.SetColumnWidth(1, 20);
 
