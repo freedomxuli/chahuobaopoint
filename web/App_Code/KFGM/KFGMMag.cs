@@ -116,6 +116,19 @@ public class KFGMMag
                     //logdr["CaoZuoRemark"]
                     logdt.Rows.Add(logdr);
                     dbc.InsertTable(logdt);
+
+                    string sql = @"select distinct b.UserID,b.OpenID from tb_b_user_gz a left join tb_b_user b on a.UserId=b.UserID
+                        where a.GZUserID=" + dbc.ToSqlValue(userid) + " and b.OpenID is not null";
+                    DataTable gzdt = dbc.ExecuteDataTable(sql);
+
+                    if (gzdt.Rows.Count > 0)
+                    {
+                        for (int i = 0; i < gzdt.Rows.Count; i++)
+                        {
+                            new Handler().SendWeText(gzdt.Rows[i]["OpenID"].ToString(), wlmc+"已开发运单券购买啦，请登录速购！");
+                        }
+                    }
+
                 }
                 dbc.CommitTransaction();
                 return true;
