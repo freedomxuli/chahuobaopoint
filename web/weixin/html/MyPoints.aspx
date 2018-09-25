@@ -118,7 +118,7 @@
 	                                    success: function (data, status, xhr) {
 	                                        if (data.sign == '1') {
 	                                            mui.alert('支付成功', '提示', function () {
-	                                                document.location.href = "menu.html";
+	                                                document.location.href = "menu.aspx";
 	                                            });
 	                                        } else {
 	                                            mui.alert(data.msg);

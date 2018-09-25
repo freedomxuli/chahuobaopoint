@@ -19,7 +19,7 @@ function login_confirm(UserName, UserPassword, UserLeiXing) {
 				localStorage.setItem("mgps_UserName", UserName);
 				localStorage.setItem("mgps_UserPassword", UserPassword);
 				localStorage.setItem("tuichudenglu", "false");
-				document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
+				document.location.href = "http://wx.chahuobao.net/weixin/html/menu.aspx";
 			} else {
 				mui.alert(ajax_msg)
 			}

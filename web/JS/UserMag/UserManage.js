@@ -68,9 +68,151 @@ function EditUser(id) {
     }, CS.onError);
     
 }
+
+function AddPhoto(v)
+{
+    var picItem = [];
+    CS('CZCLZ.YHGLClass.GetProductImages', function (retVal) {
+        for (var i = 0; i < retVal.length; i++) {
+            var isDefault = false;
+            if (retVal[i].ISDEFAULT == 1)
+                isDefault = true;
+            Ext.getCmp('uploadproductpic').add(new SelectImg({
+
+                isSelected: isDefault,
+                src: retVal[i].FILEURL,
+                fileid: retVal[i].fj_id
+            }));
+        }
+    }, CS.onError, v);
+
+    var win = new phWin({ UserID: v });
+    win.show();
+}
 //************************************页面方法***************************************
 
 //************************************弹出界面***************************************
+Ext.define('SelectImg', {
+    extend: 'Ext.Img',
+
+    height: 80,
+    width: 120,
+    margin: 5,
+    padding: 2,
+    constructor: function (config) {
+        var me = this;
+        config = config || {};
+        config.cls = config.isSelected ? "clsSelected" : "clsUnselected";
+        me.callParent([config]);
+        me.on('render', function () {
+            Ext.fly(me.el).on('click', function () {
+                var oldSelectImg = Ext.getCmp('uploadproductpic').query('image[isSelected=true]');
+                if (oldSelectImg.length < 0 || oldSelectImg[0] != me) {
+                    me.removeCls('clsUnselected');
+                    me.addCls('clsSelected');
+                    me.isSelected = true;
+                    if (oldSelectImg.length > 0) {
+                        oldSelectImg[0].removeCls('clsSelected');
+                        oldSelectImg[0].addCls('clsUnselected');
+                        oldSelectImg[0].isSelected = false;
+                    }
+                }
+            });
+        });
+
+    },
+
+    initComponent: function () {
+        var me = this;
+        me.callParent(arguments);
+    }
+});
+
+Ext.define('phWin', {
+    extend: 'Ext.window.Window',
+    height: 275,
+    width: 653,
+    modal: true,
+    layout: 'border',
+    initComponent: function () {
+        var me = this;
+        var UserID = me.UserID;
+
+
+        me.items = [{
+            xtype: 'UploaderPanel',
+            id: 'uploadproductpic',
+            region: 'center',
+            autoScroll: true,
+            dockedItems: [{
+                xtype: 'toolbar',
+                dock: 'top',
+                items: [{
+                    xtype: 'filefield',
+                    fieldLabel: '上传图片',
+                    width: 300,
+                    buttonText: '浏览'
+                }, {
+                    xtype: 'button',
+                    text: '上传',
+                    iconCls: 'upload',
+                    handler: function () {
+                        Ext.getCmp('uploadproductpic').upload('CZCLZ.YHGLClass.UploadPicForProduct', function (retVal) {
+                            var isDefault = false;
+                            if (retVal.isdefault == 1)
+                                isDefault = true;
+                            Ext.getCmp('uploadproductpic').add(new SelectImg({
+                                isSelected: isDefault,
+                                src: retVal.fileurl,
+                                fileid: retVal.fileid
+                            }));
+                        }, CS.onError, UserID);
+                    }
+                }]
+            }],
+            buttonAlign: 'center',
+            buttons: [
+                //{
+                //    text: '设为默认',
+                //    handler: function () {
+                //        Ext.MessageBox.confirm('确认', '是否设置该图片为默认图片？', function (btn) {
+                //            if (btn == 'yes') {
+                //                var selPics = Ext.getCmp('uploadproductpic').query('image[isSelected=true]');
+                //                if (selPics.length > 0) {
+                //                    CS('CZCLZ.YHGLClass.SetDefaultPicForProduct', function (retVal) {
+                //                        if (retVal)
+                //                            Ext.Msg.alert('提示', '设置成功！');
+                //                        else
+                //                            Ext.Msg.alert('提示', '设置失败！');
+                //                    }, CS.onError, selPics[0].fileid, UserID);
+                //                }
+                //            }
+                //        });
+                //    }
+                //},
+                {
+                    text: '删除',
+                    handler: function () {
+                        Ext.MessageBox.confirm('确认', '是否删除该图片？', function (btn) {
+                            if (btn == 'yes') {
+                                var selPics = Ext.getCmp('uploadproductpic').query('image[isSelected=true]');
+                                if (selPics.length > 0) {
+                                    CS('CZCLZ.YHGLClass.DelProductImageByPicID', function (retVal) {
+                                        if (retVal) {
+                                            Ext.getCmp('uploadproductpic').remove(selPics[0]);
+                                        }
+                                    }, CS.onError, selPics[0].fileid);
+                                }
+                            }
+                        });
+                    }
+                }
+            ]
+        }];
+        me.callParent(arguments);
+    }
+});
+
 Ext.define('addWin', {
     extend: 'Ext.window.Window',
 
@@ -244,7 +386,7 @@ Ext.onReady(function() {
                             menuDisabled: true,
                             renderer: function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 var str;
-                                str = "<a onclick='EditUser(\"" + value + "\");'>修改</a>";
+                                str = "<a onclick='EditUser(\"" + value + "\");'>修改</a>　<a onclick='AddPhoto(\"" + value + "\");'>添加照片</a>";
                                 return str;
                             }
                         }

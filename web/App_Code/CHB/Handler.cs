@@ -22,6 +22,12 @@ using Aspose.Cells;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.Web.Script.Serialization;
+using Senparc.Weixin.MP;
+using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
+using WxPayAPI;
+using Senparc.Weixin.MP.Containers;
+using LitJson;
 
 /// <summary>
 /// Handler 的摘要说明
@@ -35,6 +41,11 @@ public class Handler
 		// TODO: 在此处添加构造函数逻辑
 		//
 	}
+
+    public void SendWeText(string openid,string content)
+    {
+        CustomApi.SendText(WxPayConfig.GetConfig().GetAppID(), openid, content);
+    }
 
     public int UserCount(string UserName)
     {

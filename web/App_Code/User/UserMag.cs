@@ -9,6 +9,10 @@ using System.Text;
 using System.Data.SqlClient;
 using SmartFramework4v2.Web.Common.JSON;
 using SmartFramework4v2.Data;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
 /// <summary>
 ///UserMag 的摘要说明
 /// </summary>
@@ -58,6 +62,123 @@ public class UserMag
                 throw ex;
             }
 
+        }
+    }
+
+    [CSMethod("UploadPicForProduct", 1)]
+    public object UploadPicForProduct(FileData[] fds, string UserID)
+    {
+        var sqlStr = "insert into tb_b_FJ (fj_id,fj_mc,fj_pid,fj_nr,addtime,updatetime,status,xgyh_id)"
+                    + "values (@fj_id,@fj_mc,@fj_pid,@fj_nr,getdate(),getdate(),0,@xgyh_id)";
+        using (DBConnection dbc = new DBConnection())
+        {
+            string FJID = Guid.NewGuid().ToString();
+            SqlCommand cmd = new SqlCommand(sqlStr);
+            cmd.Parameters.AddWithValue("@fj_id", FJID);
+            cmd.Parameters.AddWithValue("@fj_mc", fds[0].FileName);
+            cmd.Parameters.AddWithValue("@fj_pid", UserID);
+            cmd.Parameters.AddWithValue("@fj_nr", KiResizeImage(fds[0].FileBytes));
+            cmd.Parameters.AddWithValue("@xgyh_id", DBNull.Value);
+            int retInt = dbc.ExecuteNonQuery(cmd);
+            if (retInt > 0)
+                return new { fileurl = "files/" + FJID + "/" + fds[0].FileName, isdefault = 0, fileid = FJID };
+            return null;
+        }
+    }
+
+    [CSMethod("DelProductImageByPicID")]
+    public bool DelProductImageByPicID(string fj_id)
+    {
+        string sqlStr = "update tb_b_FJ set STATUS = 1,UPDATETIME = getdate(),XGYH_ID = @XGYH_ID where fj_id = @fj_id ";
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                dbc.BeginTransaction();
+                SqlCommand cmd = new SqlCommand(sqlStr);
+                cmd.Parameters.AddWithValue("@XGYH_ID", DBNull.Value);
+                cmd.Parameters.AddWithValue("@fj_id", fj_id);
+                dbc.ExecuteNonQuery(cmd);
+                dbc.CommitTransaction();
+                return true;
+            }
+            catch
+            {
+                dbc.RoolbackTransaction();
+                return false;
+            }
+        }
+    }
+
+    [CSMethod("GetProductImages")]
+    public DataTable GetProductImages(string pid)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.Append(" select 'files/'+cast(t.fj_id as nvarchar(50))+'/'+t.fj_mc as FILEURL,");
+        sb.Append(" case");
+        sb.Append(" when exists");
+        sb.Append(" (select * from tb_b_User where tb_b_User.UserID =@FJ_PID) then");
+        sb.Append(" 1");
+        sb.Append("  else");
+        sb.Append(" 0");
+        sb.Append("  end as isdefault,t.fj_id");
+        sb.Append(" from tb_b_FJ t");
+        sb.Append(" where  t.FJ_PID = @FJ_PID and t.STATUS = 0");
+        sb.Append(" order by t.ADDTIME desc");
+        using (DBConnection dbc = new DBConnection())
+        {
+            SqlCommand cmd = new SqlCommand(sb.ToString());
+            cmd.Parameters.AddWithValue("@FJ_PID", pid);
+            return dbc.ExecuteDataTable(cmd);
+        }
+    }
+
+    /// <summary>
+    /// Resize图片
+    /// </summary>
+    /// <param name="bmp">原始Bitmap</param>
+    /// <param name="newW">新的宽度</param>
+    /// <param name="newH">新的高度</param>
+    /// <param name="Mode">保留着，暂时未用</param>
+    /// <returns>处理以后的图片</returns>
+    public static byte[] KiResizeImage(byte[] stream)
+    {
+        try
+        {
+
+            Stream bmp = new MemoryStream(stream);
+
+            Bitmap bitMap = new Bitmap(bmp);//创建bitmap
+            bmp.Dispose();
+
+            int x = 0;
+            int y = 0;
+            int width = 500;//缩放后的图的高，1280缩小成这个特定的高度
+            int height = 375;//缩放后的图的宽，768缩小成这个特定的宽度
+            Bitmap bitMap2 = new Bitmap(width, height, PixelFormat.Format32bppArgb);//缩放后的新图
+
+            Graphics gImg = Graphics.FromImage(bitMap2);
+            gImg.CompositingQuality = CompositingQuality.HighQuality;
+            gImg.InterpolationMode = InterpolationMode.High;
+            // 指定高质量插值法。 指定这个算法缩放图片后，得到的这张特定图片是黑图，而指定高质量的双三次插值法InterpolationMode.HighQualityBicubic也会生成黑图，而指定其他算法就没有问题。另外，缩放成其他大小也没有问题，比如width=547, height=328。
+            gImg.SmoothingMode = SmoothingMode.HighQuality;
+            gImg.Clear(Color.Transparent);
+            gImg.DrawImage(bitMap, x, y, width, height);
+
+            //Bitmap 转化为 Byte[]       
+            byte[] bReturn = null;
+            MemoryStream ms = new MemoryStream();
+            bitMap2.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            bReturn = ms.GetBuffer();
+
+            bitMap.Dispose();
+            gImg.Dispose();
+            bitMap2.Dispose();
+            return bReturn;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
         }
     }
 

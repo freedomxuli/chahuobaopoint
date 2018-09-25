@@ -10,20 +10,33 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 		<link rel="stylesheet" href="../css/mui.min.css">
+        <link href="../css/mui.picker.css" rel="stylesheet" />
+		<link href="../css/mui.poppicker.css" rel="stylesheet" />
 	</head>
 
 	<body>
+        <div class="mui-content">
+		    <div class="mui-content-padded">
+			    <button id='FromRoutePicker' class="mui-btn " type='button' style="width:35%;">起始地</button>
+                <button id='ToRoutePicker' class="mui-btn" type='button' style="width:35%;">目的地</button>
+                <button id="search" class="mui-btn mui-btn-primary ">点击搜索</button>
+		    </div>
+        </div>
 		<!--下拉刷新容器-->
-		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:50px;">
 			<div class="mui-scroll">
 				<!--数据列表-->
-				<ul class="mui-table-view">
+				<ul class="mui-table-view" id="data_list">
 					
 				</ul>
 			</div>
 		</div>
 		<script src="../js/mui.min.js"></script>
         <script src="../js/app.js"></script>
+        <script src="../js/mui.showLoading.js"></script>
+        <script src="../js/mui.picker.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+        <script src="../js/city.data.js"></script>
 		<script>
 		    mui.init({
 		        pullRefresh: {
@@ -44,6 +57,7 @@
 			 * 上拉加载具体业务实现
 			 */
 		    function pullupRefresh() {
+		        mui.showLoading("正在加载..", "div");
 		        mui.ajax(grobal_url, {
 		            dataType: "json",
 		            type: "post",
@@ -51,7 +65,9 @@
 		                "action": "PlatSaleList",
 		                "UserName": localStorage.getItem("mgps_UserName"),
 		                "pagnum": pagnum,
-		                "pagesize": pagesize
+		                "pagesize": pagesize,
+		                "FromRoute": document.getElementById('FromRoutePicker').textContent,
+		                "ToRoute": document.getElementById('ToRoutePicker').textContent
 		            },
 		            success: function (data, status, xhr) {
 		                if (data.sign == '1') {
@@ -64,19 +80,34 @@
 		                        flag = true;
 		                    }
 		                    setTimeout(function () {
+		                        mui.hideLoading();
 		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
 		                        var table = document.body.querySelector('.mui-table-view');
-		                        var cells = document.body.querySelectorAll('.mui-table-view-cell');
 		                        for (var i = 0; i < list.length; i++) {
 		                            var li = document.createElement('li');
 		                            li.className = 'mui-table-view-cell';
+		                            //li.innerHTML = '<a href="javascript:void(0);">'+
+						            //                    '<img class="mui-media-object mui-pull-left" src="../images/cbd.jpg">'+
+						            //                    '<div class="mui-media-body">'+
+							        //                        'CBD'+
+							        //                        '<p class="mui-ellipsis">烤炉模式的城，到黄昏，如同打翻的调色盘一般.</p>'+
+						            //                    '</div>' +
+                                    //                    '<div class="mui-table-cell mui-col-xs-2 mui-text-center">' +
+                                    //                        '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +
+                                    //                            '购买' +
+                                    //                        '</button>' +
+                                    //                    '</div>' +
+		                            //                '</a>';
 		                            li.innerHTML = '<div class="mui-table">' +
-                                                        '<div class="mui-table-cell">' +
-                                                            '<h4 style="line-height:150%">' + list[i]["UserXM"] + '-运费券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
-                                                            '<h5>折　　扣：' + list[i]["discountmemo"] + '</h5>' +
-                                                            '<h5>上架日期：' + list[i]["sj"] + '</h5>' +
+                                                        '<div class="mui-table-cell mui-col-xs-2" style="float:left;display: flex;">' +
+                                                            '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
+                                                        '</div>'+
+                                                        '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
+                                                            '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:black;font-weight:blod;">' + list[i]["UserXM"] + '-</span><span style="color:red;font-weight:blod;">' + list[i]["points"] + '分</span></h5>' +
+                                                            '<h5>折　扣：' + list[i]["discountmemo"] + '　(购买人数：<span style="color:red;">' + list[i]["num"] + '</span>)</h5>' +
+                                                            '<h5 style="word-wrap:break-word;">线　路：' + list[i]["FromRoute"] + '-' + list[i]["ToRoute"] + '</h5>' +
                                                         '</div>' +
-                                                        '<div class="mui-table-cell mui-col-xs-2 mui-text-center">' +
+                                                        '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
                                                             '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +
                                                                 '购买' +
                                                             '</button>' +
@@ -86,11 +117,48 @@
 		                        }
 		                    }, 1500);
 		                } else {
+		                    mui.hideLoading();
 		                    mui.alert(data.msg)
 		                }
 		            }
 		        });
 		    }
+		    var cityPicker = new mui.PopPicker({
+		        layer: 2
+		    });
+		    cityPicker.setData(cityData);
+		    var showCityPickerButton = document.getElementById('FromRoutePicker');
+		    showCityPickerButton.addEventListener('tap', function (event) {
+		        cityPicker.show(function (items) {
+		            showCityPickerButton.innerHTML = items[1].text;
+		            //返回 false 可以阻止选择框的关闭
+		            //return false;
+		        });
+		    }, false);
+
+		    var cityPicker1 = new mui.PopPicker({
+		        layer: 2
+		    });
+		    cityPicker1.setData(cityData);
+		    var showCityPickerButton1 = document.getElementById('ToRoutePicker');
+		    showCityPickerButton1.addEventListener('tap', function (event) {
+		        cityPicker1.show(function (items) {
+		            showCityPickerButton1.innerHTML = items[1].text;
+		            //返回 false 可以阻止选择框的关闭
+		            //return false;
+		        });
+		    }, false);
+
+		    var searchButton = document.getElementById('search');
+		    searchButton.addEventListener('tap', function (event) {
+		        list;
+		        pagnum = 1;
+		        pagesize = 10;
+		        totalcount = 0;
+		        flag = false;
+		        document.getElementById("data_list").innerHTML = "";
+		        pullupRefresh();
+		    }, false);
 
 		    function BuyPoints(val)
 		    {

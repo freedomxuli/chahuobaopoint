@@ -333,8 +333,7 @@ public class InterFaceHandler : IHttpHandler {
                 hash["msg"] = "内部错误:" + ex.Message;
             }
         }
-
-
+        //new Handler().SendWeText(,"欢迎登陆");
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 
@@ -865,7 +864,15 @@ public class InterFaceHandler : IHttpHandler {
         System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
         string UserName = context.Request["UserName"];
         UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
-
+        string FromRoute = context.Request["FromRoute"];
+        FromRoute = HttpUtility.UrlDecode(FromRoute.ToUpper(), utf8);
+        string ToRoute = context.Request["ToRoute"];
+        ToRoute = HttpUtility.UrlDecode(ToRoute.ToUpper(), utf8);
+        string conn = "";
+        if (FromRoute != "起始地")
+            conn += " and b.FromRoute like '%" + FromRoute.Replace("'","").Replace("市", "") + "%'";
+        if (ToRoute != "目的地")
+            conn += " and b.ToRoute like '%" + ToRoute.Replace("'", "").Replace("市", "") + "%'";
         int cp = Convert.ToInt32(context.Request["pagnum"]);
         int pagesize = Convert.ToInt32(context.Request["pagesize"]);
         int ac = 0;
@@ -888,8 +895,11 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM from tb_b_plattosale a left join tb_b_user b on a.UserID=b.UserID
-                             where a.status=0 and a.points > 0 order by a.addtime desc";
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,c.FJ_ID,c.FJ_MC,d.num from tb_b_plattosale a 
+                            left join tb_b_user b on a.UserID=b.UserID
+                            left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
+                            left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId
+                            where a.status=0 and a.points > 0 " + conn + @" order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");
@@ -898,6 +908,10 @@ public class InterFaceHandler : IHttpHandler {
                         if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
                         {
                             dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                        }
+                        if (string.IsNullOrEmpty(dtPage.Rows[i]["num"].ToString()))
+                        {
+                            dtPage.Rows[i]["num"] = 0;
                         }
                     }
 

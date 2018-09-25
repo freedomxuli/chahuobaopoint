@@ -54,7 +54,7 @@ function ChongZhiMiMaZF(UserName, PayPassword, UserLeiXing) {
             ajax_msg = data.msg;
             if (ajax_sign == '1') {
                 mui.alert(ajax_msg);
-                document.location.href = "http://wx.chahuobao.net/weixin/html/menu.html";
+                document.location.href = "http://wx.chahuobao.net/weixin/html/menu.aspx";
                 //mui.openWindow({
                 //    id: 'MGps_main',
                 //    url: 'MGps_main.html',
