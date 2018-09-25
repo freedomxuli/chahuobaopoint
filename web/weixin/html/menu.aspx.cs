@@ -40,7 +40,7 @@ public partial class weixin_html_menu : System.Web.UI.Page
             }
             catch (Exception ex)
             {
-                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面加载出错，请重试</span>");
+                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面加载出错，请重试" + ex + "</span>");
             }
         }
     }
