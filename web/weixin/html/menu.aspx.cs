@@ -28,6 +28,7 @@ public partial class weixin_html_menu : System.Web.UI.Page
                 HttpContext.Current.Response.Cookies.Add(new HttpCookie("openid", openid) { HttpOnly = true });
                 using(var db = new DBConnection())
                 {
+                    //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "您的id为" + HttpContext.Current.Request.Cookies["userid"].Value + "，微信标识为：" + openid + "</span>");
                     DataTable dt = db.GetEmptyDataTable("tb_b_user");
                     DataTableTracker dtt = new DataTableTracker(dt);
                     DataRow dr = dt.NewRow();
@@ -40,7 +41,7 @@ public partial class weixin_html_menu : System.Web.UI.Page
             }
             catch (Exception ex)
             {
-                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面加载出错，请重试" + ex + "</span>");
+                //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面加载出错，请重试" + ex + "</span>");
             }
         }
     }

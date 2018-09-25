@@ -71,6 +71,9 @@ public class InterFaceHandler : IHttpHandler {
             case "MyOrderList":
                 str = MyOrderList(context);
                 break;
+            case "GZWL":
+                str = GZWL(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -320,6 +323,7 @@ public class InterFaceHandler : IHttpHandler {
                 {
                     hash["sign"] = "1";
                     hash["msg"] = "注册成功！";
+                    HttpContext.Current.Response.Cookies.Add(new HttpCookie("userid", dt.Rows[0]["UserID"].ToString()) { HttpOnly = true });
                 }
                 else
                 {
@@ -686,7 +690,7 @@ public class InterFaceHandler : IHttpHandler {
 
                 if (ReceiveUser == "6E72B59D-BEC6-4835-A66F-8BC70BD82FE9")
                 {
-                    string sql = "select Points,PayPassword,ClientKind,UserID from tb_b_user where UserName = " + db.ToSqlValue(UserName);
+                    string sql = "select Points,PayPassword,ClientKind,UserID,UserXM from tb_b_user where UserName = " + db.ToSqlValue(UserName);
                     System.Data.DataTable dt = db.ExecuteDataTable(sql);
                     if (dt.Rows.Count > 0)
                     {
@@ -741,6 +745,10 @@ public class InterFaceHandler : IHttpHandler {
                                     
                                     hash["sign"] = "1";
                                     hash["msg"] = "支付成功！";
+                                    sql = "select OpenID from tb_b_user where UserName = '13961479990'";
+                                    string OpenID = db.ExecuteScalar(sql).ToString();
+                                    if (!string.IsNullOrEmpty(OpenID))
+                                        new Handler().SendWeText(OpenID, "已收到" + dt.Rows[0]["UserXM"].ToString() + "：　" + Points + "张运费券");
                                 }
                                 else
                                 {
@@ -895,10 +903,11 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,c.FJ_ID,c.FJ_MC,d.num from tb_b_plattosale a 
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId
+                            left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             where a.status=0 and a.points > 0 " + conn + @" order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
@@ -1233,6 +1242,9 @@ public class InterFaceHandler : IHttpHandler {
                                         }
                                         hash["sign"] = "1";
                                         hash["msg"] = "支付成功！";
+                                        sql = "select UserXM from tb_b_user where UserID = "+db.ToSqlValue(CardUserID);
+                                        string WLMC = db.ExecuteScalar(sql).ToString();
+                                        new Handler().SendWeText(HttpContext.Current.Request.Cookies["openid"].Value, "您已成功给账号为：" + ReceiveUser + "支付" + Points + "张“" + WLMC + "”的运费券！");
                                     }
                                     else
                                     {
@@ -1365,6 +1377,63 @@ public class InterFaceHandler : IHttpHandler {
                 hash["msg"] = "内部错误:" + ex.Message;
             }
         }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
+    public string GZWL(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+        string GZUserID = context.Request["WLUser"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "关注失败！";
+
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    string sql = "select count(*) num from tb_b_user_gz where UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " and GZUserID = " + dbc.ToSqlValue(GZUserID);
+                    int num = Convert.ToInt32(dbc.ExecuteScalar(sql).ToString());
+                    if (num == 0)
+                    {
+                        System.Data.DataTable dt = dbc.GetEmptyDataTable("tb_b_user_gz");
+                        System.Data.DataRow dr = dt.NewRow();
+                        dr["GZ_ID"] = Guid.NewGuid();
+                        dr["UserID"] = udt.Rows[0]["UserID"].ToString();
+                        dr["GZUserID"] = GZUserID;
+                        dt.Rows.Add(dr);
+                        dbc.InsertTable(dt);
+                        
+                        hash["sign"] = "1";
+                        hash["msg"] = "关注成功，以后第一时间通知您该物流的运费券购买信息！";
+                    }
+                    else {
+                        hash["sign"] = "0";
+                        hash["msg"] = "您已关注过改物流，无须再次关注！";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 }
