@@ -58,26 +58,32 @@ public partial class GetMessage : System.Web.UI.Page
             });
 
             //二级菜单
-            var subButton = new SubButton()
-            {
-                name = "微服务"
-            };
-            subButton.sub_button.Add(new SingleViewButton()
-            {
-                url = "http://www.wuliubaoxianpingtai.com/weixin/",
-                name = "关于我们"
-            });
-            subButton.sub_button.Add(new SingleViewButton()
-            {
-                url = "http://a.app.qq.com/o/simple.jsp?pkgname=io.dcloud.H5A57DD98",
-                name = "软件下载"
-            });
+            //var subButton = new SubButton()
+            //{
+            //    name = "微服务"
+            //};
+            //subButton.sub_button.Add(new SingleViewButton()
+            //{
+            //    url = "http://www.wuliubaoxianpingtai.com/weixin/",
+            //    name = "关于我们"
+            //});
+            //subButton.sub_button.Add(new SingleViewButton()
+            //{
+            //    url = "http://a.app.qq.com/o/simple.jsp?pkgname=io.dcloud.H5A57DD98",
+            //    name = "软件下载"
+            //});
 
-            bg.button.Add(subButton);
+            //bg.button.Add(subButton);
 
             bg.button.Add(new SingleViewButton()
             {
-                name = "电子券",
+                name = "物流女神",
+                url = "http://471280.v.caoapp.cn/mobile/cutebabyvote/index.jsp?aid=71DF2E37D6E98216&wuid=471280&isFromApiFilter=1"
+            });
+
+            bg.button.Add(new SingleViewButton()
+            {
+                name = "运费券",
                 url = "http://wx.chahuobao.net/weixin/html/MGps_login.html"
             });
 
