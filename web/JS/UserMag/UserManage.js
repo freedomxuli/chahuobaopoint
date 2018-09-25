@@ -15,6 +15,8 @@ var store = createSFW4Store({
        { name: 'roleId' },
        { name: 'roleName' },
        { name: 'UserXM' },
+       { name: 'ClientKind' },
+       { name: 'Address' },
        { name: 'UserTel' }
     ],
     onPageChange: function(sto, nPage, sorters) {
@@ -63,7 +65,23 @@ function EditUser(id) {
                 win.setTitle("用户修改");
                 var form = Ext.getCmp('addform');
                 form.form.setValues(r);
+                if (r.ClientKind == 2) {
+                    Ext.getCmp("roleId").allowBlank = true;
+                    Ext.getCmp("roleId").hide();
+                    Ext.getCmp("UserXM").allowBlank = true;
+                    Ext.getCmp("UserXM").hide();
+                } else if (r.ClientKind == 1) {
+                    Ext.getCmp("roleId").allowBlank = true;
+                    Ext.getCmp("roleId").hide();
+                } else {
+                    Ext.getCmp("roleId").getEl().allowBlank = false;
+                    Ext.getCmp("roleId").show();
+                    Ext.getCmp("UserXM").getEl().allowBlank = false;
+                    Ext.getCmp("UserXM").show();
+                }
+                
             });
+            
         }
     }, CS.onError);
     
@@ -216,7 +234,7 @@ Ext.define('phWin', {
 Ext.define('addWin', {
     extend: 'Ext.window.Window',
 
-    height: 250,
+    height: 300,
     width: 400,
     layout: {
         type: 'fit'
@@ -292,6 +310,14 @@ Ext.define('addWin', {
                          valueField: 'roleId',
                          value: ''
                      },
+                     {
+                         xtype: 'textareafield',
+                         id: 'Address',
+                         name: 'Address',
+                         labelWidth: 70,
+                         fieldLabel: '地址',
+                         anchor: '100%'
+                     }
                 ],
                 buttonAlign: 'center',
                 buttons: [
@@ -451,7 +477,7 @@ Ext.onReady(function() {
                                             handler: function () {
                                                 CS('CZCLZ.YHGLClass.GetRole', function (retVal) {
                                                     if (retVal) {
-                                                        roleStore1.loadData(retVal, true);
+                                                        roleStore1.loadData(retVal, false);
                                                         var win = new addWin();
                                                         win.show(null, function () {
                                                         });
@@ -530,7 +556,7 @@ Ext.onReady(function() {
     CS('CZCLZ.YHGLClass.GetRole', function (retVal) {
         if (retVal) {
             roleStore.add([{ 'roleId': '', 'roleName': '全部角色' }]);
-            roleStore.loadData(retVal, true);
+            roleStore.loadData(retVal, false);
             Ext.getCmp("cx_role").setValue('');
         }
     }, CS.onError, "");

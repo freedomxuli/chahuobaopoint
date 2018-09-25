@@ -527,11 +527,6 @@ public class UserMag
             throw new Exception("密码不能为空");
         }
 
-        if (jsr["roleId"].IsNull || jsr["roleId"].IsEmpty)
-        {
-            throw new Exception("没有用户角色！");
-        }
-
         var companyId = SystemUser.CurrentUser.CompanyID;
         using (DBConnection dbc = new DBConnection())
         {
@@ -563,6 +558,7 @@ public class UserMag
                     //dr["ToRoute"] = ;
                     dr["companyId"] = companyId;
                     //dr["PayPassword"] = ;
+                    dr["Address"] = jsr["Address"].ToString();
                     dt.Rows.Add(dr);
                     dbc.InsertTable(dt);
 
@@ -597,6 +593,7 @@ public class UserMag
                     dr["Password"] = jsr["Password"].ToString();
                     dr["UserXM"] = jsr["UserXM"].ToString();
                     dr["UserTel"] = jsr["UserTel"].ToString();
+                    dr["Address"] = jsr["Address"].ToString();
                     dt.Rows.Add(dr);
                     dbc.UpdateTable(dt, dtt);
 
