@@ -320,6 +320,7 @@ public class InterFaceHandler : IHttpHandler {
                 {
                     hash["sign"] = "1";
                     hash["msg"] = "注册成功！";
+                    HttpContext.Current.Response.Cookies.Add(new HttpCookie("userid", dt.Rows[0]["UserID"].ToString()) { HttpOnly = true });
                 }
                 else
                 {
