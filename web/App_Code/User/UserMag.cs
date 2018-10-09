@@ -211,6 +211,53 @@ public class UserMag
         }
     }
 
+    [CSMethod("GetOrderList")]
+    public object GetOrderList(string userid)
+    {
+        using (var db = new DBConnection())
+        {
+            try
+            {
+                string str = @"select b.UserXM as wuliu,c.UserName as UserName,a.AddTime,a.Points as MONEY,'交易运费券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID=" + db.ToSqlValue(userid) + @"
+                            union all 
+                            select b.UserXM as wuliu,c.UserName as UserName,a.AddTime,a.Points as MONEY,'收到运费券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID=" + db.ToSqlValue(userid) + @"
+                            union all 
+	                        select b.UserXM as wuliu,b.UserXM as UserName,a.AddTime,a.Points as MONEY,'购买运费券' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            where a.BuyUserID=" + db.ToSqlValue(userid) + @" and a.Status=0 and a.ZhiFuZT=1
+                            union all
+                            select b.UserXM as wuliu,'查货宝' as UserName,a.AddTime,a.points as MONEY,'支付平台运费券' as KIND  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
+                            where a.UserID=" + db.ToSqlValue(userid) + @" and a.Status=0 and a.IsSH=1
+                            union all
+                             select '查货宝' as wuliu, b.UserXM as UserName,a.sqrq as AddTime,a.sqjf as MONEY,'申请运费券' as KIND  from tb_b_jfsq a left join tb_b_user b on a.UserID=b.UserID
+                            where a.UserID=" + db.ToSqlValue(userid) + @"  and a.issq=1
+                            order by AddTime desc";
+                DataTable dt = db.ExecuteDataTable(str);
+
+                dt.Columns.Add("DATE");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["addtime"] != null && dt.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dt.Rows[i]["DATE"] = Convert.ToDateTime(dt.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+
+                str = @"select a.points MONEY,c.UserXM as UserName from tb_b_mycard a left join tb_b_user b on a.UserID=b.UserID
+                        left join tb_b_user c on a.CardUserID=c.UserID
+                        where a.UserID=" + db.ToSqlValue(userid) + " and a.status=0 order by a.points";
+                DataTable dt2 = db.ExecuteDataTable(str);
+
+                return new { dt = dt, dt2 = dt2 };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
     [CSMethod("GetUserList")]
     public object GetUserList(int pagnum, int pagesize, string roleId, string yhm,string xm)
     {
@@ -250,7 +297,63 @@ public class UserMag
                 }
 
                 string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
-                                left join tb_b_roledb c on b.roleId=c.roleId where 1=1  ";
+                                left join tb_b_roledb c on b.roleId=c.roleId where 1=1 and ClientKind = 0 ";
+                str += where;
+
+                //开始取分页数据
+                System.Data.DataTable dtPage = new System.Data.DataTable();
+                dtPage = dbc.GetPagedDataTable(str + " order by a.UserName,a.UserXM", pagesize, ref cp, out ac);
+
+                return new { dt = dtPage, cp = cp, ac = ac };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+    }
+
+    [CSMethod("GetClientList")]
+    public object GetClientList(int pagnum, int pagesize, string roleId, string yhm, string xm)
+    {
+        if (!string.IsNullOrEmpty(roleId))
+        {
+            try
+            {
+                Guid guid = new Guid(roleId);
+            }
+            catch
+            {
+                throw new Exception("角色ID出错！");
+            }
+        }
+
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                int cp = pagnum;
+                int ac = 0;
+
+                string where = "";
+                if (!string.IsNullOrEmpty(roleId))
+                {
+                    where += " and a.UserID in (SELECT userId FROM tb_b_user_role where roleId='" + roleId + "')";
+                }
+
+                if (!string.IsNullOrEmpty(yhm.Trim()))
+                {
+                    where += " and " + dbc.C_Like("a.UserName", yhm.Trim(), LikeStyle.LeftAndRightLike);
+                }
+
+                if (!string.IsNullOrEmpty(xm.Trim()))
+                {
+                    where += " and " + dbc.C_Like("a.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
+                }
+
+                string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                                left join tb_b_roledb c on b.roleId=c.roleId where 1=1 and (ClientKind = 1 or ClientKind = 2)";
                 str += where;
 
                 //开始取分页数据
@@ -624,6 +727,118 @@ public class UserMag
         }
 
     }
+
+    [CSMethod("SaveClient")]
+    public bool SaveClient(JSReader jsr)
+    {
+        if (jsr["UserName"].IsNull || jsr["UserName"].IsEmpty)
+        {
+            throw new Exception("用户名不能为空");
+        }
+        if (jsr["Password"].IsNull || jsr["Password"].IsEmpty)
+        {
+            throw new Exception("密码不能为空");
+        }
+
+        var companyId = SystemUser.CurrentUser.CompanyID;
+        using (DBConnection dbc = new DBConnection())
+        {
+            dbc.BeginTransaction();
+            try
+            {
+                if (jsr["UserID"].ToString() == "")
+                {
+                    DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + jsr["UserName"].ToString() + "'");
+                    if (dt_user.Rows.Count > 0)
+                    {
+                        throw new Exception("该用户名已存在！");
+                    }
+                    //用户表
+                    var YHID = Guid.NewGuid().ToString();
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = jsr["UserName"].ToString();
+                    dr["Password"] = jsr["Password"].ToString();
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 0;
+                    //dr["Discount"] = ;
+                    dr["UserXM"] = jsr["UserXM"].ToString();
+                    dr["UserTel"] = jsr["UserTel"].ToString();
+                    //dr["FromRoute"] = ;
+                    //dr["ToRoute"] = ;
+                    dr["companyId"] = companyId;
+                    //dr["PayPassword"] = ;
+                    dr["Address"] = jsr["Address"].ToString();
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
+
+                    //角色用户关联表
+                    var rdt = dbc.GetEmptyDataTable("tb_b_user_role");
+                    var rdr = rdt.NewRow();
+                    rdr["userroleId"] = Guid.NewGuid().ToString();
+                    rdr["userId"] = new Guid(YHID);
+                    rdr["roleId"] = jsr["roleId"].ToString();
+                    rdr["companyId"] = companyId;
+                    rdt.Rows.Add(rdr);
+                    dbc.InsertTable(rdt);
+
+                }
+                else
+                {
+                    var YHID = jsr["UserID"].ToString();
+                    var oldname = dbc.ExecuteScalar("select UserName from tb_b_user where UserID='" + YHID + "'");
+                    if (!jsr["UserName"].ToString().Equals(oldname.ToString()))
+                    {
+                        DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + jsr["UserName"].ToString() + "'");
+                        if (dt_user.Rows.Count > 0)
+                        {
+                            throw new Exception("该用户名已存在！");
+                        }
+                    }
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = jsr["UserName"].ToString();
+                    dr["Password"] = jsr["Password"].ToString();
+                    dr["UserXM"] = jsr["UserXM"].ToString();
+                    dr["UserTel"] = jsr["UserTel"].ToString();
+                    dr["FromRoute"] = jsr["FromRoute"].ToString();
+                    dr["ToRoute"] = jsr["ToRoute"].ToString();
+                    dt.Rows.Add(dr);
+                    dbc.UpdateTable(dt, dtt);
+
+                    //删除用户的角色关联
+                    string del_js = "delete from tb_b_user_role where userId=@userId";
+                    SqlCommand cmd = new SqlCommand(del_js);
+                    cmd.Parameters.AddWithValue("@userId", YHID);
+                    dbc.ExecuteNonQuery(cmd);
+
+                    //建立用户角色关联
+                    var rdt = dbc.GetEmptyDataTable("tb_b_user_role");
+                    var rdr = rdt.NewRow();
+                    rdr["userroleId"] = Guid.NewGuid().ToString();
+                    rdr["userId"] = new Guid(YHID);
+                    rdr["roleId"] = jsr["roleId"].ToString();
+                    rdr["companyId"] = companyId;
+                    rdt.Rows.Add(rdr);
+                    dbc.InsertTable(rdt);
+                }
+                dbc.CommitTransaction();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                throw ex;
+            }
+        }
+
+    }
+
     //[CSMethod("SaveUser")]
     //public bool SaveUser(JSReader jsr, JSReader yhjs,JSReader yhjsdw,JSReader qxids)
     //{

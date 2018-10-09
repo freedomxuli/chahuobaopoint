@@ -81,32 +81,35 @@ public class JFSQMag
                 dt.Rows.Add(sr);
                 dbc.UpdateTable(dt, dtt);
 
-                string str = "select * from tb_b_jfsq where sqId=" + dbc.ToSqlValue(sqId);
-                DataTable sdt = dbc.ExecuteDataTable(str);
-
-                var userId = "";
-                if (sdt.Rows.Count > 0)
+                if (issq == 1)
                 {
-                    userId = sdt.Rows[0]["UserID"].ToString();
-                    decimal points = 0;
-                    str = "select * from tb_b_user where UserID=" + dbc.ToSqlValue(userId);
-                    DataTable pdt = dbc.ExecuteDataTable(str);
-                    if (pdt.Rows.Count > 0)
-                    {
-                        points += Convert.ToDecimal(pdt.Rows[0]["Points"].ToString());
-                    }
-                    
-                    points = points + Convert.ToDecimal(sdt.Rows[0]["sqjf"].ToString());
+                    string str = "select * from tb_b_jfsq where sqId=" + dbc.ToSqlValue(sqId);
+                    DataTable sdt = dbc.ExecuteDataTable(str);
 
-                    var udt = dbc.GetEmptyDataTable("tb_b_user");
-                    var udtt = new SmartFramework4v2.Data.DataTableTracker(udt);
-                    var usr = udt.NewRow();
-                    usr["UserID"] = new Guid(userId);
-                    usr["Points"] = points;
-                    udt.Rows.Add(usr);
-                    dbc.UpdateTable(udt, udtt);
+                    var userId = "";
+                    if (sdt.Rows.Count > 0)
+                    {
+                        userId = sdt.Rows[0]["UserID"].ToString();
+                        decimal points = 0;
+                        str = "select * from tb_b_user where UserID=" + dbc.ToSqlValue(userId);
+                        DataTable pdt = dbc.ExecuteDataTable(str);
+                        if (pdt.Rows.Count > 0)
+                        {
+                            points += Convert.ToDecimal(pdt.Rows[0]["Points"].ToString());
+                        }
+
+                        points = points + Convert.ToDecimal(sdt.Rows[0]["sqjf"].ToString());
+
+                        var udt = dbc.GetEmptyDataTable("tb_b_user");
+                        var udtt = new SmartFramework4v2.Data.DataTableTracker(udt);
+                        var usr = udt.NewRow();
+                        usr["UserID"] = new Guid(userId);
+                        usr["Points"] = points;
+                        udt.Rows.Add(usr);
+                        dbc.UpdateTable(udt, udtt);
+                    }
                 }
-               
+                
                 dbc.CommitTransaction();
                 return true;
             }

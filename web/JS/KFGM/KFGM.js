@@ -90,7 +90,7 @@ Ext.define('addWin', {
                         allowBlank: false,
                         allowDecimals: false,
                         allowNegative: false,
-                        minValue: 0,
+                        minValue: 1,
                         anchor: '100%'
                     },
                     
@@ -128,10 +128,10 @@ Ext.define('addWin', {
                         iconCls: 'dropyes',
                         handler: function () {
                             var point = Ext.getCmp("points").getValue();
-                            if (point < 0) {
+                            if (point < 1) {
                                 Ext.Msg.show({
                                     title: '提示',
-                                    msg: '开放购买的运费券必须大于0',
+                                    msg: '开放购买的运费券必须大于1',
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });

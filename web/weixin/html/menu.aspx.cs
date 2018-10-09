@@ -37,7 +37,7 @@ public partial class weixin_html_menu : System.Web.UI.Page
                     dt.Rows.Add(dr);
                     db.UpdateTable(dt, dtt);
                 }
-                //new Handler().SendWeText(HttpContext.Current.Request.Cookies["openid"].Value, "欢迎登陆222");
+                //new Handler().SendWeText(HttpContext.Current.Request.Cookies["openid"].Value, "欢迎登陆");
             }
             catch (Exception ex)
             {

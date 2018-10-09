@@ -44,11 +44,17 @@ function sq(id) {
                 CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
                     if (retVal) {
                         getList(1);
+                        Ext.Msg.alert("授权成功");
                     }
                 }, CS.onError, id,1);
             }
             else {
-                return;
+                CS('CZCLZ.JFSQMag.JFSQ', function (retVal) {
+                    if (retVal) {
+                        getList(1);
+                        Ext.Msg.alert("授权拒绝");
+                    }
+                }, CS.onError, id, 2);
             }
         });
     }
@@ -124,9 +130,11 @@ Ext.onReady(function () {
                             renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
                                 var str;
                                 if (value == 0) {
-                                    str = "否";
+                                    str = "待授权";
+                                } else if (value == 1) {
+                                    str = "已授权";
                                 } else {
-                                    str = "是";
+                                    str = "拒绝授权";
                                 }
                                 return str;
                             }
