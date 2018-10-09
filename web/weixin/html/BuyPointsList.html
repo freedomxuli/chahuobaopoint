@@ -10,6 +10,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 		<link rel="stylesheet" href="../css/mui.min.css">
+        <link href="../css/mui.showLoading.css" rel="stylesheet" />
         <link href="../css/mui.picker.css" rel="stylesheet" />
 		<link href="../css/mui.poppicker.css" rel="stylesheet" />
 	</head>
@@ -52,12 +53,11 @@
 		    var pagesize = 10;
 		    var totalcount = 0;
 		    var flag = false;
-
+		    var show_var = true;
 		    /**
 			 * 上拉加载具体业务实现
 			 */
 		    function pullupRefresh() {
-		        mui.showLoading("正在加载..", "div");
 		        mui.ajax(grobal_url, {
 		            dataType: "json",
 		            type: "post",
@@ -80,7 +80,9 @@
 		                        flag = true;
 		                    }
 		                    setTimeout(function () {
-		                        mui.hideLoading();
+		                        if (show_var)
+		                            mui.hideLoading();
+		                        show_var = false;
 		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
 		                        var table = document.body.querySelector('.mui-table-view');
 		                        for (var i = 0; i < list.length; i++) {
@@ -120,7 +122,9 @@
 		                        }
 		                    }, 1500);
 		                } else {
-		                    mui.hideLoading();
+		                    if (show_var)
+		                        mui.hideLoading();
+		                    show_var = false;
 		                    mui.alert(data.msg)
 		                }
 		            }
@@ -160,6 +164,8 @@
 		        totalcount = 0;
 		        flag = false;
 		        document.getElementById("data_list").innerHTML = "";
+		        show_var = true;
+                mui.showLoading("正在加载...", "div");
 		        pullupRefresh();
 		    }, false);
 
