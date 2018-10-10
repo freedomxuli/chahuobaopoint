@@ -23,7 +23,7 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
             //检测是否给当前页面传递了相关参数
             if (string.IsNullOrEmpty(openid) || string.IsNullOrEmpty(total_fee))
             {
-                Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面传参出错,请返回重试" + "</span>");
+                //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "页面传参出错,请返回重试" + "</span>");
                 Log.Error(this.GetType().ToString(), "This page have not get params, cannot be inited, exit...");
                 submit.Visible = false;
                 return;
@@ -54,20 +54,20 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                     }
                     catch (Exception ex)
                     {
-                        Response.Write("<span style='color:#FF0000;font-size:20px'>" + "订单已失效，请返回下单" + "</span>");
+                        //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "订单已失效，请返回下单" + "</span>");
                         submit.Visible = false;
                     }
                 }
                 else
                 {
-                    Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + "</span>");
+                    //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "下单失败，请返回重试" + "</span>");
                     submit.Visible = false;
                 }
             }
         }
         else
         {
-            Response.Redirect("http://wx.chahuobao.net/weixin/html/MyOrders.html");
+            Response.Redirect("http://wx.chahuobao.net/weixin/html/menu.aspx");
         }
     }
 }

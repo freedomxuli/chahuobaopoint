@@ -118,6 +118,7 @@
 	                                data: {
 	                                    "action": "JudgeTelByPayPoints",
 	                                    "ReceiveUser": result,
+	                                    "CardUserID": localStorage.getItem("PPCardUserID"),
 	                                    "UserName": localStorage.getItem("mgps_UserName")
 	                                },
 	                                success: function (data, status, xhr) {

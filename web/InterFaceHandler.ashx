@@ -74,6 +74,9 @@ public class InterFaceHandler : IHttpHandler {
             case "GZWL":
                 str = GZWL(context);
                 break;
+            case "IsVaildUser":
+                str = IsVaildUser(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -828,13 +831,13 @@ public class InterFaceHandler : IHttpHandler {
                             select b.UserXM as wuliu,c.UserName as jydx,a.AddTime,a.Points,'收' as flag  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
                             left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID='"+udt.Rows[0]["UserID"]+ @"'
                             union all 
-	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'进' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+	                        select b.UserXM as wuliu,b.UserXM as jydx,a.AddTime,a.Points,'买' as flag  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
                             where a.BuyUserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.ZhiFuZT=1
                             union all
                             select b.UserXM as wuliu,'查货宝' as jydx,a.AddTime,a.points Points,'支' as flag  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
                             where a.UserID='" + udt.Rows[0]["UserID"] + @"' and a.Status=0 and a.IsSH=1
                             union all
-                             select '查货宝' as wuliu, b.UserXM as jydx,a.sqrq as AddTime,a.sqjf Points,'受' as flag  from tb_b_jfsq a left join tb_b_user b on a.UserID=b.UserID
+                             select '查货宝' as wuliu, b.UserXM as jydx,a.sqrq as AddTime,a.sqjf Points,'申请' as flag  from tb_b_jfsq a left join tb_b_user b on a.UserID=b.UserID
                             where a.UserID='" + udt.Rows[0]["UserID"] + @"'  and a.issq=1
                             order by AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
@@ -1244,7 +1247,7 @@ public class InterFaceHandler : IHttpHandler {
                                         hash["msg"] = "支付成功！";
                                         sql = "select UserXM from tb_b_user where UserID = "+db.ToSqlValue(CardUserID);
                                         string WLMC = db.ExecuteScalar(sql).ToString();
-                                        new Handler().SendWeText(HttpContext.Current.Request.Cookies["openid"].Value, "您已成功给账号为：" + ReceiveUser + "支付" + Points + "张“" + WLMC + "”的运费券！");
+                                        new Handler().SendWeText(HttpContext.Current.Request.Cookies["openid"].Value, "您已成功给账号为：" + ReceiveUser + "支付" + Points + "数量“" + WLMC + "”的运费券！");
                                     }
                                     else
                                     {
@@ -1290,6 +1293,39 @@ public class InterFaceHandler : IHttpHandler {
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 
+    public string IsVaildUser(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "您是专线用户不可购买，如需购买请注册三方用户！";
+
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select * from tb_b_user where ClientKind = 2 and UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+
+                if (udt.Rows.Count > 0)
+                {
+                    hash["sign"] = "1";
+                    hash["msg"] = "该用户为有效用户！";
+                }
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
     public string JudgeTelByPayPoints(HttpContext context)
     {
         context.Response.ContentType = "text/plain";
@@ -1297,6 +1333,7 @@ public class InterFaceHandler : IHttpHandler {
         System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
         string UserName = context.Request["UserName"];
         string ReceiveUser = context.Request["ReceiveUser"];
+        string CardUserID = context.Request["CardUserID"];
 
         Hashtable hash = new Hashtable();
         hash["sign"] = "0";
@@ -1311,8 +1348,24 @@ public class InterFaceHandler : IHttpHandler {
 
                 if (udt.Rows.Count > 0)
                 {
-                    hash["sign"] = "1";
-                    hash["msg"] = "有效二维码！";
+                    if (udt.Rows[0]["ClientKind"].ToString() == "1")
+                    {
+                        if (udt.Rows[0]["UserID"].ToString() != CardUserID)
+                        {
+                            hash["sign"] = "0";
+                            hash["msg"] = "您没有" + udt.Rows[0]["UserXM"].ToString() + "的运费券，请确认您所支付的运费券是否为该专线所有！";
+                        }
+                        else
+                        {
+                            hash["sign"] = "1";
+                            hash["msg"] = "有效二维码！";
+                        }
+                    }
+                    else
+                    {
+                        hash["sign"] = "1";
+                        hash["msg"] = "有效二维码！";
+                    }
                 }
                 else {
                     hash["sign"] = "0";

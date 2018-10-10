@@ -108,8 +108,8 @@
                                                             '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
                                                         '</div>'+
                                                         '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
-                                                            '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:blue;font-weight:bold;">' + list[i]["UserXM"] + '-</span><span style="color:red;font-weight:bold;">' + list[i]["points"] + '分</span>　<button type="button" style="padding:0px !important;border:0px !important;color:green !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">' + isGZ + '</button></h5>' +
-                                                            '<h5>折　扣：' + list[i]["discountmemo"] + '　(购买人次：<span style="color:red;">' + list[i]["num"] + '</span>)</h5>' +
+                                                            '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:blue;font-weight:bold;">' + list[i]["UserXM"] + '</span>　　<span style="color:red;font-weight:bold;">' + list[i]["points"] + '分</span>　　<button type="button" style="padding:0px !important;border:0px !important;color:green !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">' + isGZ + '</button></h5>' +
+                                                            '<h5>折　扣：<span style="color:red;font-weight:bold;">' + list[i]["discountmemo"] + '</span>　(购买人次：<span style="color:red;font-weight:bold;">' + list[i]["num"] + '</span>)</h5>' +
                                                             '<h5 style="word-wrap:break-word;">线　路：' + list[i]["FromRoute"] + '-' + list[i]["ToRoute"] + '</h5>' +
                                                         '</div>' +
                                                         '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
@@ -194,8 +194,22 @@
 
 		    function BuyPoints(val)
 		    {
-		        document.location.href = "BuyPointsDetails.html";
-		        localStorage.setItem("PlatToSaleId", val);
+		        mui.ajax(grobal_url, {
+		            dataType: "json",
+		            type: "post",
+		            data: {
+		                "action": "IsVaildUser",
+		                "UserName": localStorage.getItem("mgps_UserName")
+		            },
+		            success: function (data, status, xhr) {
+		                if (data.sign == 1) {
+		                    document.location.href = "BuyPointsDetails.html";
+		                    localStorage.setItem("PlatToSaleId", val);
+		                } else {
+		                    mui.alert(data.msg);
+		                }
+		            }
+		        });
 		    }
 
 		    if (mui.os.plus) {
