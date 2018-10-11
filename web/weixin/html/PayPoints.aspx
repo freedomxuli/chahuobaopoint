@@ -80,7 +80,7 @@
                                                     '<div class="mui-table-cell">' +
                                                         '<h4 style="line-height:150%">' + list[i]["zxmc"] + '-运费券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
                                                         '<h5>所有人：' + list[i]["syr"] + '</h5>' +
-                                                        '<p class="mui-h6 mui-ellipsis">备注：该券购买相关产品时可抵扣使用</p>' +
+                                                        '<p class="mui-h6 mui-ellipsis">备注：在对应专线使用该运费券可抵扣运费</p>' +
                                                     '</div>' +
                                                     '<div class="mui-table-cell mui-col-xs-2 mui-text-center">' +
                                                         '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" data-index="wl" onClick="PayPoints(\'' + list[i]["CardUserID"] + '\',\'' + list[i]["zxmc"] + '\',\'' + list[i]["points"] + '\');">' +

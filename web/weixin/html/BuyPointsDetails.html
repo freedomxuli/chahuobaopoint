@@ -21,11 +21,9 @@
 				<h4 id="title"></h4>
                 <br />
 				<p>
-					运费券可抵扣相关物流产品。
+					每票货物最高可抵扣500份。
 				</p>
                 <p style="color:red;">
-					自下单起，请于5分钟内付款，否则订单失效！
-                    <br />
                     请输入大于50的整数，如剩余数量小于50，需一次性购买全部剩余数量
 				</p>
                 <br />
@@ -60,7 +58,7 @@
 	            success: function (data, status, xhr) {
 	                if (data.sign == '1') {
 	                    maxpoints = data.dt[0]["points"];
-	                    jQuery("#title").html(data.dt[0]["UserXM"] + "　" + data.dt[0]["points"] + "分　" + data.dt[0]["discountmemo"] + "运费券");
+	                    jQuery("#title").html(data.dt[0]["UserXM"] + " <font style='color:red;'>" + data.dt[0]["points"] + "分 " + data.dt[0]["discountmemo"] + "</font> 运费券");
 	                } else {
 	                    mui.alert("获取失败！");
 	                }

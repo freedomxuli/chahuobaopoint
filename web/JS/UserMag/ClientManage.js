@@ -21,7 +21,8 @@ var store = createSFW4Store({
        { name: 'FromRoute' },
        { name: 'ToRoute' },
        { name: 'Points' },
-       { name: 'SalePoints' }
+       { name: 'SalePoints' },
+       { name: 'KFGMPoints' }
     ],
     onPageChange: function (sto, nPage, sorters) {
         getUser(nPage);
@@ -615,6 +616,30 @@ Ext.onReady(function () {
                                 menuDisabled: true,
                                 hidden: true,
                                 text: "终点"
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                sortable: false,
+                                menuDisabled: true,
+                                text: "线路",
+                                renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
+                                    var str="";
+                                    if (record.data.FromRoute) {
+                                        str += record.data.FromRoute
+                                    }
+                                    if (record.data.ToRoute) {
+                                        str += "─" + record.data.ToRoute;
+                                    }
+                                    return str;
+                                }
+
+                            },{
+                                xtype: 'gridcolumn',
+                                dataIndex: 'KFGMPoints',
+                                width: 140,
+                                sortable: false,
+                                menuDisabled: true,
+                                text: "可开放购买运费券"
                             },
                             {
                                 xtype: 'gridcolumn',

@@ -127,7 +127,7 @@ public class KFGMMag
                         {
                             try
                             {
-                                new Handler().SendWeText(gzdt.Rows[i]["OpenID"].ToString(), wlmc + "已开放“" + jsr["discountmemo"].ToString() + "”的运单券，请速度登录进行抢购，手快有，手慢无！");
+                                new Handler().SendWeText(gzdt.Rows[i]["OpenID"].ToString(), wlmc + "已开放“" + jsr["discountmemo"].ToString() + "”的运费券，请速度登录进行抢购，手快有，手慢无！");
                             }
                             catch (Exception ex)
                             { 

@@ -1418,6 +1418,15 @@ public class InterFaceHandler : IHttpHandler {
                              where a.ZhiFuZT<>1 and a.status=0 and a.BuyUserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
+                    dtPage.Columns.Add("sj");
+                    for (int i = 0; i < dtPage.Rows.Count; i++)
+                    {
+                        if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
+                        {
+                            dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                        }
+                    }
+
                     hash["sign"] = "1";
                     hash["msg"] = "获取成功！";
                     hash["value"] = new { dt = dtPage, cp = cp, ac = ac };

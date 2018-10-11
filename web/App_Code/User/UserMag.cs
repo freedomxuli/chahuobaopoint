@@ -484,10 +484,11 @@ public class UserMag
                     where += " and " + dbc.C_Like("a.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
                 }
 
-                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints,e.Points as KFGMPoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
-                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID where 1=1 
-                                ";
+                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID 
+                               left join tb_b_platpoints e on a.UserID = e.UserID 
+                               where 1=1";
                 str += where;
 
                 //开始取分页数据
@@ -849,12 +850,18 @@ public class UserMag
                 cells[0, 3].PutValue("电话");
                 cells[0, 3].SetStyle(style2);
                 cells.SetColumnWidth(3, 20);
-                cells[0, 4].PutValue("剩余运费券");
+                cells[0, 4].PutValue("线路");
                 cells[0, 4].SetStyle(style2);
                 cells.SetColumnWidth(4, 20);
-                cells[0, 5].PutValue("在售运费券");
+                cells[0, 5].PutValue("可开放购买运费券");
                 cells[0, 5].SetStyle(style2);
                 cells.SetColumnWidth(5, 20);
+                cells[0, 6].PutValue("剩余运费券");
+                cells[0, 6].SetStyle(style2);
+                cells.SetColumnWidth(6, 20);
+                cells[0, 7].PutValue("在售运费券");
+                cells[0, 7].SetStyle(style2);
+                cells.SetColumnWidth(7, 20);
 
                 string where = "";
                 //if (!string.IsNullOrEmpty(yhm.Trim()))
@@ -862,12 +869,13 @@ public class UserMag
                 //    where += " and " + dbc.C_Like("b.UserXM", yhm.Trim(), LikeStyle.LeftAndRightLike);
                 //}
 
-                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints,e.Points as KFGMPoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
-                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID where 1=1 and a.ClientKind = 1
-                                ";
+                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID 
+                               left join tb_b_platpoints e on a.UserID = e.UserID 
+                               where 1=1 and a.ClientKind = 1
+                                                                ";
                 str += where;
-
                 //开始取分页数据
                 System.Data.DataTable dt = new System.Data.DataTable();
                 dt = dbc.ExecuteDataTable(str + " order by a.UserName,a.UserXM");
@@ -881,10 +889,24 @@ public class UserMag
                     cells[i + 1, 2].SetStyle(style4);
                     cells[i + 1, 3].PutValue(dt.Rows[i]["UserTel"]);
                     cells[i + 1, 3].SetStyle(style4);
-                    cells[i + 1, 4].PutValue(dt.Rows[i]["Points"]);
+                    
+                    var xl = "";
+                    if (dt.Rows[i]["FromRoute"] != null && dt.Rows[i]["FromRoute"].ToString() != "")
+                    {
+                        xl += dt.Rows[i]["FromRoute"].ToString();
+                    }
+                    if (dt.Rows[i]["ToRoute"] != null && dt.Rows[i]["ToRoute"].ToString() != "")
+                    {
+                        xl += "─" + dt.Rows[i]["ToRoute"].ToString();
+                    }
+                    cells[i + 1, 4].PutValue(xl);
                     cells[i + 1, 4].SetStyle(style4);
-                    cells[i + 1, 5].PutValue(dt.Rows[i]["SalePoints"]);
+                    cells[i + 1, 5].PutValue(dt.Rows[i]["KFGMPoints"]);
                     cells[i + 1, 5].SetStyle(style4);
+                    cells[i + 1, 6].PutValue(dt.Rows[i]["Points"]);
+                    cells[i + 1, 6].SetStyle(style4);
+                    cells[i + 1, 7].PutValue(dt.Rows[i]["SalePoints"]);
+                    cells[i + 1, 7].SetStyle(style4);
                 }
 
                 MemoryStream ms = workbook.SaveToStream();
