@@ -13,6 +13,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using Aspose.Cells;
 /// <summary>
 ///UserMag 的摘要说明
 /// </summary>
@@ -219,7 +220,7 @@ public class UserMag
             try
             {
                 string str = @"select b.UserXM as wuliu,c.UserName as UserName,a.AddTime,a.Points as MONEY,'交易运费券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
-                            left join tb_b_user c on a.ReceiveUserID=c.UserID where PayUserID=" + db.ToSqlValue(userid) + @"
+                            left join tb_b_user c on a.PayUserID=c.UserID where PayUserID=" + db.ToSqlValue(userid) + @"
                             union all 
                             select b.UserXM as wuliu,c.UserName as UserName,a.AddTime,a.Points as MONEY,'收到运费券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
                             left join tb_b_user c on a.PayUserID=c.UserID where ReceiveUserID=" + db.ToSqlValue(userid) + @"
@@ -250,6 +251,145 @@ public class UserMag
                 DataTable dt2 = db.ExecuteDataTable(str);
 
                 return new { dt = dt, dt2 = dt2 };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
+    [CSMethod("GetOrderListByZX")]
+    public object GetOrderListByZX(int pagnum, int pagesize, string kind, string btime, string etime, string mc)
+    {
+        using (var db = new DBConnection())
+        {
+            try
+            {
+                int cp = pagnum;
+                int ac = 0;
+
+                string where1 = "";
+                string where2 = "";
+                string where3 = "";
+                if (!string.IsNullOrEmpty(kind))
+                {
+                    switch (kind)
+                    { 
+                        case "1":
+                            where1 = " and a.CardUserID = '0'";
+                            where2 = " and a.UserID = '0'";
+                            break;
+                        case "2":
+                            where1 = " and a.CardUserID = '0'";
+                            where3 = " and a.UserID = '0'";
+                            break;
+                        case "3":
+                            where2 = " and a.UserID = '0'";
+                            where3 = " and a.UserID = '0'";
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(btime) && !string.IsNullOrEmpty(etime))
+                {
+                    where1 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where2 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where3 += " and a.sqrq >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.sqrq < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                }
+
+                if (!string.IsNullOrEmpty(mc))
+                {
+                    where1 += " and " + db.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + db.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                    where3 += " and " + db.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                }
+
+                string str = @"
+                            select b.UserXM,c.UserName as UserName,a.AddTime,a.Points as MONEY,'收券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where a.ReceiveUserID = a.CardUserID " + where1 + @"
+                            union all 
+                            select b.UserXM,'查货宝' as UserName,a.AddTime,a.points as MONEY,'支付' as KIND  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
+                            where a.Status=0 and a.IsSH=1 " + where2 + @"
+                            union all
+                            select b.UserXM, '查货宝' as UserName,a.sqrq as AddTime,a.sqjf as MONEY,'申请' as KIND  from tb_b_jfsq a left join tb_b_user b on a.UserID=b.UserID
+                            where a.issq=1 " + where3 + @"
+                            order by AddTime desc";
+                DataTable dt = db.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                dt.Columns.Add("DATE");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["addtime"] != null && dt.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dt.Rows[i]["DATE"] = Convert.ToDateTime(dt.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+
+                return new { dt = dt, cp = cp, ac = ac };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
+    [CSMethod("GetOrderListBySF")]
+    public object GetOrderListBySF(int pagnum, int pagesize, string kind, string btime, string etime, string mc)
+    {
+        using (var db = new DBConnection())
+        {
+            try
+            {
+                int cp = pagnum;
+                int ac = 0;
+
+                string where1 = "";
+                string where2 = "";
+                if (!string.IsNullOrEmpty(kind))
+                {
+                    switch (kind)
+                    {
+                        case "1":
+                            where1 = " and a.CardUserID = '0'";
+                            break;
+                        case "2":
+                            where2 = " and a.BuyUserID = '0'";
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(btime) && !string.IsNullOrEmpty(etime))
+                {
+                    where1 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where2 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                }
+
+                if (!string.IsNullOrEmpty(mc))
+                {
+                    where1 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + db.C_Like("b.UserName", mc, LikeStyle.LeftAndRightLike);
+                }
+
+                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"
+                            union all 
+	                        select b.UserXM,b.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"
+                            order by AddTime desc";
+                DataTable dt = db.GetPagedDataTable(str, pagesize, ref cp, out ac);
+
+                dt.Columns.Add("DATE");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["addtime"] != null && dt.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dt.Rows[i]["DATE"] = Convert.ToDateTime(dt.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+
+                return new { dt = dt, cp = cp, ac = ac };
             }
             catch (Exception ex)
             {
@@ -317,18 +457,6 @@ public class UserMag
     [CSMethod("GetClientList")]
     public object GetClientList(int pagnum, int pagesize, string roleId, string yhm, string xm)
     {
-        if (!string.IsNullOrEmpty(roleId))
-        {
-            try
-            {
-                Guid guid = new Guid(roleId);
-            }
-            catch
-            {
-                throw new Exception("角色ID出错！");
-            }
-        }
-
         using (DBConnection dbc = new DBConnection())
         {
             try
@@ -339,7 +467,11 @@ public class UserMag
                 string where = "";
                 if (!string.IsNullOrEmpty(roleId))
                 {
-                    where += " and a.UserID in (SELECT userId FROM tb_b_user_role where roleId='" + roleId + "')";
+                    where += " and a.ClientKind = " + roleId;
+                }
+                else
+                {
+                    where += " and (a.ClientKind = 1 or a.ClientKind = 2)";
                 }
 
                 if (!string.IsNullOrEmpty(yhm.Trim()))
@@ -352,8 +484,10 @@ public class UserMag
                     where += " and " + dbc.C_Like("a.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
                 }
 
-                string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
-                                left join tb_b_roledb c on b.roleId=c.roleId where 1=1 and (ClientKind = 1 or ClientKind = 2)";
+                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                               left join tb_b_roledb c on b.roleId=c.roleId
+                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID where 1=1 
+                                ";
                 str += where;
 
                 //开始取分页数据
@@ -368,6 +502,401 @@ public class UserMag
             }
         }
 
+    }
+
+    [CSMethod("GetZXXFToFile", 2)]
+    public byte[] GetZXXFToFile(string kind, string btime, string etime, string mc)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                Workbook workbook = new Workbook(); //工作簿
+                Worksheet sheet = workbook.Worksheets[0]; //工作表
+                Cells cells = sheet.Cells;//单元格
+
+                //为标题设置样式  
+                Style styleTitle = workbook.Styles[workbook.Styles.Add()];
+                styleTitle.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                styleTitle.Font.Name = "宋体";//文字字体
+                styleTitle.Font.Size = 18;//文字大小
+                styleTitle.Font.IsBold = true;//粗体
+
+                //样式1
+                Style style1 = workbook.Styles[workbook.Styles.Add()];
+                style1.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                style1.Font.Name = "宋体";//文字字体
+                style1.Font.Size = 12;//文字大小
+                style1.Font.IsBold = true;//粗体
+
+                //样式2
+                Style style2 = workbook.Styles[workbook.Styles.Add()];
+                style2.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style2.Font.Name = "宋体";//文字字体
+                style2.Font.Size = 14;//文字大小
+                style2.Font.IsBold = true;//粗体
+                style2.IsTextWrapped = true;//单元格内容自动换行
+                style2.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin; //应用边界线 左边界线
+                style2.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin; //应用边界线 右边界线
+                style2.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin; //应用边界线 上边界线
+                style2.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin; //应用边界线 下边界线
+                style2.IsLocked = true;
+
+                //样式3
+                Style style4 = workbook.Styles[workbook.Styles.Add()];
+                style4.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style4.Font.Name = "宋体";//文字字体
+                style4.Font.Size = 11;//文字大小
+                style4.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+
+
+                cells.SetRowHeight(0, 20);
+                cells[0, 0].PutValue("类别");
+                cells[0, 0].SetStyle(style2);
+                cells.SetColumnWidth(0, 20);
+                cells[0, 1].PutValue("专线");
+                cells[0, 1].SetStyle(style2);
+                cells.SetColumnWidth(1, 20);
+                cells[0, 2].PutValue("交易对象");
+                cells[0, 2].SetStyle(style2);
+                cells.SetColumnWidth(2, 20);
+                cells[0, 3].PutValue("交易时间");
+                cells[0, 3].SetStyle(style2);
+                cells.SetColumnWidth(3, 30);
+                cells[0, 4].PutValue("交易金额");
+                cells[0, 4].SetStyle(style2);
+
+                string where1 = "";
+                string where2 = "";
+                string where3 = "";
+                if (!string.IsNullOrEmpty(kind))
+                {
+                    switch (kind)
+                    {
+                        case "1":
+                            where1 = " and a.CardUserID = '0'";
+                            where2 = " and a.UserID = '0'";
+                            break;
+                        case "2":
+                            where1 = " and a.CardUserID = '0'";
+                            where3 = " and a.UserID = '0'";
+                            break;
+                        case "3":
+                            where2 = " and a.UserID = '0'";
+                            where3 = " and a.UserID = '0'";
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(btime) && !string.IsNullOrEmpty(etime))
+                {
+                    where1 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where2 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where3 += " and a.sqrq >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.sqrq < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                }
+
+                if (!string.IsNullOrEmpty(mc))
+                {
+                    where1 += " and " + dbc.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + dbc.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                    where3 += " and " + dbc.C_Like("b.UserXM", mc, LikeStyle.LeftAndRightLike);
+                }
+
+                string str = @"
+                            select b.UserXM,c.UserName as UserName,a.AddTime,a.Points as MONEY,'收券' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where a.ReceiveUserID = a.CardUserID " + where1 + @"
+                            union all 
+                            select b.UserXM,'查货宝' as UserName,a.AddTime,a.points as MONEY,'支付' as KIND  from tb_b_givetoplat a left join tb_b_user b on a.UserID=b.UserID
+                            where a.Status=0 and a.IsSH=1 " + where2 + @"
+                            union all
+                            select b.UserXM, '查货宝' as UserName,a.sqrq as AddTime,a.sqjf as MONEY,'申请' as KIND  from tb_b_jfsq a left join tb_b_user b on a.UserID=b.UserID
+                            where a.issq=1 " + where3 + @"
+                            order by AddTime desc";
+                DataTable dt = dbc.ExecuteDataTable(str);
+
+                dt.Columns.Add("DATE");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["addtime"] != null && dt.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dt.Rows[i]["DATE"] = Convert.ToDateTime(dt.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    cells[i + 1, 0].PutValue(dt.Rows[i]["KIND"]);
+                    cells[i + 1, 0].SetStyle(style4);
+                    cells[i + 1, 1].PutValue(dt.Rows[i]["UserXM"]);
+                    cells[i + 1, 1].SetStyle(style4);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["UserName"]);
+                    cells[i + 1, 2].SetStyle(style4);
+                    cells[i + 1, 3].PutValue(dt.Rows[i]["DATE"]);
+                    cells[i + 1, 3].SetStyle(style4);
+                    cells[i + 1, 4].PutValue(dt.Rows[i]["MONEY"]);
+                    cells[i + 1, 4].SetStyle(style4);
+                }
+
+                MemoryStream ms = workbook.SaveToStream();
+                byte[] bt = ms.ToArray();
+                return bt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+    }
+
+    [CSMethod("GetSFXFToFile", 2)]
+    public byte[] GetSFXFToFile(string kind, string btime, string etime, string mc)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                Workbook workbook = new Workbook(); //工作簿
+                Worksheet sheet = workbook.Worksheets[0]; //工作表
+                Cells cells = sheet.Cells;//单元格
+
+                //为标题设置样式  
+                Style styleTitle = workbook.Styles[workbook.Styles.Add()];
+                styleTitle.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                styleTitle.Font.Name = "宋体";//文字字体
+                styleTitle.Font.Size = 18;//文字大小
+                styleTitle.Font.IsBold = true;//粗体
+
+                //样式1
+                Style style1 = workbook.Styles[workbook.Styles.Add()];
+                style1.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                style1.Font.Name = "宋体";//文字字体
+                style1.Font.Size = 12;//文字大小
+                style1.Font.IsBold = true;//粗体
+
+                //样式2
+                Style style2 = workbook.Styles[workbook.Styles.Add()];
+                style2.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style2.Font.Name = "宋体";//文字字体
+                style2.Font.Size = 14;//文字大小
+                style2.Font.IsBold = true;//粗体
+                style2.IsTextWrapped = true;//单元格内容自动换行
+                style2.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin; //应用边界线 左边界线
+                style2.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin; //应用边界线 右边界线
+                style2.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin; //应用边界线 上边界线
+                style2.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin; //应用边界线 下边界线
+                style2.IsLocked = true;
+
+                //样式3
+                Style style4 = workbook.Styles[workbook.Styles.Add()];
+                style4.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style4.Font.Name = "宋体";//文字字体
+                style4.Font.Size = 11;//文字大小
+                style4.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+
+
+                cells.SetRowHeight(0, 20);
+                cells[0, 0].PutValue("类别");
+                cells[0, 0].SetStyle(style2);
+                cells.SetColumnWidth(0, 20);
+                cells[0, 1].PutValue("专线");
+                cells[0, 1].SetStyle(style2);
+                cells.SetColumnWidth(1, 20);
+                cells[0, 2].PutValue("三方");
+                cells[0, 2].SetStyle(style2);
+                cells.SetColumnWidth(2, 20);
+                cells[0, 3].PutValue("交易时间");
+                cells[0, 3].SetStyle(style2);
+                cells.SetColumnWidth(3, 30);
+                cells[0, 4].PutValue("交易金额");
+                cells[0, 4].SetStyle(style2);
+
+                string where1 = "";
+                string where2 = "";
+                if (!string.IsNullOrEmpty(kind))
+                {
+                    switch (kind)
+                    {
+                        case "1":
+                            where1 = " and a.CardUserID = '0'";
+                            break;
+                        case "2":
+                            where2 = " and a.BuyUserID = '0'";
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(btime) && !string.IsNullOrEmpty(etime))
+                {
+                    where1 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where2 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                }
+
+                if (!string.IsNullOrEmpty(mc))
+                {
+                    where1 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + dbc.C_Like("b.UserName", mc, LikeStyle.LeftAndRightLike);
+                }
+
+                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"
+                            union all 
+	                        select b.UserXM,b.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"
+                            order by AddTime desc";
+                DataTable dt = dbc.ExecuteDataTable(str);
+
+                dt.Columns.Add("DATE");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["addtime"] != null && dt.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dt.Rows[i]["DATE"] = Convert.ToDateTime(dt.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                }
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    cells[i + 1, 0].PutValue(dt.Rows[i]["KIND"]);
+                    cells[i + 1, 0].SetStyle(style4);
+                    cells[i + 1, 1].PutValue(dt.Rows[i]["UserXM"]);
+                    cells[i + 1, 1].SetStyle(style4);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["UserName"]);
+                    cells[i + 1, 2].SetStyle(style4);
+                    cells[i + 1, 3].PutValue(dt.Rows[i]["DATE"]);
+                    cells[i + 1, 3].SetStyle(style4);
+                    cells[i + 1, 4].PutValue(dt.Rows[i]["MONEY"]);
+                    cells[i + 1, 4].SetStyle(style4);
+                }
+
+                MemoryStream ms = workbook.SaveToStream();
+                byte[] bt = ms.ToArray();
+                return bt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+    }
+
+    [CSMethod("GetZXUSERToFile", 2)]
+    public byte[] GetZXUSERToFile(string roleId, string yhm, string xm)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                Workbook workbook = new Workbook(); //工作簿
+                Worksheet sheet = workbook.Worksheets[0]; //工作表
+                Cells cells = sheet.Cells;//单元格
+
+                //为标题设置样式  
+                Style styleTitle = workbook.Styles[workbook.Styles.Add()];
+                styleTitle.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                styleTitle.Font.Name = "宋体";//文字字体
+                styleTitle.Font.Size = 18;//文字大小
+                styleTitle.Font.IsBold = true;//粗体
+
+                //样式1
+                Style style1 = workbook.Styles[workbook.Styles.Add()];
+                style1.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                style1.Font.Name = "宋体";//文字字体
+                style1.Font.Size = 12;//文字大小
+                style1.Font.IsBold = true;//粗体
+
+                //样式2
+                Style style2 = workbook.Styles[workbook.Styles.Add()];
+                style2.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style2.Font.Name = "宋体";//文字字体
+                style2.Font.Size = 14;//文字大小
+                style2.Font.IsBold = true;//粗体
+                style2.IsTextWrapped = true;//单元格内容自动换行
+                style2.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin; //应用边界线 左边界线
+                style2.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin; //应用边界线 右边界线
+                style2.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin; //应用边界线 上边界线
+                style2.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin; //应用边界线 下边界线
+                style2.IsLocked = true;
+
+                //样式3
+                Style style4 = workbook.Styles[workbook.Styles.Add()];
+                style4.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style4.Font.Name = "宋体";//文字字体
+                style4.Font.Size = 11;//文字大小
+                style4.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+
+
+                cells.SetRowHeight(0, 20);
+                cells[0, 0].PutValue("登陆名");
+                cells[0, 0].SetStyle(style2);
+                cells.SetColumnWidth(0, 20);
+                cells[0, 1].PutValue("角色");
+                cells[0, 1].SetStyle(style2);
+                cells.SetColumnWidth(1, 20);
+                cells[0, 2].PutValue("姓名");
+                cells[0, 2].SetStyle(style2);
+                cells.SetColumnWidth(2, 20);
+                cells[0, 3].PutValue("电话");
+                cells[0, 3].SetStyle(style2);
+                cells.SetColumnWidth(3, 20);
+                cells[0, 4].PutValue("剩余运费券");
+                cells[0, 4].SetStyle(style2);
+                cells.SetColumnWidth(4, 20);
+                cells[0, 5].PutValue("在售运费券");
+                cells[0, 5].SetStyle(style2);
+                cells.SetColumnWidth(5, 20);
+
+                string where = "";
+                //if (!string.IsNullOrEmpty(yhm.Trim()))
+                //{
+                //    where += " and " + dbc.C_Like("b.UserXM", yhm.Trim(), LikeStyle.LeftAndRightLike);
+                //}
+
+                string str = @"select a.*,c.roleName,b.roleId,d.SalePoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                               left join tb_b_roledb c on b.roleId=c.roleId
+                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID where 1=1 and a.ClientKind = 1
+                                ";
+                str += where;
+
+                //开始取分页数据
+                System.Data.DataTable dt = new System.Data.DataTable();
+                dt = dbc.ExecuteDataTable(str + " order by a.UserName,a.UserXM");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    cells[i + 1, 0].PutValue(dt.Rows[i]["UserName"]);
+                    cells[i + 1, 0].SetStyle(style4);
+                    cells[i + 1, 1].PutValue("专线");
+                    cells[i + 1, 1].SetStyle(style4);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["UserXM"]);
+                    cells[i + 1, 2].SetStyle(style4);
+                    cells[i + 1, 3].PutValue(dt.Rows[i]["UserTel"]);
+                    cells[i + 1, 3].SetStyle(style4);
+                    cells[i + 1, 4].PutValue(dt.Rows[i]["Points"]);
+                    cells[i + 1, 4].SetStyle(style4);
+                    cells[i + 1, 5].PutValue(dt.Rows[i]["SalePoints"]);
+                    cells[i + 1, 5].SetStyle(style4);
+                }
+
+                MemoryStream ms = workbook.SaveToStream();
+                byte[] bt = ms.ToArray();
+                return bt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
 
     //[CSMethod("GetUserList")]

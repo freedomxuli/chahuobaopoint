@@ -19,7 +19,9 @@ var store = createSFW4Store({
        { name: 'Address' },
        { name: 'UserTel' },
        { name: 'FromRoute' },
-       { name: 'ToRoute' }
+       { name: 'ToRoute' },
+       { name: 'Points' },
+       { name: 'SalePoints' }
     ],
     onPageChange: function (sto, nPage, sorters) {
         getUser(nPage);
@@ -367,7 +369,7 @@ Ext.define('addWin', {
                          store: roleStore1,
                          queryMode: 'local',
                          displayField: 'ClientName',
-                         valueField: 'ClientId',
+                         valueField: 'ClientKind',
                          value: ''
                      },
                      {
@@ -431,7 +433,7 @@ Ext.define('OrderList', {
             items: [
                 {
                     xtype: 'tabpanel',
-                    activeTab: 0,
+                    activeTab: 1,
                     items: [
                         {
                             xtype: 'panel',
@@ -439,6 +441,7 @@ Ext.define('OrderList', {
                                 type: 'fit'
                             },
                             title: '交易记录',
+                            hidden:true,
                             items: [
                                 {
                                     xtype: 'gridpanel',
@@ -614,6 +617,22 @@ Ext.onReady(function () {
                                 text: "终点"
                             },
                             {
+                                xtype: 'gridcolumn',
+                                dataIndex: 'Points',
+                                sortable: false,
+                                menuDisabled: true,
+                                width: 140,
+                                text: "专线用户剩余运费券"
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                dataIndex: 'SalePoints',
+                                sortable: false,
+                                menuDisabled: true,
+                                width: 140,
+                                text: "专线用户在售运费券"
+                            },
+                            {
                                 text: '操作',
                                 dataIndex: 'UserID',
                                 width: 180,
@@ -644,7 +663,7 @@ Ext.onReady(function () {
                                             store: roleStore,
                                             queryMode: 'local',
                                             displayField: 'ClientName',
-                                            valueField: 'ClientId',
+                                            valueField: 'ClientKind',
                                             value: ''
                                         },
                                         {
@@ -672,13 +691,7 @@ Ext.onReady(function () {
                                                     handler: function () {
                                                         getUser(1);
                                                     }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            xtype: 'buttongroup',
-                                            title: '',
-                                            items: [
+                                                },
                                                 {
                                                     xtype: 'button',
                                                     iconCls: 'delete',
@@ -715,14 +728,18 @@ Ext.onReady(function () {
                                                                 return;
                                                             }
                                                         });
-
-
-
+                                                    }
+                                                },
+                                                {
+                                                    xtype: 'button',
+                                                    iconCls: 'view',
+                                                    text: '导出专线用户统计表',
+                                                    handler: function () {
+                                                        DownloadFile("CZCLZ.YHGLClass.GetZXUSERToFile", "专线用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
                                                     }
                                                 }
                                             ]
                                         }
-
                                     ]
                                 },
                                 {
