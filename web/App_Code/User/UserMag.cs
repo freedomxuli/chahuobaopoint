@@ -1078,17 +1078,14 @@ public class UserMag
                 cells[0, 1].PutValue("物流");
                 cells[0, 1].SetStyle(style2);
                 cells.SetColumnWidth(1, 20);
-                cells[0, 2].PutValue("购买运费券");
+                cells[0, 2].PutValue("剩余运费券");
                 cells[0, 2].SetStyle(style2);
                 cells.SetColumnWidth(2, 20);
-                cells[0, 3].PutValue("时间");
-                cells[0, 3].SetStyle(style2);
-                cells.SetColumnWidth(3, 20);
 
                 string where = "";
-                string str = @" select c.UserName as sf, b.UserXM as wuliu,a.Points,a.AddTime from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
-                                left join tb_b_user c on a.BuyUserID=c.UserID
-                                where   a.Status=0 and a.ZhiFuZT=1 and c.ClientKind=2 order by c.UserName,b.UserXM,a.AddTime desc";
+                string str = @" select a.points MONEY,c.UserXM as wuliu,b.UserName as sf from tb_b_mycard a left join tb_b_user b on a.UserID=b.UserID
+                        left join tb_b_user c on a.CardUserID=c.UserID
+                        where a.status=0 and b.ClientKind=2 order by b.UserName,c.UserXM,a.points";
                 str += where;
                 //开始取分页数据
                 System.Data.DataTable dt = new System.Data.DataTable();
@@ -1099,10 +1096,8 @@ public class UserMag
                     cells[i + 1, 0].SetStyle(style4);
                     cells[i + 1, 1].PutValue(dt.Rows[i]["wuliu"]);
                     cells[i + 1, 1].SetStyle(style4);
-                    cells[i + 1, 2].PutValue(dt.Rows[i]["Points"]);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["MONEY"]);
                     cells[i + 1, 2].SetStyle(style4);
-                    cells[i + 1, 3].PutValue(Convert.ToDateTime(dt.Rows[i]["AddTime"]).ToString("yyyy-MM-dd HH:mm:ss"));
-                    cells[i + 1, 3].SetStyle(style4);
                 }
 
                 MemoryStream ms = workbook.SaveToStream();

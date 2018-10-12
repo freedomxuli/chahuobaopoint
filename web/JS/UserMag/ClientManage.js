@@ -835,9 +835,9 @@ Ext.onReady(function () {
                                                 {
                                                     xtype: 'button',
                                                     iconCls: 'view',
-                                                    text: '导出三方用户购买记录',
+                                                    text: '导出三方用户剩余运费券',
                                                     handler: function () {
-                                                        DownloadFile("CZCLZ.YHGLClass.GetSFYFQToFile", "三方用户购买记录.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                        DownloadFile("CZCLZ.YHGLClass.GetSFYFQToFile", "三方用户剩余运费券.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
                                                     }
                                                 }
                                             ]
