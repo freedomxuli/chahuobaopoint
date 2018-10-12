@@ -622,6 +622,7 @@ Ext.onReady(function () {
                                 sortable: false,
                                 menuDisabled: true,
                                 text: "线路",
+                                width: 240,
                                 renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
                                     var str="";
                                     if (record.data.FromRoute) {
@@ -761,6 +762,14 @@ Ext.onReady(function () {
                                                     text: '导出专线用户统计表',
                                                     handler: function () {
                                                         DownloadFile("CZCLZ.YHGLClass.GetZXUSERToFile", "专线用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                    }
+                                                },
+                                                {
+                                                    xtype: 'button',
+                                                    iconCls: 'view',
+                                                    text: '导出三方用户统计表',
+                                                    handler: function () {
+                                                        DownloadFile("CZCLZ.YHGLClass.GetSFUSERToFile", "三方用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
                                                     }
                                                 }
                                             ]

@@ -369,13 +369,14 @@ public class UserMag
                 if (!string.IsNullOrEmpty(mc))
                 {
                     where1 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
-                    where2 += " and " + db.C_Like("b.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                 }
 
                 string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
                             left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"
                             union all 
-	                        select b.UserXM,b.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+	                        select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            left join tb_b_user c on a.BuyUserID=c.UserID
                             where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"
                             order by AddTime desc";
                 DataTable dt = db.GetPagedDataTable(str, pagesize, ref cp, out ac);
@@ -907,6 +908,106 @@ public class UserMag
                     cells[i + 1, 6].SetStyle(style4);
                     cells[i + 1, 7].PutValue(dt.Rows[i]["SalePoints"]);
                     cells[i + 1, 7].SetStyle(style4);
+                }
+
+                MemoryStream ms = workbook.SaveToStream();
+                byte[] bt = ms.ToArray();
+                return bt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+    }
+
+    [CSMethod("GetSFUSERToFile", 2)]
+    public byte[] GetSFUSERToFile(string roleId, string yhm, string xm)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                Workbook workbook = new Workbook(); //工作簿
+                Worksheet sheet = workbook.Worksheets[0]; //工作表
+                Cells cells = sheet.Cells;//单元格
+
+                //为标题设置样式  
+                Style styleTitle = workbook.Styles[workbook.Styles.Add()];
+                styleTitle.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                styleTitle.Font.Name = "宋体";//文字字体
+                styleTitle.Font.Size = 18;//文字大小
+                styleTitle.Font.IsBold = true;//粗体
+
+                //样式1
+                Style style1 = workbook.Styles[workbook.Styles.Add()];
+                style1.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                style1.Font.Name = "宋体";//文字字体
+                style1.Font.Size = 12;//文字大小
+                style1.Font.IsBold = true;//粗体
+
+                //样式2
+                Style style2 = workbook.Styles[workbook.Styles.Add()];
+                style2.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style2.Font.Name = "宋体";//文字字体
+                style2.Font.Size = 14;//文字大小
+                style2.Font.IsBold = true;//粗体
+                style2.IsTextWrapped = true;//单元格内容自动换行
+                style2.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin; //应用边界线 左边界线
+                style2.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin; //应用边界线 右边界线
+                style2.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin; //应用边界线 上边界线
+                style2.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin; //应用边界线 下边界线
+                style2.IsLocked = true;
+
+                //样式3
+                Style style4 = workbook.Styles[workbook.Styles.Add()];
+                style4.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style4.Font.Name = "宋体";//文字字体
+                style4.Font.Size = 11;//文字大小
+                style4.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+
+
+                cells.SetRowHeight(0, 20);
+                cells[0, 0].PutValue("登陆名");
+                cells[0, 0].SetStyle(style2);
+                cells.SetColumnWidth(0, 20);
+                cells[0, 1].PutValue("角色");
+                cells[0, 1].SetStyle(style2);
+                cells.SetColumnWidth(1, 20);
+                cells[0, 2].PutValue("姓名");
+                cells[0, 2].SetStyle(style2);
+                cells.SetColumnWidth(2, 20);
+                cells[0, 3].PutValue("电话");
+                cells[0, 3].SetStyle(style2);
+                cells.SetColumnWidth(3, 20);
+
+                string where = "";
+                //if (!string.IsNullOrEmpty(yhm.Trim()))
+                //{
+                //    where += " and " + dbc.C_Like("b.UserXM", yhm.Trim(), LikeStyle.LeftAndRightLike);
+                //}
+
+                string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
+                               left join tb_b_roledb c on b.roleId=c.roleId
+                               where 1=1 and a.ClientKind = 2";
+                str += where;
+                //开始取分页数据
+                System.Data.DataTable dt = new System.Data.DataTable();
+                dt = dbc.ExecuteDataTable(str + " order by a.UserName,a.UserXM");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    cells[i + 1, 0].PutValue(dt.Rows[i]["UserName"]);
+                    cells[i + 1, 0].SetStyle(style4);
+                    cells[i + 1, 1].PutValue("三方");
+                    cells[i + 1, 1].SetStyle(style4);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["UserXM"]);
+                    cells[i + 1, 2].SetStyle(style4);
+                    cells[i + 1, 3].PutValue(dt.Rows[i]["UserTel"]);
+                    cells[i + 1, 3].SetStyle(style4);
                 }
 
                 MemoryStream ms = workbook.SaveToStream();
