@@ -1414,16 +1414,16 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM from tb_b_order a left join tb_b_user b on a.BuyUserID=b.UserID
-                             where a.ZhiFuZT<>1 and a.status=0 and a.BuyUserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " order by a.addtime desc";
+                    str = @"select a.*,b.UserXM from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                             where a.ZhiFuZT<>1 and a.status=0 and a.BuyUserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " order by a.AddTime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");
                     for (int i = 0; i < dtPage.Rows.Count; i++)
                     {
-                        if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
+                        if (dtPage.Rows[i]["AddTime"] != null && dtPage.Rows[i]["AddTime"].ToString() != "")
                         {
-                            dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                            dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["AddTime"]).ToString("yyyy-MM-dd HH:mm:ss");
                         }
                     }
 

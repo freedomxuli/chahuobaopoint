@@ -487,7 +487,7 @@ public class UserMag
 
                 string str = @"select a.*,c.roleName,b.roleId,d.SalePoints,e.Points as KFGMPoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
-                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 group by UserID) d on a.UserID = d.UserID 
+                               left join (select sum(points) SalePoints,UserID from tb_b_plattosale where status = 0 and points > 0  group by UserID) d on a.UserID = d.UserID 
                                left join tb_b_platpoints e on a.UserID = e.UserID 
                                where 1=1";
                 str += where;
@@ -1007,6 +1007,101 @@ public class UserMag
                     cells[i + 1, 2].PutValue(dt.Rows[i]["UserXM"]);
                     cells[i + 1, 2].SetStyle(style4);
                     cells[i + 1, 3].PutValue(dt.Rows[i]["UserTel"]);
+                    cells[i + 1, 3].SetStyle(style4);
+                }
+
+                MemoryStream ms = workbook.SaveToStream();
+                byte[] bt = ms.ToArray();
+                return bt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+    }
+
+    [CSMethod("GetSFYFQToFile", 2)]
+    public byte[] GetSFYFQToFile(string roleId, string yhm, string xm)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            try
+            {
+                Workbook workbook = new Workbook(); //工作簿
+                Worksheet sheet = workbook.Worksheets[0]; //工作表
+                Cells cells = sheet.Cells;//单元格
+
+                //为标题设置样式  
+                Style styleTitle = workbook.Styles[workbook.Styles.Add()];
+                styleTitle.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                styleTitle.Font.Name = "宋体";//文字字体
+                styleTitle.Font.Size = 18;//文字大小
+                styleTitle.Font.IsBold = true;//粗体
+
+                //样式1
+                Style style1 = workbook.Styles[workbook.Styles.Add()];
+                style1.HorizontalAlignment = TextAlignmentType.Center;//文字居中
+                style1.Font.Name = "宋体";//文字字体
+                style1.Font.Size = 12;//文字大小
+                style1.Font.IsBold = true;//粗体
+
+                //样式2
+                Style style2 = workbook.Styles[workbook.Styles.Add()];
+                style2.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style2.Font.Name = "宋体";//文字字体
+                style2.Font.Size = 14;//文字大小
+                style2.Font.IsBold = true;//粗体
+                style2.IsTextWrapped = true;//单元格内容自动换行
+                style2.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin; //应用边界线 左边界线
+                style2.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin; //应用边界线 右边界线
+                style2.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin; //应用边界线 上边界线
+                style2.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin; //应用边界线 下边界线
+                style2.IsLocked = true;
+
+                //样式3
+                Style style4 = workbook.Styles[workbook.Styles.Add()];
+                style4.HorizontalAlignment = TextAlignmentType.Left;//文字居中
+                style4.Font.Name = "宋体";//文字字体
+                style4.Font.Size = 11;//文字大小
+                style4.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+                style4.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+
+
+                cells.SetRowHeight(0, 20);
+                cells[0, 0].PutValue("三方");
+                cells[0, 0].SetStyle(style2);
+                cells.SetColumnWidth(0, 20);
+                cells[0, 1].PutValue("物流");
+                cells[0, 1].SetStyle(style2);
+                cells.SetColumnWidth(1, 20);
+                cells[0, 2].PutValue("购买运费券");
+                cells[0, 2].SetStyle(style2);
+                cells.SetColumnWidth(2, 20);
+                cells[0, 3].PutValue("时间");
+                cells[0, 3].SetStyle(style2);
+                cells.SetColumnWidth(3, 20);
+
+                string where = "";
+                string str = @" select c.UserName as sf, b.UserXM as wuliu,a.Points,a.AddTime from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                                left join tb_b_user c on a.BuyUserID=c.UserID
+                                where   a.Status=0 and a.ZhiFuZT=1 and c.ClientKind=2 order by c.UserName,b.UserXM,a.AddTime desc";
+                str += where;
+                //开始取分页数据
+                System.Data.DataTable dt = new System.Data.DataTable();
+                dt = dbc.ExecuteDataTable(str);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    cells[i + 1, 0].PutValue(dt.Rows[i]["sf"]);
+                    cells[i + 1, 0].SetStyle(style4);
+                    cells[i + 1, 1].PutValue(dt.Rows[i]["wuliu"]);
+                    cells[i + 1, 1].SetStyle(style4);
+                    cells[i + 1, 2].PutValue(dt.Rows[i]["Points"]);
+                    cells[i + 1, 2].SetStyle(style4);
+                    cells[i + 1, 3].PutValue(Convert.ToDateTime(dt.Rows[i]["AddTime"]).ToString("yyyy-MM-dd HH:mm:ss"));
                     cells[i + 1, 3].SetStyle(style4);
                 }
 

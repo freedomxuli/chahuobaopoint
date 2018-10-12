@@ -1,4 +1,9 @@
-﻿var pageSize = 15;
+﻿inline_include("approot/r/weixin/js/qrcode/jquery-1.8.3.min.js");
+inline_include("approot/r/weixin/js/qrcode/jquery.qrcode.js");
+inline_include("approot/r/weixin/js/qrcode/qrcode.js");
+inline_include("approot/r/weixin/js/qrcode/utf.js");
+
+var pageSize = 15;
 var cx_role;
 var cx_yhm;
 var cx_xm;
@@ -152,6 +157,19 @@ function LookLists(id)
                 moneystore.loadData(retVal.dt2);
             }
         }, CS.onError, id);
+    });
+}
+
+
+function LookEWM(username) {
+    var win = new EWMWin();
+    win.show(null, function () {
+        jQuery('#qrcodeTable').qrcode({
+            render: "table",
+            text: username,
+            width: "150",               //二维码的宽度
+            height: "150",
+        });
     });
 }
 //************************************页面方法***************************************
@@ -416,6 +434,48 @@ Ext.define('addWin', {
     }
 });
 
+
+Ext.define('EWMWin', {
+    extend: 'Ext.window.Window',
+
+    height: 300,
+    width: 400,
+    layout: {
+        type: 'fit'
+    },
+    closeAction: 'destroy',
+    modal: true,
+    title: '查看二维码',
+
+    initComponent: function () {
+        var me = this;
+        me.items = [
+            {
+                xtype: 'panel',
+                region: 'center',
+                width: 150,
+                html:'<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:30px;">'
+                   +    ' <tr>'
+                   +      '   <td align="center"> <div id="qrcodeTable"></div></td>'
+                  +     ' </tr>'
+                  + '</table>',
+                buttonAlign: 'center',
+                buttons: [
+                     {
+                         text: '取消',
+                         iconCls: 'back',
+                         handler: function () {
+                             this.up('window').close();
+                         }
+                     }
+                ]
+            }
+        ];
+        me.callParent(arguments);
+    }
+});
+
+
 Ext.define('OrderList', {
     extend: 'Ext.window.Window',
 
@@ -661,12 +721,12 @@ Ext.onReady(function () {
                             {
                                 text: '操作',
                                 dataIndex: 'UserID',
-                                width: 180,
+                                width: 250,
                                 sortable: false,
                                 menuDisabled: true,
                                 renderer: function (value, cellmeta, record, rowIndex, columnIndex, store) {
                                     var str;
-                                    str = "<a onclick='EditUser(\"" + value + "\");'>修改</a>　<a onclick='AddPhoto(\"" + value + "\");'>添加照片</a>　<a onclick='LookLists(\"" + value + "\");'>查看记录</a>";
+                                    str = "<a onclick='EditUser(\"" + value + "\");'>修改</a>　<a onclick='AddPhoto(\"" + value + "\");'>添加照片</a>　<a onclick='LookLists(\"" + value + "\");'>查看记录</a> <a onclick='LookEWM(\"" + record.data.UserName + "\");'>查看二维码</a>";
                                     return str;
                                 }
                             }
@@ -770,6 +830,14 @@ Ext.onReady(function () {
                                                     text: '导出三方用户统计表',
                                                     handler: function () {
                                                         DownloadFile("CZCLZ.YHGLClass.GetSFUSERToFile", "三方用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                    }
+                                                },
+                                                {
+                                                    xtype: 'button',
+                                                    iconCls: 'view',
+                                                    text: '导出三方用户购买记录',
+                                                    handler: function () {
+                                                        DownloadFile("CZCLZ.YHGLClass.GetSFYFQToFile", "三方用户购买记录.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
                                                     }
                                                 }
                                             ]
