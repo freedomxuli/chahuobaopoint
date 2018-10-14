@@ -265,7 +265,8 @@
                                                             '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" data-preview-src="" data-preview-group="' + pagnum + i + '" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
                                                         '</div>'+
                                                         '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
-                                                            '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:blue;font-weight:bold;">' + list[i]["UserXM"] + '</span>　　<span style="color:red;font-weight:bold;">' + list[i]["points"] + '分</span>　　<button type="button" style="padding:0px !important;border:0px !important;color:green !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">' + isGZ + '</button></h5>' +
+                                                            '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:blue;font-weight:bold;">' + list[i]["UserXM"] + '</span>　　<button type="button" style="padding:0px !important;border:0px !important;color:green !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">' + isGZ + '</button></h5>' +
+                                                            '<h5>运费券：<span style="color:red;font-weight:bold;">' + list[i]["points"] + '</span><h5>'+
                                                             '<h5>折　扣：<span style="color:red;font-weight:bold;">' + list[i]["discountmemo"] + '</span>　(购买人次：<span style="color:red;font-weight:bold;">' + list[i]["num"] + '</span>)</h5>' +
                                                             '<h5 style="word-wrap:break-word;">线　路：<span style="color:red;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
                                                             '<h5 style="word-wrap:break-word;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
@@ -383,7 +384,7 @@
 		            mui('#pullrefresh').pullRefresh().pullupLoading();
 		        });
 		    }
-		</script>
+		  </script>
 	</body>
 
 </html>
