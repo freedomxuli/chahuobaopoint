@@ -71,19 +71,9 @@ public class JFSQMag
             dbc.BeginTransaction();
             try
             {
-                var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
-                var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
-                var sr = dt.NewRow();
-                sr["sqId"] = new Guid(sqId);
-                sr["issq"] = issq;
-                sr["shtime"] = DateTime.Now;
-                sr["shuserId"] = SystemUser.CurrentUser.UserID;
-                dt.Rows.Add(sr);
-                dbc.UpdateTable(dt, dtt);
-
                 if (issq == 1)
                 {
-                    string str = "select * from tb_b_jfsq where sqId=" + dbc.ToSqlValue(sqId);
+                    string str = "select * from tb_b_jfsq where issq=0 and sqId=" + dbc.ToSqlValue(sqId);
                     DataTable sdt = dbc.ExecuteDataTable(str);
 
                     var userId = "";
@@ -109,7 +99,17 @@ public class JFSQMag
                         dbc.UpdateTable(udt, udtt);
                     }
                 }
-                
+
+                var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
+                var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
+                var sr = dt.NewRow();
+                sr["sqId"] = new Guid(sqId);
+                sr["issq"] = issq;
+                sr["shtime"] = DateTime.Now;
+                sr["shuserId"] = SystemUser.CurrentUser.UserID;
+                dt.Rows.Add(sr);
+                dbc.UpdateTable(dt, dtt);
+
                 dbc.CommitTransaction();
                 return true;
             }
