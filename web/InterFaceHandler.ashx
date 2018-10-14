@@ -532,7 +532,7 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserName as syr,c.UserXM as zxmc from tb_b_mycard a left join tb_b_user b  on a.UserID=b.UserID
+                    str = @"select a.*,b.UserName as syr,c.UserXM as zxmc,c.UserTel,c.Address from tb_b_mycard a left join tb_b_user b  on a.UserID=b.UserID
                             left join tb_b_user c on a.CardUserID=c.UserID
                              where a.UserID='" + udt.Rows[0]["UserID"] + "' and a.status=0 order by a.points";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
@@ -906,7 +906,7 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID from tb_b_plattosale a 
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId

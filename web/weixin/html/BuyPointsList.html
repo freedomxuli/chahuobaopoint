@@ -268,9 +268,11 @@
                                                             '<h5 style="line-height:150%;word-wrap:break-word;"><span style="color:blue;font-weight:bold;">' + list[i]["UserXM"] + '</span>　　<span style="color:red;font-weight:bold;">' + list[i]["points"] + '分</span>　　<button type="button" style="padding:0px !important;border:0px !important;color:green !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">' + isGZ + '</button></h5>' +
                                                             '<h5>折　扣：<span style="color:red;font-weight:bold;">' + list[i]["discountmemo"] + '</span>　(购买人次：<span style="color:red;font-weight:bold;">' + list[i]["num"] + '</span>)</h5>' +
                                                             '<h5 style="word-wrap:break-word;">线　路：<span style="color:red;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
+                                                            '<h5 style="word-wrap:break-word;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
+                                                            '<h5 style="word-wrap:break-word;">地　址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</span></h5>' +
                                                         '</div>' +
                                                         '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
-                                                            '<br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +
+                                                            '<br /><br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +
                                                                 '购买' +
                                                             '</button>' +
                                                         '</div>' +
