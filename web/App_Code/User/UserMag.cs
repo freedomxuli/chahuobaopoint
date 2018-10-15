@@ -1550,6 +1550,7 @@ public class UserMag
                     dr["UserTel"] = jsr["UserTel"].ToString();
                     dr["FromRoute"] = jsr["FromRoute"].ToString();
                     dr["ToRoute"] = jsr["ToRoute"].ToString();
+                    dr["Address"] = jsr["Address"].ToString();
                     dt.Rows.Add(dr);
                     dbc.UpdateTable(dt, dtt);
 

@@ -353,7 +353,28 @@
 		    }
 
 		    function BuyPoints(val) {
-		        mui.alert("16号开放抢购，敬请期待！");
+		        //1539651600000
+		        if (new Date().getTime() >= 1539651600000) {
+		            mui.ajax(grobal_url, {
+		                dataType: "json",
+		                type: "post",
+		                data: {
+		                    "action": "IsVaildUser",
+		                    "UserName": localStorage.getItem("mgps_UserName")
+		                },
+		                success: function (data, status, xhr) {
+		                    if (data.sign == 1) {
+		                        document.location.href = "BuyPointsDetails.html";
+		                        localStorage.setItem("PlatToSaleId", val);
+		                    } else {
+		                        mui.alert(data.msg);
+		                    }
+		                }
+		            });
+		        } else {
+		            mui.alert("10月16日上午9点开抢，敬请期待！");
+		        }
+		        
 		        //mui.ajax(grobal_url, {
 		        //    dataType: "json",
 		        //    type: "post",
