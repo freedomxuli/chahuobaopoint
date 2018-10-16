@@ -48,9 +48,9 @@
 		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" onclick="ApplyPoints();"style="padding-left:0px;padding-right:0px;"><a href="#" id="ApplyPoints">
 		                    <span class="mui-icon-extra mui-icon-extra-prech"></span>
 		                    <div class="mui-media-body">申请运费券</div></a></li>
-		           <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
-		                    <span class="mui-icon mui-icon-more"></span>
-		                    <div class="mui-media-body">敬请期待</div></a></li>
+		           <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" onclick="CZSM();"style="padding-left:0px;padding-right:0px;"><a href="#" id="CZSM">
+		                    <span class="mui-icon-extra mui-icon-extra-dictionary"></span>
+		                    <div class="mui-media-body">操作说明</div></a></li>
 		        </ul> 
 		</div>
 	</body>
@@ -111,6 +111,10 @@
 	        panduanyh(localStorage.getItem("mgps_UserName"));
 	       // document.location.href = "ApplyPoints.aspx";
 	    }
+	    function CZSM() {
+	        document.location.href = "SYSH.html";
+	        // document.location.href = "ApplyPoints.aspx";
+	    }
 	    //var MySettingsButton = doc.getElementById('MySettings');
 	    //MySettingsButton.addEventListener('tap', function (event) {
 	    //    document.location.href = "MySettings.html";
@@ -120,5 +124,5 @@
 	    //ApplyPointsButton.addEventListener('tap', function (event) {
 	    //    panduanyh(localStorage.getItem("mgps_UserName"));
 	    //}, false);
-	</script>
+    </script>
 </html>

@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+        <!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+	</head>
+	<style>
+			.mui-control-content {
+				background-color: white;
+				min-height: 215px;
+			}
+			.mui-control-content .mui-loading {
+				margin-top: 50px;
+			}
+		</style>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item" href="#item1mobile">
+				专线说明
+			</a>
+					<a class="mui-control-item" href="#item2mobile">
+				三方说明
+			</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				<div class="mui-slider-group">
+					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active" style="min-height:500px;">
+						<div id="scroll1" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+                                <img src="../../Images/zx.jpg" />
+							</div>
+						</div>
+					</div>
+					<div id="item2mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll2" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<img src="../../Images/sf.jpg" />
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+        <script type="text/javascript" src="../js/qrcode/jquery-1.8.3.min.js" ></script>
+		<script>
+
+		    mui.init({
+		        swipeBack: false
+		    });
+		    (function ($) {
+		        $('.mui-scroll-wrapper').scroll({
+		            indicators: true //是否显示滚动条
+		        });
+		        var html2 = '<ul class="mui-table-view"><li class="mui-table-view-cell">第二个选项卡子项-1</li><li class="mui-table-view-cell">第二个选项卡子项-2</li><li class="mui-table-view-cell">第二个选项卡子项-3</li><li class="mui-table-view-cell">第二个选项卡子项-4</li><li class="mui-table-view-cell">第二个选项卡子项-5</li></ul>';
+		        var item2 = document.getElementById('item2mobile');
+		        document.getElementById('slider').addEventListener('slide', function (e) {
+		            if (e.detail.slideNumber === 1) {
+		                if (item2.querySelector('.mui-loading')) {
+		                    setTimeout(function () {
+		                        item2.querySelector('.mui-scroll').innerHTML = html2;
+		                    }, 500);
+		                }
+		            } 
+		        });
+		        var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
+		        $('.mui-input-group').on('change', 'input', function () {
+		            if (this.checked) {
+		                sliderSegmentedControl.className = 'mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-' + this.value;
+		                //force repaint
+		                sliderProgressBar.setAttribute('style', sliderProgressBar.getAttribute('style'));
+		            }
+		        });
+		    })(mui);
+		</script>
+
+	</body>
+</html>
