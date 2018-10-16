@@ -743,15 +743,10 @@ public class UserMag
                 if (!string.IsNullOrEmpty(mc))
                 {
                     where1 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
-                    where2 += " and " + dbc.C_Like("b.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where2 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                 }
 
-                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
-                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"
-                            union all 
-	                        select b.UserXM,b.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
-                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"
-                            order by AddTime desc";
+                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"                            union all 	                        select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID                            left join tb_b_user c on a.BuyUserID=c.UserID                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"                            order by AddTime desc";
                 DataTable dt = dbc.ExecuteDataTable(str);
 
                 dt.Columns.Add("DATE");
