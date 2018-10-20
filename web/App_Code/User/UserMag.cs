@@ -496,20 +496,6 @@ public class UserMag
                 System.Data.DataTable dtPage = new System.Data.DataTable();
                 dtPage = dbc.GetPagedDataTable(str + " order by a.UserName,a.UserXM", pagesize, ref cp, out ac);
 
-                dtPage.Columns.Add("dqS");
-                for (int i = 0; i < dtPage.Rows.Count; i++)
-                {
-                    if (dtPage.Rows[i]["DqBm"] != null && dtPage.Rows[i]["DqBm"].ToString() != "")
-                    {
-                        string sql = "select dq_bm from tb_b_dq where dq_bm=(select dq_sj from tb_b_dq where dq_sj<>'000000' and dq_bm=" + dbc.ToSqlValue(dtPage.Rows[i]["DqBm"]) + ")";
-                        DataTable dt = dbc.ExecuteDataTable(sql);
-                        if (dt.Rows.Count > 0)
-                        {
-                            dtPage.Rows[i]["dqS"] = dt.Rows[0][0];
-                        }
-                    }
-                }
-
                 return new { dt = dtPage, cp = cp, ac = ac };
             }
             catch (Exception ex)
@@ -1523,7 +1509,6 @@ public class UserMag
                     dr["companyId"] = companyId;
                     //dr["PayPassword"] = ;
                     dr["Address"] = jsr["Address"].ToString();
-                    dr["DqBm"] = jsr["DqBm"].ToString();
                     dt.Rows.Add(dr);
                     dbc.InsertTable(dt);
 
@@ -1561,7 +1546,6 @@ public class UserMag
                     dr["FromRoute"] = jsr["FromRoute"].ToString();
                     dr["ToRoute"] = jsr["ToRoute"].ToString();
                     dr["Address"] = jsr["Address"].ToString();
-                    dr["DqBm"] = jsr["DqBm"].ToString();
                     dt.Rows.Add(dr);
                     dbc.UpdateTable(dt, dtt);
 
@@ -2021,28 +2005,6 @@ public class UserMag
             Privileges.Add(drPrivilege["PRIVILEGECODE"].ToString());
         }
         return Privileges.ToArray();
-    }
-
-    [CSMethod("GetDQS")]
-    public DataTable GetDQS()
-    {
-        using (DBConnection dbc = new DBConnection())
-        {
-            string str = "select dq_mc,dq_bm from tb_b_dq where dq_sj='000000' and status=0 order by dq_bm";
-            DataTable dt = dbc.ExecuteDataTable(str);
-            return dt;
-        }
-    }
-
-    [CSMethod("GetDQ")]
-    public DataTable GetDQ(string dqbm)
-    {
-        using (DBConnection dbc = new DBConnection())
-        {
-            string str = "select dq_mc,dq_bm from tb_b_dq where dq_sj=" + dbc.ToSqlValue(dqbm) + " and status=0 order by dq_bm";
-            DataTable dt = dbc.ExecuteDataTable(str);
-            return dt;
-        }
     }
 
 }

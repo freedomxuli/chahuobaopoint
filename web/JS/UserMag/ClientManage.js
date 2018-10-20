@@ -27,10 +27,7 @@ var store = createSFW4Store({
        { name: 'ToRoute' },
        { name: 'Points' },
        { name: 'SalePoints' },
-       { name: 'KFGMPoints' },
-       { name: 'dqS' },
-       { name: 'DqBm' }
-       
+       { name: 'KFGMPoints' }
     ],
     onPageChange: function (sto, nPage, sorters) {
         getUser(nPage);
@@ -92,21 +89,6 @@ var moneystore = Ext.create('Ext.data.Store', {
     ]
 });
 
-var dqstore = Ext.create('Ext.data.Store', {
-    fields: [
-        { name: 'dq_mc' },
-        { name: 'dq_bm' }
-    ]
-});
-
-var sdqstore = Ext.create('Ext.data.Store', {
-    fields: [
-        { name: 'dq_mc' },
-        { name: 'dq_bm' }
-    ]
-});
-
-
 //************************************数据源*****************************************
 
 //************************************页面方法***************************************
@@ -125,31 +107,23 @@ function EditUser(id) {
     var r = store.findRecord("UserID", id).data;
     var win = new addWin();
     win.show(null, function () {
-        CS('CZCLZ.YHGLClass.GetDQS', function (retVal) {
-            if (retVal) {
-                sdqstore.loadData(retVal);
-                CS('CZCLZ.YHGLClass.GetDQ', function (ret) {
-                    dqstore.loadData(ret);
-                    win.setTitle("用户修改");
-                    var form = Ext.getCmp('addform');
-                    form.form.setValues(r);
-                    if (r.ClientKind == 2) {
-                        Ext.getCmp("roleId").allowBlank = true;
-                        Ext.getCmp("roleId").hide();
-                        Ext.getCmp("UserXM").allowBlank = true;
-                        Ext.getCmp("UserXM").hide();
-                    } else if (r.ClientKind == 1) {
-                        Ext.getCmp("roleId").allowBlank = true;
-                        Ext.getCmp("roleId").hide();
-                    } else {
-                        Ext.getCmp("roleId").getEl().allowBlank = false;
-                        Ext.getCmp("roleId").show();
-                        Ext.getCmp("UserXM").getEl().allowBlank = false;
-                        Ext.getCmp("UserXM").show();
-                    }
-                }, CS.onError, r.dqS);
-            }
-        }, CS.onError);
+        win.setTitle("用户修改");
+        var form = Ext.getCmp('addform');
+        form.form.setValues(r);
+        if (r.ClientKind == 2) {
+            Ext.getCmp("roleId").allowBlank = true;
+            Ext.getCmp("roleId").hide();
+            Ext.getCmp("UserXM").allowBlank = true;
+            Ext.getCmp("UserXM").hide();
+        } else if (r.ClientKind == 1) {
+            Ext.getCmp("roleId").allowBlank = true;
+            Ext.getCmp("roleId").hide();
+        } else {
+            Ext.getCmp("roleId").getEl().allowBlank = false;
+            Ext.getCmp("roleId").show();
+            Ext.getCmp("UserXM").getEl().allowBlank = false;
+            Ext.getCmp("UserXM").show();
+        }
     });
 }
 
@@ -325,7 +299,7 @@ Ext.define('phWin', {
 Ext.define('addWin', {
     extend: 'Ext.window.Window',
 
-    height: 350,
+    height: 300,
     width: 400,
     layout: {
         type: 'fit'
@@ -385,44 +359,6 @@ Ext.define('addWin', {
                         name: 'UserTel',
                         labelWidth: 70,
                         anchor: '100%'
-                    },
-                    {
-                        xtype: 'combobox',
-                        id: 'dqS',
-                        name: 'dqS',
-                        anchor: '100%',
-                        fieldLabel: '归属地(省)',
-                        allowBlank: false,
-                        editable: false,
-                        labelWidth: 70,
-                        store: sdqstore,
-                        queryMode: 'local',
-                        displayField: 'dq_mc',
-                        valueField: 'dq_bm',
-                        value: '',
-                        listeners: {
-                            'select': function (o) {
-                                Ext.getCmp("DqBm").setValue();
-                                CS('CZCLZ.YHGLClass.GetDQ', function (retVal) {
-                                    dqstore.loadData(retVal);
-                                }, CS.onError,Ext.getCmp("dqS").getValue());
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'combobox',
-                        id: 'DqBm',
-                        name: 'DqBm',
-                        anchor: '100%',
-                        fieldLabel: '归属地(市)',
-                        allowBlank: false,
-                        editable: false,
-                        labelWidth: 70,
-                        store: dqstore,
-                        queryMode: 'local',
-                        displayField: 'dq_mc',
-                        valueField: 'dq_bm',
-                        value: ''
                     },
                     {
                         xtype: 'textfield',

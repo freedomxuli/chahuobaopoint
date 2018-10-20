@@ -12,8 +12,7 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
 		    "FromRoute": FromRoutevalue,
 		    "ToRoute": ToRoutevalue,
 		    "UserPassword": UserPasswordvalue,
-		    "PayPassword": PayPasswordvalue,
-		    "DqBm": DqBm
+		    "PayPassword": PayPasswordvalue
 		},
 		success: function(data, status, xhr) {
 		    ajax_sign = data.sign;
@@ -51,8 +50,7 @@ function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue) {
             "UserName": UserNamevalue,
             //"UserXM": UserXMvalue,
             "UserPassword": UserPasswordvalue,
-            "PayPassword": PayPasswordvalue,
-            "DqBm": DqBm
+            "PayPassword": PayPasswordvalue
         },
         success: function (data, status, xhr) {
             ajax_sign = data.sign;
