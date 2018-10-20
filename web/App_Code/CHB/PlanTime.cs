@@ -70,14 +70,16 @@ public class MyJob : IJob
                 string sql = "select OrderID,PlatToSaleId,ZhiFuZT,AddTime,Points from tb_b_order where status = 0 and ZhiFuZT = 0";
                 DataTable dt_order = db.ExecuteDataTable(sql);
 
-                sql = "select PlatToSaleId,points from tb_b_plattosale where PlatToSaleId in (select PlatToSaleId from tb_b_order where status = 0 and ZhiFuZT = 0)";
-                DataTable dt_plat = db.ExecuteDataTable(sql);
+                //sql = "select PlatToSaleId,points from tb_b_plattosale where PlatToSaleId in (select PlatToSaleId from tb_b_order where status = 0 and ZhiFuZT = 0)";
+                //DataTable dt_plat = db.ExecuteDataTable(sql);
 
-                DataTable dt_update = db.GetEmptyDataTable("tb_b_plattosale");
-                DataTableTracker dtt_update = new DataTableTracker(dt_update);
+                //DataTable dt_update = db.GetEmptyDataTable("tb_b_plattosale");
+                //DataTableTracker dtt_update = new DataTableTracker(dt_update);
 
                 DataTable dt_order_update = db.GetEmptyDataTable("tb_b_order");
                 DataTableTracker dtt_order_update = new DataTableTracker(dt_order_update);
+
+                Hashtable ht = new Hashtable();
 
                 for (var i = 0; i < dt_order.Rows.Count; i++)
                 {
@@ -88,19 +90,28 @@ public class MyJob : IJob
                         dr_order["Status"] = 1;
                         dt_order_update.Rows.Add(dr_order);
 
-                        DataRow[] drs = dt_plat.Select("PlatToSaleId = '" + dt_order.Rows[i]["PlatToSaleId"].ToString() + "'");
-                        if (drs.Length > 0)
-                        {
-                            DataRow dr = dt_update.NewRow();
-                            dr["PlatToSaleId"] = dt_order.Rows[i]["PlatToSaleId"];
-                            dr["points"] = Convert.ToInt32(dt_order.Rows[i]["Points"]) + Convert.ToInt32(drs[0]["points"]);
-                            dt_update.Rows.Add(dr);
+                        sql = "select PlatToSaleId,points from tb_b_plattosale where PlatToSaleId = '" + dt_order.Rows[i]["PlatToSaleId"].ToString() + "'";
+                        DataTable dt_plat = db.ExecuteDataTable(sql);
 
-                            drs[0]["points"] = Convert.ToInt32(dr["points"]);
+                        if (dt_plat.Rows.Count > 0)
+                        {
+                            sql = "update tb_b_plattosale set points = '" + Convert.ToInt32(Convert.ToInt32(dt_order.Rows[i]["Points"]) + Convert.ToInt32(dt_plat.Rows[0]["points"])) + "' where PlatToSaleId = '" + dt_order.Rows[i]["PlatToSaleId"].ToString() + "'";
+                            db.ExecuteNonQuery(sql);
                         }
+                        //DataRow[] drs = dt_plat.Select("PlatToSaleId = '" + dt_order.Rows[i]["PlatToSaleId"].ToString() + "'");
+                        //if (drs.Length > 0)
+                        //{
+
+                        //    DataRow dr = dt_update.NewRow();
+                        //    dr["PlatToSaleId"] = dt_order.Rows[i]["PlatToSaleId"];
+                        //    dr["points"] = Convert.ToInt32(dt_order.Rows[i]["Points"]) + Convert.ToInt32(drs[0]["points"]);
+                        //    dt_update.Rows.Add(dr);
+
+                        //    drs[0]["points"] = Convert.ToInt32(Convert.ToInt32(dt_order.Rows[i]["Points"]) + Convert.ToInt32(drs[0]["points"]));
+                        //}
                     }
                 }
-                db.UpdateTable(dt_update, dtt_update);
+                //db.UpdateTable(dt_update, dtt_update);
                 db.UpdateTable(dt_order_update, dtt_order_update);
                 db.CommitTransaction();
             }

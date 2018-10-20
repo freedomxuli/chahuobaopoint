@@ -111,7 +111,7 @@ public class KFGMMag
                     logdr["CaoZuoJiLuID"]=Guid.NewGuid().ToString();
                     logdr["UserID"]=SystemUser.CurrentUser.UserID;
                     logdr["CaoZuoLeiXing"]="开放购买积分";
-                    logdr["CaoZuoNeiRong"] = SystemUser.CurrentUser.UserName + DateTime.Now + "开放购买" + wlmc + jsr["points"]+"积分";
+                    logdr["CaoZuoNeiRong"] = SystemUser.CurrentUser.UserName + DateTime.Now + "开放购买" + wlmc + jsr["points"] + "积分；折扣为：" + jsr["discountmemo"].ToString();
                     logdr["CaoZuoTime"]=DateTime.Now;
                     //logdr["CaoZuoRemark"]
                     logdt.Rows.Add(logdr);

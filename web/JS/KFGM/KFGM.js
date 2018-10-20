@@ -20,6 +20,12 @@ var store = createSFW4Store({
         getList(nPage);
     }
 });
+
+var hisStore = Ext.create('Ext.data.Store', {
+    fields: [
+        'PlatToSaleId', 'UserID', 'UserXM', 'points', 'discount', 'discountmemo'
+    ]
+})
 //************************************数据源*****************************************
 
 //************************************页面方法***************************************
@@ -37,18 +43,103 @@ function getList(nPage) {
 
 function kfgm(id) {
     var r = store.findRecord("PlatPointId", id).data;
-    var win = new addWin();
-    win.show(null, function () {
-        Ext.getCmp("PlatPointId").setValue(id);
-        Ext.getCmp("MaxPoint").setValue(r.Points);
+    var win = new KFList({ PlatPointId:id,MaxPoint:r.Points });
+    win.show(null,function(){
+        
     });
-    
-   
-
+    //var win = new addWin();
+    //win.show(null, function () {
+    //    Ext.getCmp("PlatPointId").setValue(id);
+    //    Ext.getCmp("MaxPoint").setValue(r.Points);
+    //});
 }
 //************************************页面方法***************************************
 
 //************************************弹出界面***************************************
+Ext.define('KFList', {
+    extend: 'Ext.window.Window',
+
+    height: 407,
+    width: 634,
+    layout: {
+        type: 'fit'
+    },
+    title: '历史开放',
+    modal: true,
+
+    initComponent: function () {
+        var me = this;
+
+        Ext.applyIf(me, {
+            items: [
+                {
+                    xtype: 'gridpanel',
+                    border: 1,
+                    columnLines: 1,
+                    store: hisStore,
+
+                    columns: [
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'UserXM',
+                            sortable: false,
+                            menuDisabled: true,
+                            flex: 1,
+                            text: '专线'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'points',
+                            sortable: false,
+                            menuDisabled: true,
+                            flex: 1,
+                            text: '线上剩余运费券'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'discountmemo',
+                            sortable: false,
+                            menuDisabled: true,
+                            flex: 1,
+                            text: '线上折扣'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            dataIndex: 'PlatToSaleId',
+                            sortable: false,
+                            menuDisabled: true,
+                            flex: 1,
+                            text: '操作',
+                            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store)
+                            {
+                                return "<a href='javascsript:void(0);' onclick='CXKF(\"" + value + "\");'>重新开放</a>";
+                            }
+                        }
+                    ]
+                }
+            ],
+            buttonAlign: 'center',
+            buttons: [
+                {
+                    text: '新增开放折扣',
+                    handler: function () {
+                        var 
+                    }
+                },
+                {
+                    text: '关闭',
+                    handler: function () {
+                        me.close();
+                    }
+                }
+            ]
+        });
+
+        me.callParent(arguments);
+    }
+
+});
+
 Ext.define('addWin', {
     extend: 'Ext.window.Window',
 
