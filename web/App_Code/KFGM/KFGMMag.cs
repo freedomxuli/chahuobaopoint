@@ -25,6 +25,34 @@ public class KFGMMag
         //
     }
 
+    [CSMethod("getHisSale")]
+    public DataTable getHisSale(string UserID)
+    {
+        using (DBConnection dbc = new DBConnection())
+        {
+            string sql = @"select a.*,b.UserXM from tb_b_plattosale a 
+                           left join tb_b_user b on a.UserID = b.UserID
+                           where a.status = 0 and a.UserID = @UserID";
+            SqlCommand cmd = dbc.CreateCommand(sql);
+            cmd.Parameters.Add("@UserID", UserID);
+            DataTable dt = dbc.ExecuteDataTable(cmd);
+            return dt;
+        }
+    }
+
+    [CSMethod("GetPointSaleXM")]
+    public DataTable GetPointSaleXM(string PlatToSaleId)
+    {
+        using (var dbc = new DBConnection())
+        {
+            string sql = "select * from tb_b_plattosale where PlatToSaleId = @PlatToSaleId";
+            SqlCommand cmd = dbc.CreateCommand(sql);
+            cmd.Parameters.Add("@PlatToSaleId", PlatToSaleId);
+            DataTable dt = dbc.ExecuteDataTable(cmd);
+            return dt;
+        }
+    }
+
     [CSMethod("GetList")]
     public object GetList(int pagnum, int pagesize,string yhm)
     {
@@ -76,18 +104,47 @@ public class KFGMMag
                     var userid = pdt.Rows[0]["UserID"].ToString();
 
                     var saledt = dbc.GetEmptyDataTable("tb_b_plattosale");
-                    var saledr = saledt.NewRow();
-                    saledr["PlatToSaleId"] = Guid.NewGuid().ToString();
-                    saledr["UserID"] = userid;
-                    saledr["points"] = Convert.ToDecimal(jsr["points"].ToString());
-                    saledr["addtime"] = DateTime.Now;
-                    saledr["status"] = 0;
-                    saledr["discount"] = Convert.ToDecimal(jsr["discount"].ToString());
-                    saledr["discountmemo"] = jsr["discountmemo"].ToString();
-                    //saledr["memo"] = ;
-                    saledt.Rows.Add(saledr);
-                    dbc.InsertTable(saledt);
+                    DataTableTracker saledtt = new DataTableTracker(saledt);
 
+                    if (string.IsNullOrEmpty(jsr["PlatToSaleId"].ToString()))
+                    {
+                        str = "select discount from tb_b_plattosale where UserID = " + dbc.ToSqlValue(userid);
+                        DataTable dt_discount = dbc.ExecuteDataTable(str);
+
+                        if (dt_discount.Rows.Count > 0)
+                        {
+                            for (var i = 0; i < dt_discount.Rows.Count; i++)
+                            {
+                                if (dt_discount.Rows[i]["discount"].ToString() == jsr["discount"].ToString())
+                                    throw new Exception("已开放相同折扣，请使用重新开放功能！");
+                            }
+                        }
+
+                        var saledr = saledt.NewRow();
+                        saledr["PlatToSaleId"] = Guid.NewGuid().ToString();
+                        saledr["UserID"] = userid;
+                        saledr["points"] = Convert.ToDecimal(jsr["points"].ToString());
+                        saledr["addtime"] = DateTime.Now;
+                        saledr["status"] = 0;
+                        saledr["discount"] = Convert.ToDecimal(jsr["discount"].ToString());
+                        saledr["discountmemo"] = jsr["discountmemo"].ToString();
+                        saledt.Rows.Add(saledr);
+                        dbc.InsertTable(saledt);
+                    }
+                    else
+                    {
+                        str = "select points from tb_b_plattosale where PlatToSaleId = " + dbc.ToSqlValue(jsr["PlatToSaleId"].ToString());
+                        decimal sale_new_points = Convert.ToDecimal(dbc.ExecuteScalar(str));
+
+                        var saledr = saledt.NewRow();
+                        saledr["PlatToSaleId"] = jsr["PlatToSaleId"].ToString();
+                        saledr["points"] = Convert.ToDecimal(jsr["points"].ToString()) + sale_new_points;
+                        saledr["addtime"] = DateTime.Now;
+                        saledr["status"] = 0;
+                        saledt.Rows.Add(saledr);
+                        dbc.UpdateTable(saledt, saledtt);
+                    }
+                    
                     var dt = dbc.GetEmptyDataTable("tb_b_platpoints");
                     var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
                     var dr = dt.NewRow();
