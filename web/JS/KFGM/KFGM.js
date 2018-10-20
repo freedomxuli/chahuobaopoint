@@ -40,18 +40,41 @@ function getList(nPage) {
     }, CS.onError, nPage, pageSize,  Ext.getCmp("cx_yhm").getValue());
 }
 
+function getHisSale(UserID)
+{
+    CS('CZCLZ.KFGMMag.getHisSale', function (retVal) {
+        if (retVal)
+        {
+            hisStore.loadData(retVal);
+        }
+    }, CS.onError, UserID);
+}
+
 
 function kfgm(id) {
     var r = store.findRecord("PlatPointId", id).data;
-    var win = new KFList({ PlatPointId:id,MaxPoint:r.Points });
+    var win = new KFList({ PlatPointId: id, MaxPoint: r.Points, UserID: r.UserID });
     win.show(null,function(){
-        
+        getHisSale(r.UserID);
     });
     //var win = new addWin();
     //win.show(null, function () {
     //    Ext.getCmp("PlatPointId").setValue(id);
     //    Ext.getCmp("MaxPoint").setValue(r.Points);
     //});
+}
+
+function CXKF(PlatToSaleId, UserID, PlatPointId, MaxPoint, discount, discountmemo)
+{
+    var win = new addWin({ UserID: UserID, PlatToSaleId: PlatToSaleId });
+    win.show(null, function () {
+        Ext.getCmp("PlatPointId").setValue(PlatPointId);
+        Ext.getCmp("MaxPoint").setValue(MaxPoint);
+        Ext.getCmp("discount").setValue(discount);
+        Ext.getCmp("discount").setDisabled(true);
+        Ext.getCmp("discountmemo").setValue(discountmemo);
+        Ext.getCmp("discountmemo").setDisabled(true);
+    });
 }
 //************************************页面方法***************************************
 
@@ -112,7 +135,7 @@ Ext.define('KFList', {
                             text: '操作',
                             renderer: function(value, cellmeta, record, rowIndex, columnIndex, store)
                             {
-                                return "<a href='javascsript:void(0);' onclick='CXKF(\"" + value + "\");'>重新开放</a>";
+                                return "<a href='javascsript:void(0);' onclick='CXKF(\"" + value + "\",\"" + record.data.UserID + "\",\"" + me.PlatPointId + "\",\"" + me.MaxPoint + "\",\"" + record.data.discount + "\",\"" + record.data.discountmemo + "\");'>重新开放</a>";
                             }
                         }
                     ]
@@ -122,12 +145,18 @@ Ext.define('KFList', {
             buttons: [
                 {
                     text: '新增开放折扣',
+                    iconCls: 'add',
                     handler: function () {
-                        var 
+                        var win = new addWin({ UserID: me.UserID, PlatToSaleId: "" });
+                        win.show(null, function () {
+                            Ext.getCmp("PlatPointId").setValue(me.PlatPointId);
+                            Ext.getCmp("MaxPoint").setValue(me.MaxPoint);
+                        })
                     }
                 },
                 {
                     text: '关闭',
+                    iconCls: 'close',
                     handler: function () {
                         me.close();
                     }
@@ -243,11 +272,13 @@ Ext.define('addWin', {
                             var form = Ext.getCmp('addform');
                             if (form.form.isValid()) {
                                 var values = form.form.getValues(false);
+                                values["PlatToSaleId"] = me.PlatToSaleId;
                                 var me = this;
                                 CS('CZCLZ.KFGMMag.SaveKFGM', function (retVal) {
                                     if (retVal) {
                                         me.up('window').close();
                                         getList(1);
+                                        getHisSale(me.UserID);
                                     }
                                 }, CS.onError, values);
 
