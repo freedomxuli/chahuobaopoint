@@ -170,6 +170,7 @@ public class InterFaceHandler : IHttpHandler {
         string ToRoute = context.Request["ToRoute"];
         string UserPassword = context.Request["UserPassword"];
         string PayPassword = context.Request["PayPassword"];
+        string DqBm = context.Request["DqBm"];
 
         string type = context.Request["type"];
         Hashtable hash = new Hashtable();
@@ -206,6 +207,7 @@ public class InterFaceHandler : IHttpHandler {
                     dr["ToRoute"] = ToRoute;
                     //dr["companyId"] =;
                     dr["PayPassword"] = PayPassword;
+                    dr["DqBm"] = DqBm;
                     dt.Rows.Add(dr);
                     dbc.InsertTable(dt);
 
@@ -241,6 +243,7 @@ public class InterFaceHandler : IHttpHandler {
         //string UserXM = context.Request["UserXM"];
         string UserPassword = context.Request["UserPassword"];
         string PayPassword = context.Request["PayPassword"];
+        string DqBm = context.Request["DqBm"];
 
         string type = context.Request["type"];
         Hashtable hash = new Hashtable();
@@ -277,6 +280,7 @@ public class InterFaceHandler : IHttpHandler {
                     //dr["ToRoute"] = ToRoute;
                     //dr["companyId"] =;
                     dr["PayPassword"] = PayPassword;
+                    dr["DqBm"] = DqBm;
                     dt.Rows.Add(dr);
                     dbc.InsertTable(dt);
 
