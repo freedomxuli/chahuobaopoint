@@ -915,7 +915,7 @@ public class InterFaceHandler : IHttpHandler {
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
-                            where a.status=0 " + conn + @" order by a.addtime desc";
+                            where a.status=0 " + conn + @" and b.DqBm=" + dbc.ToSqlValue(udt.Rows[0]["DqBm"]) + @" order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");
