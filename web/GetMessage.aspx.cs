@@ -15,6 +15,7 @@ using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.MP.Entities.Menu;
 using Senparc.Weixin.MP.CommonAPIs;
+using Senparc.Weixin.MP.Sample.Weixin;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", ConfigFileExtension = "log4net", Watch = true)]
 public partial class GetMessage : System.Web.UI.Page
@@ -99,49 +100,49 @@ public partial class GetMessage : System.Web.UI.Page
             }
 
             //post method - 当有用户想公众账号发送消息时触发
-            //var postModel = new PostModel()
-            //{
-            //    Signature = Request.QueryString["signature"],
-            //    Msg_Signature = Request.QueryString["msg_signature"],
-            //    Timestamp = Request.QueryString["timestamp"],
-            //    Nonce = Request.QueryString["nonce"],
-            //    //以下保密信息不会（不应该）在网络上传播，请注意
-            //    Token = Token,
-            //    EncodingAESKey = "OOUa8906bBKb8l6aaMJTKyM5iIFJcI5PZkpWXZtIbNq",//根据自己后台的设置保持一致
-            //    AppId = "wx422044a7a4be9609"//根据自己后台的设置保持一致
-            //};
+            var postModel = new PostModel()
+            {
+                Signature = Request.QueryString["signature"],
+                Msg_Signature = Request.QueryString["msg_signature"],
+                Timestamp = Request.QueryString["timestamp"],
+                Nonce = Request.QueryString["nonce"],
+                //以下保密信息不会（不应该）在网络上传播，请注意
+                Token = Token,
+                EncodingAESKey = "chb7390fhunxg16sdjlkxnfhjdsk3gaz",//根据自己后台的设置保持一致
+                AppId = "wx422044a7a4be9609"//根据自己后台的设置保持一致
+            };
 
-            //var maxRecordCount = 10;
+            var maxRecordCount = 10;
 
-            ////自定义MessageHandler，对微信请求的详细判断操作都在这里面。
-            //var messageHandler = new CustomMessageHandler(Request.InputStream, postModel);
+            //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
+            var messageHandler = new CustomMessageHandler(Request.InputStream, postModel);
 
-            //try
-            //{
-            //    //执行微信处理过程
-            //    messageHandler.Execute();
+            try
+            {
+                //执行微信处理过程
+                messageHandler.Execute();
 
-            //    WriteContent(messageHandler.ResponseDocument.ToString());
-            //    return;
-            //}
-            //catch (Exception ex)
-            //{
-            //    using (TextWriter tw = new StreamWriter(Server.MapPath("~/App_Data/Error_" + DateTime.Now.Ticks + ".txt")))
-            //    {
-            //        tw.WriteLine(ex.Message);
-            //        tw.WriteLine(ex.InnerException.Message);
-            //        if (messageHandler.ResponseDocument != null)
-            //        {
-            //            tw.WriteLine(messageHandler.ResponseDocument.ToString());
-            //        }
-            //        tw.Flush();
-            //        tw.Close();
-            //    }
-            //}
-            //finally
-            //{
-            //    Response.End();
-            //}
+                WriteContent(messageHandler.ResponseDocument.ToString());
+                return;
+            }
+            catch (Exception ex)
+            {
+                using (TextWriter tw = new StreamWriter(Server.MapPath("~/App_Data/Error_" + DateTime.Now.Ticks + ".txt")))
+                {
+                    tw.WriteLine(ex.Message);
+                    tw.WriteLine(ex.InnerException.Message);
+                    if (messageHandler.ResponseDocument != null)
+                    {
+                        tw.WriteLine(messageHandler.ResponseDocument.ToString());
+                    }
+                    tw.Flush();
+                    tw.Close();
+                }
+            }
+            finally
+            {
+                Response.End();
+            }
         }
     }
 
