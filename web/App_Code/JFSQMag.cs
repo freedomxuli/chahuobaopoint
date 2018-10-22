@@ -97,19 +97,18 @@ public class JFSQMag
                         usr["Points"] = points;
                         udt.Rows.Add(usr);
                         dbc.UpdateTable(udt, udtt);
+
+                        var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
+                        var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
+                        var sr = dt.NewRow();
+                        sr["sqId"] = new Guid(sqId);
+                        sr["issq"] = issq;
+                        sr["shtime"] = DateTime.Now;
+                        sr["shuserId"] = SystemUser.CurrentUser.UserID;
+                        dt.Rows.Add(sr);
+                        dbc.UpdateTable(dt, dtt);
                     }
                 }
-
-                var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
-                var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
-                var sr = dt.NewRow();
-                sr["sqId"] = new Guid(sqId);
-                sr["issq"] = issq;
-                sr["shtime"] = DateTime.Now;
-                sr["shuserId"] = SystemUser.CurrentUser.UserID;
-                dt.Rows.Add(sr);
-                dbc.UpdateTable(dt, dtt);
-
                 dbc.CommitTransaction();
                 return true;
             }
