@@ -77,6 +77,9 @@ public class InterFaceHandler : IHttpHandler {
             case "IsVaildUser":
                 str = IsVaildUser(context);
                 break;
+            case "GetYHGSD":
+                str = GetYHGSD(context);
+                break;
         }
         context.Response.Write(str);
         context.Response.End();
@@ -871,6 +874,46 @@ public class InterFaceHandler : IHttpHandler {
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 
+    public string GetYHGSD(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string UserName = context.Request["UserName"];
+        UserName = HttpUtility.UrlDecode(UserName.ToUpper(), utf8);
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
+        hash["value"] = new object();
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                string str = "select a.*,b.dq_mc from tb_b_user a left join tb_b_dq b on a.DqBm=b.dq_bm and b.status=0 where a.UserName=" + dbc.ToSqlValue(UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(str);
+                if (udt.Rows.Count == 0)
+                {
+                    hash["sign"] = "0";
+                    hash["msg"] = "该用户不存在，请注册！";
+                }
+                else
+                {
+                    hash["sign"] = "1";
+                    hash["msg"] = "获取成功！";
+                    hash["value"] = new { dt = udt };
+                }
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
     public string PlatSaleList(HttpContext context)
     {
 
@@ -916,7 +959,7 @@ public class InterFaceHandler : IHttpHandler {
                             left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
-                            where a.status=0 " + conn + @" and b.DqBm=" + dbc.ToSqlValue(udt.Rows[0]["DqBm"]) + @" order by a.addtime desc";
+                            where a.status=0 " + conn + @" order by a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");

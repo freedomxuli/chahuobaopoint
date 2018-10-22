@@ -422,7 +422,26 @@
 		        });
 		    } else {
 		        mui.ready(function () {
-		            mui('#pullrefresh').pullRefresh().pullupLoading();
+		            mui.ajax(grobal_url, {
+		                dataType: "json",
+		                type: "post",
+		                data: {
+		                    "action": "GetYHGSD",
+		                    "UserName": localStorage.getItem("mgps_UserName"),
+		                },
+		                success: function (data, status, xhr) {
+		                    if (data.sign == '1') {
+		                        var udt = data.value.dt;
+		                        if (udt.length > 0) {
+		                            if (udt[0]['dq_mc']) {
+		                                document.getElementById('FromRoutePicker').innerHTML = udt[0]['dq_mc'];
+		                            }
+		                        }
+		                    }
+		                    mui('#pullrefresh').pullRefresh().pullupLoading();
+		                }
+		            });
+		           
 		        });
 		    }
 		  </script>
