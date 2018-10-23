@@ -1,4 +1,4 @@
-function getyanzhengma(UserName, type) {
+function getyanzhengma(UserName, type, txyanzhengma) {
     //alert(1);
 	var ajax_sign;
 	var ajax_msg;
@@ -8,7 +8,8 @@ function getyanzhengma(UserName, type) {
 		data: {
 		    "action": "getyanzhengma",
 			"UserName": UserName,
-			"type": type
+			"type": type,
+			"txyanzhengma": txyanzhengma
 		},
 		success: function(data, status, xhr) {
 			ajax_sign = data.sign;

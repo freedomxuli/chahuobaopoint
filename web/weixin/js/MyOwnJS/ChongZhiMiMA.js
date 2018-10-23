@@ -1,4 +1,4 @@
-function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
+function ChongZhiMiMa(UserName, UserPassword, UserLeiXing, txyanzhengma) {
     mui.showLoading("正在加载..", "div");
 	var ajax_sign;
 	var ajax_msg;
@@ -9,7 +9,8 @@ function ChongZhiMiMa(UserName, UserPassword, UserLeiXing) {
 		    "action": "ChongZhiMiMa",
 			"UserName": UserName,
 			"UserPassword": UserPassword,
-			"UserLeiXing":UserLeiXing
+			"UserLeiXing": UserLeiXing,
+			"txyanzhengma": txyanzhengma
 		},
 		success: function(data, status, xhr) {
 			ajax_sign = data.sign;

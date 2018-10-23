@@ -70,9 +70,16 @@
 
 						</div>
 					</li>
+                    <li class="mui-table-view-cell">
+						<div class="mui-input-row">
+							<label style="width: 37%;" class="iconfont_log_reg">图形验证码:</label>
+							<input id='txyanzhengma' style="width: 40%; float: left;" type="number" class="mui-input-clear  mui-input" placeholder="请输入图形码" style="width:80px;margin-left: 30px;">
+							<img id="imgcode" src="../../captcha.aspx?vctype=log" style="cursor: pointer;" />
+						</div>
+					</li>
 					<li class="mui-table-view-cell">
 						<div class="mui-input-row">
-							<label style="width: 37%;" class="iconfont_log_reg">验 证 码 :</label>
+							<label style="width: 37%;" class="iconfont_log_reg">短信验证码:</label>
 							<input id='yanzhengma' style="width: 40%; float: left;" type="number" class="mui-input-clear  mui-input" placeholder="请输入验证码" style="width:80px;margin-left: 30px;">
 							<div id="send" style="float: left;width: 23%;" class="mui-btn mui-btn-primary mui-btn-outlined">
 								发送
@@ -106,13 +113,23 @@
 		        var UserPasswordBox = doc.getElementById('Password');
 		        var PayPasswordBox = doc.getElementById('PayPassword');
 		        var sendbutton = document.getElementById("send");
+		        var imgButton = doc.getElementById('imgcode');
 		        sendbutton.addEventListener('tap', function (e) {
 		            var UserNamevalue = UserNameBox.value;
+		            var txyanzhengma = doc.getElementById('txyanzhengma').value;
 		            if (UserNamevalue.length == 11) {
-		                senmobile(60);
-		                getyanzhengma(UserNamevalue, 'zhuce');
+		                if (txyanzhengma) {
+		                    senmobile(60);
+		                    getyanzhengma(UserNamevalue, 'zhuce', txyanzhengma);
+		                }
+		                else {
+		                    $.toast('请输入图形验证码');
+		                    setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
+		                    return;
+		                }
 		            } else {
 		                $.toast('请输入正确格式的手机号');
+		                setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
 		                return;
 		            }
 		        });
@@ -124,23 +141,30 @@
 		            var UserPasswordvalue = UserPasswordBox.value;
 		            var PayPasswordvalue = PayPasswordBox.value;
 		            var yanzhengmavalue = doc.getElementById('yanzhengma').value;
+		            var txyanzhengma = doc.getElementById('txyanzhengma').value;
 		            var yanzhengmavalue_old = localStorage.getItem("yanzhengma_zhuce");
-		            if (UserXMvalue == "" || UserNamevalue == "" || UserPasswordvalue == "" || FromRoutevalue == "" || ToRoutevalue == "" || PayPasswordvalue == "" || yanzhengmavalue == "" || DqBm == "") {
+		            if (UserXMvalue == "" || UserNamevalue == "" || UserPasswordvalue == "" || FromRoutevalue == "" || ToRoutevalue == "" || PayPasswordvalue == "" || yanzhengmavalue == "" || DqBm == "" || txyanzhengma == "") {
 		                $.toast('每个信息都必须填写');
+		                setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
 		                return;
 		            }
 		            if (UserNamevalue.length != 11) {
 		                $.toast('请输入正确格式的手机号');
+		                setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
 		                return;
 		            }
 		            if (yanzhengmavalue != yanzhengmavalue_old) {
 		                $.toast('验证码超时，请重新发送');
+		                setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
 		                return;
 		            }
-		            ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPasswordvalue, PayPasswordvalue, DqBm);
+		            ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPasswordvalue, PayPasswordvalue, DqBm, txyanzhengma);
 		        });
 
-		       
+		        imgButton.addEventListener('tap', function (event) {
+		            setTimeout(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 1);
+		        });
+
 		    }(mui, document));
 
 		    var cityPicker = new mui.PopPicker({

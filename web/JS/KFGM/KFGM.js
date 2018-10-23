@@ -66,8 +66,10 @@ function kfgm(id) {
 
 function CXKF(PlatToSaleId, UserID, PlatPointId, MaxPoint, discount, discountmemo)
 {
-    var win = new addWin({ UserID: UserID, PlatToSaleId: PlatToSaleId });
+    var win = new addWin();
     win.show(null, function () {
+        Ext.getCmp("UserId").setValue(UserID);
+        Ext.getCmp("PlatToSaleId").setValue(PlatToSaleId);
         Ext.getCmp("PlatPointId").setValue(PlatPointId);
         Ext.getCmp("MaxPoint").setValue(MaxPoint);
         Ext.getCmp("discount").setValue(discount);
@@ -147,10 +149,12 @@ Ext.define('KFList', {
                     text: '新增开放折扣',
                     iconCls: 'add',
                     handler: function () {
-                        var win = new addWin({ UserID: me.UserID, PlatToSaleId: "" });
+                        var win = new addWin();
                         win.show(null, function () {
                             Ext.getCmp("PlatPointId").setValue(me.PlatPointId);
                             Ext.getCmp("MaxPoint").setValue(me.MaxPoint);
+                            Ext.getCmp("UserId").setValue(me.UserID);
+                            Ext.getCmp("PlatToSaleId").setValue("");
                         })
                     }
                 },
@@ -192,15 +196,29 @@ Ext.define('addWin', {
                     {
                         xtype: 'textfield',
                         fieldLabel: 'ID',
+                        id: 'UserId',
+                        name: 'UserId',
+                        hidden: true
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'ID',
+                        id: 'PlatToSaleId',
+                        name: 'PlatToSaleId',
+                        hidden: true
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'ID',
                         id: 'PlatPointId',
                         name: 'PlatPointId',
-                        hidden: true,
+                        hidden: true
                     },
                     {
                         xtype: 'numberfield',
                         id: 'MaxPoint',
                         name: 'MaxPoint',
-                        hidden: true,
+                        hidden: true
                     },
                     {
                         xtype: 'numberfield',
@@ -268,17 +286,17 @@ Ext.define('addWin', {
                                 });
                                 return;
                             }
-
+                            Ext.getCmp("discount").setDisabled(false);
+                            Ext.getCmp("discountmemo").setDisabled(false);
                             var form = Ext.getCmp('addform');
                             if (form.form.isValid()) {
                                 var values = form.form.getValues(false);
-                                values["PlatToSaleId"] = me.PlatToSaleId;
                                 var me = this;
                                 CS('CZCLZ.KFGMMag.SaveKFGM', function (retVal) {
                                     if (retVal) {
+                                        getHisSale(Ext.getCmp("UserId").getValue());
                                         me.up('window').close();
                                         getList(1);
-                                        getHisSale(me.UserID);
                                     }
                                 }, CS.onError, values);
 

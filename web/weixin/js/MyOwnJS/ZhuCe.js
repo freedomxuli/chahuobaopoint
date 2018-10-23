@@ -1,4 +1,4 @@
-function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPasswordvalue, PayPasswordvalue) {
+function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPasswordvalue, PayPasswordvalue, DqBm, txyanzhengma) {
     mui.showLoading("正在加载..", "div");
 	var ajax_sign;
 	var ajax_msg;
@@ -13,7 +13,8 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
 		    "ToRoute": ToRoutevalue,
 		    "UserPassword": UserPasswordvalue,
 		    "PayPassword": PayPasswordvalue,
-            "DqBm": DqBm
+		    "DqBm": DqBm,
+		    "txyanzhengma": txyanzhengma
 		},
 		success: function(data, status, xhr) {
 		    ajax_sign = data.sign;
@@ -39,7 +40,7 @@ function ZhuCe(UserNamevalue, UserXMvalue, FromRoutevalue, ToRoutevalue, UserPas
 	});
 }
 
-function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue) {
+function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue, DqBm, txyanzhengma) {
     mui.showLoading("正在加载..", "div");
     var ajax_sign;
     var ajax_msg;
@@ -52,7 +53,8 @@ function ZhuCe1(UserNamevalue, UserPasswordvalue, PayPasswordvalue) {
             //"UserXM": UserXMvalue,
             "UserPassword": UserPasswordvalue,
             "PayPassword": PayPasswordvalue,
-            "DqBm": DqBm
+            "DqBm": DqBm,
+            "txyanzhengma": txyanzhengma
         },
         success: function (data, status, xhr) {
             ajax_sign = data.sign;

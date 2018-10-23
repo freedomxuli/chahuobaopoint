@@ -108,14 +108,14 @@ public class KFGMMag
 
                     if (string.IsNullOrEmpty(jsr["PlatToSaleId"].ToString()))
                     {
-                        str = "select discount from tb_b_plattosale where UserID = " + dbc.ToSqlValue(userid);
+                        str = "select discount from tb_b_plattosale where status = 0 and UserID = " + dbc.ToSqlValue(userid);
                         DataTable dt_discount = dbc.ExecuteDataTable(str);
 
                         if (dt_discount.Rows.Count > 0)
                         {
                             for (var i = 0; i < dt_discount.Rows.Count; i++)
                             {
-                                if (dt_discount.Rows[i]["discount"].ToString() == jsr["discount"].ToString())
+                                if (Convert.ToDecimal(dt_discount.Rows[i]["discount"].ToString()) == Convert.ToDecimal(jsr["discount"].ToString()))
                                     throw new Exception("已开放相同折扣，请使用重新开放功能！");
                             }
                         }
