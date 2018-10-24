@@ -108,7 +108,7 @@ public class InterFaceHandler : IHttpHandler {
         {
             if (!VerCode.CheckCode("log", txyanzhengma))
             {
-                hash["msg"] = "验证码错误！";
+                hash["msg"] = "图形验证码错误，请重新点击刷新图形验证码，然后点发送获取短信验证！";
             }
             else
             {
@@ -195,60 +195,54 @@ public class InterFaceHandler : IHttpHandler {
         Hashtable hash = new Hashtable();
         hash["sign"] = "0";
         hash["msg"] = "注册失败！";
-        if (!VerCode.CheckCode("log", txyanzhengma))
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
         {
-            hash["msg"] = "验证码错误！";
-        }
-        else {
-            using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+            dbc.BeginTransaction();
+            try
             {
-                dbc.BeginTransaction();
-                try
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + UserName + "'");
+                if (dt_user.Rows.Count > 0)
                 {
-                    System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName='" + UserName + "'");
-                    if (dt_user.Rows.Count > 0)
-                    {
-                        hash["sign"] = "0";
-                        hash["msg"] = "该用户名已存在！";
-                    }
-                    else
-                    {
-                        //用户表
-                        var YHID = Guid.NewGuid().ToString();
-                        var dt = dbc.GetEmptyDataTable("tb_b_user");
-                        var dr = dt.NewRow();
-                        dr["UserID"] = new Guid(YHID);
-                        dr["UserName"] = UserName;
-                        dr["Password"] = UserPassword;
-                        dr["AddTime"] = DateTime.Now;
-                        dr["IsSHPass"] = 1;
-                        dr["Points"] = 0;
-                        dr["ClientKind"] = 1;
-                        //dr["Discount"] = ;
-                        dr["UserXM"] = UserXM;
-                        dr["UserTel"] = UserName;
-                        dr["FromRoute"] = FromRoute;
-                        dr["ToRoute"] = ToRoute;
-                        //dr["companyId"] =;
-                        dr["PayPassword"] = PayPassword;
-                        dr["DqBm"] = DqBm;
-                        dt.Rows.Add(dr);
-                        dbc.InsertTable(dt);
-
-                        hash["sign"] = "1";
-                        hash["msg"] = "注册成功！";
-                    }
-
-                    dbc.CommitTransaction();
-
-
-                }
-                catch (Exception ex)
-                {
-                    dbc.RoolbackTransaction();
                     hash["sign"] = "0";
-                    hash["msg"] = "内部错误:" + ex.Message;
+                    hash["msg"] = "该用户名已存在！";
                 }
+                else
+                {
+                    //用户表
+                    var YHID = Guid.NewGuid().ToString();
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = UserName;
+                    dr["Password"] = UserPassword;
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 1;
+                    //dr["Discount"] = ;
+                    dr["UserXM"] = UserXM;
+                    dr["UserTel"] = UserName;
+                    dr["FromRoute"] = FromRoute;
+                    dr["ToRoute"] = ToRoute;
+                    //dr["companyId"] =;
+                    dr["PayPassword"] = PayPassword;
+                    dr["DqBm"] = DqBm;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "注册成功！";
+                }
+
+                dbc.CommitTransaction();
+
+
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
             }
         }
 
@@ -274,60 +268,53 @@ public class InterFaceHandler : IHttpHandler {
         Hashtable hash = new Hashtable();
         hash["sign"] = "0";
         hash["msg"] = "注册失败！";
-        if (!VerCode.CheckCode("log", txyanzhengma))
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
         {
-            hash["msg"] = "验证码错误！";
-        }
-        else
-        {
-            using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+            dbc.BeginTransaction();
+            try
             {
-                dbc.BeginTransaction();
-                try
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count > 0)
                 {
-                    System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
-                    if (dt_user.Rows.Count > 0)
-                    {
-                        hash["sign"] = "0";
-                        hash["msg"] = "该用户名已存在！";
-                    }
-                    else
-                    {
-                        //用户表
-                        var YHID = Guid.NewGuid().ToString();
-                        var dt = dbc.GetEmptyDataTable("tb_b_user");
-                        var dr = dt.NewRow();
-                        dr["UserID"] = new Guid(YHID);
-                        dr["UserName"] = UserName;
-                        dr["Password"] = UserPassword;
-                        dr["AddTime"] = DateTime.Now;
-                        dr["IsSHPass"] = 1;
-                        dr["Points"] = 0;
-                        dr["ClientKind"] = 2;
-                        //dr["Discount"] = ;
-                        //dr["UserXM"] = UserXM;
-                        dr["UserTel"] = UserName;
-                        //dr["FromRoute"] = FromRoute;
-                        //dr["ToRoute"] = ToRoute;
-                        //dr["companyId"] =;
-                        dr["PayPassword"] = PayPassword;
-                        dr["DqBm"] = DqBm;
-                        dt.Rows.Add(dr);
-                        dbc.InsertTable(dt);
-
-                        hash["sign"] = "1";
-                        hash["msg"] = "注册成功！";
-                    }
-                    dbc.CommitTransaction();
-
-
-                }
-                catch (Exception ex)
-                {
-                    dbc.RoolbackTransaction();
                     hash["sign"] = "0";
-                    hash["msg"] = "内部错误:" + ex.Message;
+                    hash["msg"] = "该用户名已存在！";
                 }
+                else
+                {
+                    //用户表
+                    var YHID = Guid.NewGuid().ToString();
+                    var dt = dbc.GetEmptyDataTable("tb_b_user");
+                    var dr = dt.NewRow();
+                    dr["UserID"] = new Guid(YHID);
+                    dr["UserName"] = UserName;
+                    dr["Password"] = UserPassword;
+                    dr["AddTime"] = DateTime.Now;
+                    dr["IsSHPass"] = 1;
+                    dr["Points"] = 0;
+                    dr["ClientKind"] = 2;
+                    //dr["Discount"] = ;
+                    //dr["UserXM"] = UserXM;
+                    dr["UserTel"] = UserName;
+                    //dr["FromRoute"] = FromRoute;
+                    //dr["ToRoute"] = ToRoute;
+                    //dr["companyId"] =;
+                    dr["PayPassword"] = PayPassword;
+                    dr["DqBm"] = DqBm;
+                    dt.Rows.Add(dr);
+                    dbc.InsertTable(dt);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "注册成功！";
+                }
+                dbc.CommitTransaction();
+
+
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
             }
         }
 
@@ -394,39 +381,32 @@ public class InterFaceHandler : IHttpHandler {
         Hashtable hash = new Hashtable();
         hash["sign"] = "0";
         hash["msg"] = "重置密码失败！";
-        if (!VerCode.CheckCode("log", txyanzhengma))
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
         {
-            hash["msg"] = "验证码错误！";
-        }
-        else
-        {
-            using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+            dbc.BeginTransaction();
+            try
             {
-                dbc.BeginTransaction();
-                try
+                System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
+                if (dt_user.Rows.Count == 0)
                 {
-                    System.Data.DataTable dt_user = dbc.ExecuteDataTable("select * from tb_b_user where UserName=" + dbc.ToSqlValue(UserName));
-                    if (dt_user.Rows.Count == 0)
-                    {
-                        hash["sign"] = "0";
-                        hash["msg"] = "该用户不存在，请注册！";
-                    }
-                    else
-                    {
-                        string str = "update tb_b_user set Password=" + dbc.ToSqlValue(UserPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
-                        dbc.ExecuteDataTable(str);
-
-                        hash["sign"] = "1";
-                        hash["msg"] = "修改成功！";
-                    }
-                    dbc.CommitTransaction();
-                }
-                catch (Exception ex)
-                {
-                    dbc.RoolbackTransaction();
                     hash["sign"] = "0";
-                    hash["msg"] = "内部错误:" + ex.Message;
+                    hash["msg"] = "该用户不存在，请注册！";
                 }
+                else
+                {
+                    string str = "update tb_b_user set Password=" + dbc.ToSqlValue(UserPassword) + " where UserName=" + dbc.ToSqlValue(UserName);
+                    dbc.ExecuteDataTable(str);
+
+                    hash["sign"] = "1";
+                    hash["msg"] = "修改成功！";
+                }
+                dbc.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                dbc.RoolbackTransaction();
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
             }
         }
         
