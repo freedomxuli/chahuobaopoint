@@ -63,11 +63,11 @@ public partial class GetMessage : System.Web.UI.Page
             {
                 name = "微服务"
             };
-            subButton.sub_button.Add(new SingleViewButton()
-            {
-                url = "http://www.wuliubaoxianpingtai.com/weixin/",
-                name = "关于我们"
-            });
+            //subButton.sub_button.Add(new SingleViewButton()
+            //{
+            //    url = "http://www.wuliubaoxianpingtai.com/weixin/",
+            //    name = "关于我们"
+            //});
             subButton.sub_button.Add(new SingleViewButton()
             {
                 url = "http://a.app.qq.com/o/simple.jsp?pkgname=io.dcloud.H5A57DD98",
