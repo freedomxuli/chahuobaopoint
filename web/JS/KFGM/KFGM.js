@@ -53,15 +53,25 @@ function getHisSale(UserID)
 
 function kfgm(id) {
     var r = store.findRecord("PlatPointId", id).data;
-    var win = new KFList({ PlatPointId: id, MaxPoint: r.Points, UserID: r.UserID });
-    win.show(null,function(){
-        getHisSale(r.UserID);
-    });
-    //var win = new addWin();
-    //win.show(null, function () {
-    //    Ext.getCmp("PlatPointId").setValue(id);
-    //    Ext.getCmp("MaxPoint").setValue(r.Points);
+    //var win = new KFList({ PlatPointId: id, MaxPoint: r.Points, UserID: r.UserID });
+    //win.show(null,function(){
+    //    getHisSale(r.UserID);
     //});
+    CS('CZCLZ.KFGMMag.getHisSale', function (retVal) {
+        
+            var win = new addWin();
+            win.show(null, function () {
+                Ext.getCmp("PlatPointId").setValue(id);
+                Ext.getCmp("MaxPoint").setValue(r.Points);
+
+                if (retVal)
+                {
+                    var str = "线上剩余运费券:" + retVal[0]["points"] + " 线上折扣:" + retVal[0]["discountmemo"];
+                    Ext.getCmp("zspoint").setText(str);
+                    Ext.getCmp("PlatToSaleId").setValue(retVal[0]["PlatToSaleId"]);
+                }
+            });
+    }, CS.onError, r.UserID);
 }
 
 function CXKF(PlatToSaleId, UserID, PlatPointId, MaxPoint, discount, discountmemo)
@@ -257,7 +267,13 @@ Ext.define('addWin', {
                         fieldLabel: '优惠折扣备注',
                         allowBlank: false,
                         anchor: '100%'
-                    }
+                    },
+                     {
+                         xtype: "label",
+                         id:"zspoint",
+                         text: "",
+                         style: "padding-left:100px;"
+                     }
                 ],
                 buttonAlign: 'center',
                 buttons: [

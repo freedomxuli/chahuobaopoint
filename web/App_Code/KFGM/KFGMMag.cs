@@ -108,17 +108,17 @@ public class KFGMMag
 
                     if (string.IsNullOrEmpty(jsr["PlatToSaleId"].ToString()))
                     {
-                        str = "select discount from tb_b_plattosale where status = 0 and UserID = " + dbc.ToSqlValue(userid);
-                        DataTable dt_discount = dbc.ExecuteDataTable(str);
+                        //str = "select discount from tb_b_plattosale where status = 0 and UserID = " + dbc.ToSqlValue(userid);
+                        //DataTable dt_discount = dbc.ExecuteDataTable(str);
 
-                        if (dt_discount.Rows.Count > 0)
-                        {
-                            for (var i = 0; i < dt_discount.Rows.Count; i++)
-                            {
-                                if (Convert.ToDecimal(dt_discount.Rows[i]["discount"].ToString()) == Convert.ToDecimal(jsr["discount"].ToString()))
-                                    throw new Exception("已开放相同折扣，请使用重新开放功能！");
-                            }
-                        }
+                        //if (dt_discount.Rows.Count > 0)
+                        //{
+                        //    for (var i = 0; i < dt_discount.Rows.Count; i++)
+                        //    {
+                        //        if (Convert.ToDecimal(dt_discount.Rows[i]["discount"].ToString()) == Convert.ToDecimal(jsr["discount"].ToString()))
+                        //            throw new Exception("已开放相同折扣，请使用重新开放功能！");
+                        //    }
+                        //}
 
                         var saledr = saledt.NewRow();
                         saledr["PlatToSaleId"] = Guid.NewGuid().ToString();
@@ -141,6 +141,8 @@ public class KFGMMag
                         saledr["points"] = Convert.ToDecimal(jsr["points"].ToString()) + sale_new_points;
                         saledr["addtime"] = DateTime.Now;
                         saledr["status"] = 0;
+                        saledr["discount"] = Convert.ToDecimal(jsr["discount"].ToString());
+                        saledr["discountmemo"] = jsr["discountmemo"].ToString();
                         saledt.Rows.Add(saledr);
                         dbc.UpdateTable(saledt, saledtt);
                     }
