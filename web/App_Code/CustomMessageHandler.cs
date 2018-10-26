@@ -49,7 +49,7 @@ namespace Senparc.Weixin.MP.Sample.Weixin
         public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
         {
             var responseMessage = ResponseMessageBase.CreateFromRequestMessage<ResponseMessageText>(requestMessage);
-            responseMessage.Content = "感谢亲的关注！首次关注，亲可以输入“我要红包”获得1-10元不等的关注红包哦！";//GetWelcomeInfo();
+            responseMessage.Content = "";//"感谢亲的关注！首次关注，亲可以输入“我要红包”获得1-10元不等的关注红包哦！";//GetWelcomeInfo();
             return responseMessage;
         }
 
