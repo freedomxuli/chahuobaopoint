@@ -967,7 +967,7 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs from tb_b_plattosale a 
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,PlatToSaleId from tb_b_order where Status = 0 group by PlatToSaleId) d on a.PlatToSaleId = d.PlatToSaleId

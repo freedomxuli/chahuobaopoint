@@ -265,7 +265,7 @@
                                                                 '<h5 style="word-wrap:break-word;">地　址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</span></h5>' +
                                                             '</div>' +
                                                             '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
-                                                                '<br /><br /><button type="button" class="mui-btn mui-btn-danger" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\');">' +
+                                                                '<br /><br /><button type="button" class="mui-btn mui-btn-danger" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\',\'' + list[i]["DqBm"] + '\');">' +
                                                                     '购买' +
                                                                 '</button>' +
                                                             '</div>' +
@@ -372,9 +372,31 @@
 		        })
 		    }
 
-		    function BuyPoints(val) {
+		    function BuyPoints(val,dqbm) {
 		        //1539651600000
-		        if (new Date().getTime() >= 1539651600000) {
+		        if (dqbm == '320500') {
+		            if (new Date().getTime() >= 1540774800000) {
+		                mui.ajax(grobal_url, {
+		                    dataType: "json",
+		                    type: "post",
+		                    data: {
+		                        "action": "IsVaildUser",
+		                        "UserName": localStorage.getItem("mgps_UserName")
+		                    },
+		                    success: function (data, status, xhr) {
+		                        if (data.sign == 1) {
+		                            document.location.href = "BuyPointsDetails.html";
+		                            localStorage.setItem("PlatToSaleId", val);
+		                        } else {
+		                            mui.alert(data.msg);
+		                        }
+		                    }
+		                });
+		            } else {
+		                mui.alert("苏州物流10月29日上午9点开抢，敬请期待！");
+		            }
+
+		        } else {
 		            mui.ajax(grobal_url, {
 		                dataType: "json",
 		                type: "post",
@@ -391,9 +413,8 @@
 		                    }
 		                }
 		            });
-		        } else {
-		            mui.alert("10月16日上午9点开抢，敬请期待！");
 		        }
+		        
 		        
 		        //mui.ajax(grobal_url, {
 		        //    dataType: "json",
