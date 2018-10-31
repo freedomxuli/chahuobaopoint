@@ -1104,6 +1104,7 @@ public class InterFaceHandler : IHttpHandler {
                             dr["AddTime"] = DateTime.Now;
                             dr["Status"] = 0;
                             dr["ZhiFuZT"] = 0;
+                            dr["SXZT"] = 0;
                             dr["PlatToSaleId"] = PlatToSaleId;
                             dt_new.Rows.Add(dr);
                             db.InsertTable(dt_new);

@@ -67,7 +67,7 @@ public class MyJob : IJob
             {
                 db.BeginTransaction();
 
-                string sql = "select OrderID,PlatToSaleId,ZhiFuZT,AddTime,Points from tb_b_order where status = 0 and ZhiFuZT = 0";
+                string sql = "select OrderID,PlatToSaleId,ZhiFuZT,AddTime,Points from tb_b_order where status = 0 and ZhiFuZT = 0 and SXZT = 0";
                 DataTable dt_order = db.ExecuteDataTable(sql);
 
                 //sql = "select PlatToSaleId,points from tb_b_plattosale where PlatToSaleId in (select PlatToSaleId from tb_b_order where status = 0 and ZhiFuZT = 0)";

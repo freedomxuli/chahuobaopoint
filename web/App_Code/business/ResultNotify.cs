@@ -61,7 +61,7 @@ namespace WxPayAPI
                     string sql = "select * from tb_b_order where OrderCode =" + db.ToSqlValue(ordercode);
                     DataTable dt = db.ExecuteDataTable(sql);
 
-                    sql = "update tb_b_order set ZhiFuZT = 1,status = 0 where OrderCode =" + db.ToSqlValue(ordercode);
+                    sql = "update tb_b_order set ZhiFuZT = 1,Status = 0,SXZT = 0 where OrderCode =" + db.ToSqlValue(ordercode);
                     db.ExecuteNonQuery(sql);
 
                     sql = "select * from tb_b_mycard where status = 0 and CardUserID = '" + dt.Rows[0]["SaleUserID"].ToString() + "' and UserID = '" + dt.Rows[0]["BuyUserID"].ToString() + "'";

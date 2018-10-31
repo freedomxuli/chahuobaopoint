@@ -44,6 +44,9 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                     //JSAPI支付预处理
                     try
                     {
+                        sql = "update tb_b_order set SXZT = 1 where OrderCode =" + db.ToSqlValue(orderid);
+                        db.ExecuteNonQuery(sql);
+
                         WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult();
                         wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
                         Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);

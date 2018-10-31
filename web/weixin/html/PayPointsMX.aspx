@@ -101,7 +101,7 @@
 	        //e.detail.gesture.preventDefault();
 	        var ex = /^\d+$/;
 	        if (ex.test(jQuery("#GivePoints").val())) {
-	            if (parseInt(jQuery("#GivePoints").val()) >= 1) {
+	            if (parseInt(jQuery("#GivePoints").val()) >= 1 && parseInt(jQuery("#GivePoints").val()) <= 500) {
 	                //点击按钮扫描二维码
 	                wx.scanQRCode({
 	                    needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
@@ -162,7 +162,7 @@
 	                    }
 	                });
 	            } else {
-	                mui.alert("请填入大于1的整数");
+	                mui.alert("请填入大于1且小于500的整数");
 	            }
 	        } else {
 	            mui.alert("请填入整数");
