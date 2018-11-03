@@ -109,6 +109,24 @@ public class JFSQMag
                         dbc.UpdateTable(dt, dtt);
                     }
                 }
+                else if (issq == 2)
+                {
+                    string str = "select * from tb_b_jfsq where issq=0 and sqId=" + dbc.ToSqlValue(sqId);
+                    DataTable sdt = dbc.ExecuteDataTable(str);
+
+                    if (sdt.Rows.Count > 0)
+                    {
+                        var dt = dbc.GetEmptyDataTable("tb_b_jfsq");
+                        var dtt = new SmartFramework4v2.Data.DataTableTracker(dt);
+                        var sr = dt.NewRow();
+                        sr["sqId"] = new Guid(sqId);
+                        sr["issq"] = issq;
+                        sr["shtime"] = DateTime.Now;
+                        sr["shuserId"] = SystemUser.CurrentUser.UserID;
+                        dt.Rows.Add(sr);
+                        dbc.UpdateTable(dt, dtt);
+                    }
+                }
                 dbc.CommitTransaction();
                 return true;
             }
