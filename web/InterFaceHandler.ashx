@@ -967,13 +967,14 @@ public class InterFaceHandler : IHttpHandler {
                 }
                 else
                 {
-                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs from tb_b_plattosale a 
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs,g.gmje from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) d on a.UserID = d.SaleUserID
+                            left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
-                            where a.status=0 " + conn + @" order by a.addtime desc";
+                            where a.status=0 " + conn + @" order by f.gzs desc,a.addtime desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");

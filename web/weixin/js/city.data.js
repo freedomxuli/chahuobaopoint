@@ -1,4 +1,49 @@
-var cityData = [{
+var cityData = [
+    {
+        value: '320000',
+        text: '江苏省',
+        children: [{
+            value: "320100",
+            text: "南京市"
+        }, {
+            value: "320200",
+            text: "无锡市"
+        }, {
+            value: "320300",
+            text: "徐州市"
+        }, {
+            value: "320400",
+            text: "常州市"
+        }, {
+            value: "320500",
+            text: "苏州市"
+        }, {
+            value: "320600",
+            text: "南通市"
+        }, {
+            value: "320700",
+            text: "连云港市"
+        }, {
+            value: "320800",
+            text: "淮安市"
+        }, {
+            value: "320900",
+            text: "盐城市"
+        }, {
+            value: "321000",
+            text: "扬州市"
+        }, {
+            value: "321100",
+            text: "镇江市"
+        }, {
+            value: "321200",
+            text: "泰州市"
+        }, {
+            value: "321300",
+            text: "宿迁市"
+        }]
+    },
+    {
 	value: '110000',
 	text: '北京市',
 	children: [
@@ -442,49 +487,6 @@ var cityData = [{
 	//	text: "其它区"
 	//}
 ]
-}, {
-	value: '320000',
-	text: '江苏省',
-	children: [{
-		value: "320100",
-		text: "南京市"
-	}, {
-		value: "320200",
-		text: "无锡市"
-	}, {
-		value: "320300",
-		text: "徐州市"
-	}, {
-		value: "320400",
-		text: "常州市"
-	}, {
-		value: "320500",
-		text: "苏州市"
-	}, {
-		value: "320600",
-		text: "南通市"
-	}, {
-		value: "320700",
-		text: "连云港市"
-	}, {
-		value: "320800",
-		text: "淮安市"
-	}, {
-		value: "320900",
-		text: "盐城市"
-	}, {
-		value: "321000",
-		text: "扬州市"
-	}, {
-		value: "321100",
-		text: "镇江市"
-	}, {
-		value: "321200",
-		text: "泰州市"
-	}, {
-		value: "321300",
-		text: "宿迁市"
-	}]
 }, {
 	value: '330000',
 	text: '浙江省',
