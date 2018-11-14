@@ -83,7 +83,7 @@ public class MyJob : IJob
 
                 for (var i = 0; i < dt_order.Rows.Count; i++)
                 {
-                    if ((DateTime.Now - Convert.ToDateTime(dt_order.Rows[i]["AddTime"].ToString())).TotalMinutes > 3)
+                    if ((DateTime.Now - Convert.ToDateTime(dt_order.Rows[i]["AddTime"].ToString())).TotalSeconds > 180)
                     {
                         DataRow dr_order = dt_order_update.NewRow();
                         dr_order["OrderID"] = dt_order.Rows[i]["OrderID"];
@@ -112,6 +112,28 @@ public class MyJob : IJob
                     }
                 }
                 //db.UpdateTable(dt_update, dtt_update);
+                sql = "select OrderID,PlatToSaleId,ZhiFuZT,AddTime,Points from tb_b_order where status = 0 and ZhiFuZT = 0 and SXZT = 1";
+                DataTable dt_order_sx = db.ExecuteDataTable(sql);
+                for (var i = 0; i < dt_order_sx.Rows.Count; i++)
+                {
+                    if ((DateTime.Now - Convert.ToDateTime(dt_order_sx.Rows[i]["AddTime"].ToString())).TotalSeconds > 240)
+                    {
+                        DataRow dr_order = dt_order_update.NewRow();
+                        dr_order["OrderID"] = dt_order_sx.Rows[i]["OrderID"];
+                        dr_order["Status"] = 1;
+                        dt_order_update.Rows.Add(dr_order);
+
+                        sql = "select PlatToSaleId,points from tb_b_plattosale where PlatToSaleId = '" + dt_order_sx.Rows[i]["PlatToSaleId"].ToString() + "'";
+                        DataTable dt_plat = db.ExecuteDataTable(sql);
+
+                        if (dt_plat.Rows.Count > 0)
+                        {
+                            sql = "update tb_b_plattosale set points = '" + Convert.ToInt32(Convert.ToInt32(dt_order_sx.Rows[i]["Points"]) + Convert.ToInt32(dt_plat.Rows[0]["points"])) + "' where PlatToSaleId = '" + dt_order_sx.Rows[i]["PlatToSaleId"].ToString() + "'";
+                            db.ExecuteNonQuery(sql);
+                        }
+                    }
+                }
+
                 db.UpdateTable(dt_order_update, dtt_order_update);
                 db.CommitTransaction();
             }

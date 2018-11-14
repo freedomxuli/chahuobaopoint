@@ -35,30 +35,72 @@ public partial class weixin_html_JsApiPayPage : System.Web.UI.Page
                 int num = Convert.ToInt32(db.ExecuteScalar(sql).ToString());
                 if (num > 0)
                 {
-                    //若传递了相关参数，则调统一下单接口，获得后续相关接口的入口参数
-                    JsApiPay jsApiPay = new JsApiPay(this);
-                    jsApiPay.openid = openid;
-                    jsApiPay.total_fee = int.Parse(total_fee);
-                    jsApiPay.out_trade_no = orderid;
+                    sql = "select AddTime from tb_b_order where Status = 0 and ZhiFuZT = 0 and SXZT = 1 and OrderCode =" + db.ToSqlValue(orderid);
+                    System.Data.DataTable dt = db.ExecuteDataTable(sql);
 
-                    //JSAPI支付预处理
-                    try
+                    if (dt.Rows.Count == 0)
                     {
-                        sql = "update tb_b_order set SXZT = 1 where OrderCode =" + db.ToSqlValue(orderid);
-                        db.ExecuteNonQuery(sql);
+                        //若传递了相关参数，则调统一下单接口，获得后续相关接口的入口参数
+                        JsApiPay jsApiPay = new JsApiPay(this);
+                        jsApiPay.openid = openid;
+                        jsApiPay.total_fee = int.Parse(total_fee);
+                        jsApiPay.out_trade_no = orderid;
 
-                        WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult();
-                        wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
-                        Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
-                        //在页面上显示订单信息
-                        //Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
-                        //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
+                        //JSAPI支付预处理
+                        try
+                        {
+                            sql = "update tb_b_order set SXZT = 1 where OrderCode =" + db.ToSqlValue(orderid);
+                            db.ExecuteNonQuery(sql);
 
+                            WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult();
+                            wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
+                            Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
+                            //在页面上显示订单信息
+                            //Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
+                            //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "订单已失效，请返回下单" + "</span>");
+                            submit.Visible = false;
+                        }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "订单已失效，请返回下单" + "</span>");
-                        submit.Visible = false;
+                        TimeSpan ts = DateTime.Now - Convert.ToDateTime(dt.Rows[0]["AddTime"]);
+                        if (ts.TotalSeconds < 180)
+                        {
+                            //若传递了相关参数，则调统一下单接口，获得后续相关接口的入口参数
+                            JsApiPay jsApiPay = new JsApiPay(this);
+                            jsApiPay.openid = openid;
+                            jsApiPay.total_fee = int.Parse(total_fee);
+                            jsApiPay.out_trade_no = orderid;
+
+                            //JSAPI支付预处理
+                            try
+                            {
+                                sql = "update tb_b_order set SXZT = 1 where OrderCode =" + db.ToSqlValue(orderid);
+                                db.ExecuteNonQuery(sql);
+
+                                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult();
+                                wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
+                                Log.Debug(this.GetType().ToString(), "wxJsApiParam : " + wxJsApiParam);
+                                //在页面上显示订单信息
+                                //Response.Write("<span style='color:#00CD00;font-size:20px'>" + orderid + "</span><br/>");
+                                //Response.Write("<span style='color:#00CD00;font-size:20px'>" + unifiedOrderResult.ToPrintStr() + "</span>");
+
+                            }
+                            catch (Exception ex)
+                            {
+                                //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "订单已失效，请返回下单" + "</span>");
+                                submit.Visible = false;
+                            }
+                        }
+                        else
+                        {
+                            submit.Visible = false;
+                        }
                     }
                 }
                 else

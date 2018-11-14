@@ -82,7 +82,7 @@
 	            },
 	            success: function (data, status, xhr) {
 	                if (data.sign == '1') {
-	                    jQuery("#MyPoints").html(data.points + "分");
+	                    jQuery("#MyPoints").html(data.points + "运费券");
 	                } else {
 	                    mui.alert(data.msg);
 	                }

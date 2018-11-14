@@ -66,7 +66,7 @@
 		                        },
 		                        success: function (data1, status, xhr) {
 		                            if (data1.sign == '1') {
-		                                jQuery("#MyPoints").html(data1.points + "分");
+		                                jQuery("#MyPoints").html(data1.points + "券");
 		                                jQuery("#pullrefresh").addClass("menuClass");
 		                            } else {
 		                                mui.alert(data1.msg);
@@ -124,7 +124,7 @@
 		                            //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
 		                            li.innerHTML = '<div class="mui-table">' +
                                                         '<div class="mui-table-cell">' +
-                                                            '<h4 style="line-height:150%">' + list[i]["zxmc"] + '-运费券-<span style="color:red;">' + list[i]["points"] + '分</span></h4>' +
+                                                            '<h4 style="line-height:150%">' + list[i]["zxmc"] + '-运费券-<span style="color:red;">' + list[i]["points"] + '券</span></h4>' +
                                                             '<h5>所有人：' + list[i]["syr"] + '</h5>' +
                                                             '<p class="mui-h6 mui-ellipsis">备注：在对应专线使用该运费券可抵扣运费</p>' +
                                                         '</div>' +

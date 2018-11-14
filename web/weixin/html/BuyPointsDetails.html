@@ -58,7 +58,7 @@
 	            success: function (data, status, xhr) {
 	                if (data.sign == '1') {
 	                    maxpoints = data.dt[0]["points"];
-	                    jQuery("#title").html(data.dt[0]["UserXM"] + " <font style='color:red;'>" + data.dt[0]["points"] + "分 " + data.dt[0]["discountmemo"] + "</font> 运费券");
+	                    jQuery("#title").html(data.dt[0]["UserXM"] + " <font style='color:red;'>" + data.dt[0]["points"] + "券 " + data.dt[0]["discountmemo"] + "</font> 运费券");
 	                } else {
 	                    mui.alert("获取失败！");
 	                }

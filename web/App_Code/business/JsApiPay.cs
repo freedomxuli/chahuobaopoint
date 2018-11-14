@@ -154,7 +154,7 @@ namespace WxPayAPI
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
+            data.SetValue("time_expire", DateTime.Now.AddMinutes(1).ToString("yyyyMMddHHmmss"));
             data.SetValue("goods_tag", "Freight-voucher");
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
