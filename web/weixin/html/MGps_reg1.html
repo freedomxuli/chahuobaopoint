@@ -94,6 +94,7 @@
 		<script>
 		    var DqBm = "";
 		    (function ($, doc) {
+		        setInterval(function () { imgButton.src = "../../captcha.aspx?vctype=log&r=" + Math.random().toString() }, 180000);
 		        var regButton = doc.getElementById('reg');
 		        var UserNameBox = doc.getElementById('UserName');
 		        //var UserXMBox = doc.getElementById('UserXM');
