@@ -259,7 +259,7 @@
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5>关注人数：<font style="color:red;font-weight:bold;">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</font><h5>' +
                                                                 '<h5>消费总次数：<span style="color:red;font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
-                                                                '<h5>消费总券额：<span style="font-weight:bold;">' + (list[i]["gmje"] == null ? '' : list[i]["gmje"]) + '元</span></h5>' +
+                                                                '<h5>消费总券额：<span style="font-weight:bold;">' + ((list[i]["gmje"] == null || list[i]["gmje"] == 0) ? '--' : list[i]["gmje"]) + '</span></h5>' +
                                                                 '<h5>运费券：<span style="color:red;font-weight:bold;">' + list[i]["points"] + '</span>　折扣：<span style="color:red;font-weight:bold;">' + list[i]["discountmemo"] + '</span></h5>' +
                                                                 '<h5 style="word-wrap:break-word;">线　路：<span style="color:red;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
                                                                 '<h5 style="word-wrap:break-word;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
@@ -289,8 +289,8 @@
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5 style="color:#ffffff;">关注人数：<span style="font-weight:bold;color:red">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</span><h5>' +
                                                                 '<h5 style="color:#ffffff;">消费总次数：<span style="font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
-                                                                '<h5 style="color:#ffffff;">消费总券额：<span style="font-weight:bold;">' + (list[i]["gmje"] == null ? '' : list[i]["gmje"]) + '元</span></h5>' +
-                                                                '<h5 style="color:#ffffff;">运费券：<span style="color:#ffffff;font-weight:bold;">' + list[i]["points"] + '</span>　折扣：<span style="font-weight:bold;">—</span></h5>' +
+                                                                '<h5 style="color:#ffffff;">消费总券额：<span style="font-weight:bold;">' + ((list[i]["gmje"] == null || list[i]["gmje"] == 0) ? '--' : list[i]["gmje"]) + '</span></h5>' +
+                                                                '<h5 style="color:#ffffff;">运费券：<span style="color:#ffffff;font-weight:bold;">' + list[i]["points"] + '</span>　折扣：<span style="font-weight:bold;">--</span></h5>' +
                                                                 '<h5 style="word-wrap:break-word;color:#ffffff;">线　路：<span style="color:#ffffff;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
                                                                 '<h5 style="word-wrap:break-word;color:#ffffff;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
                                                                 '<h5 style="word-wrap:break-word;color:#ffffff;">地　址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</span></h5>' +
