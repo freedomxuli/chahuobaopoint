@@ -968,15 +968,16 @@ public class InterFaceHandler : IHttpHandler {
                 else
                 {
                     System.Data.DataTable dt = new System.Data.DataTable();
-                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs,g.gmje from tb_b_plattosale a 
+                    str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs,g.gmje
+                              from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
                             left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
                             left join (select count(OrderID) num,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) d on a.UserID = d.SaleUserID
                             left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
-                            where a.points>0 and  a.status=0  " + conn + @" order by a.addtime desc";
-                    System.Data.DataTable dt1=dbc.ExecuteDataTable(str);
+                            where a.addtime>dateadd(day,-5,getdate()) and a.status=0  " + conn + @" order by a.points desc,f.gzs desc,a.addtime desc";
+                    System.Data.DataTable dt1 = dbc.ExecuteDataTable(str);
 
                     string str1 = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,e.GZ_ID,f.gzs,g.gmje from tb_b_plattosale a 
                             left join tb_b_user b on a.UserID=b.UserID
@@ -985,7 +986,7 @@ public class InterFaceHandler : IHttpHandler {
                             left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
-                            where a.points=0 and a.status=0  " + conn + @" order by f.gzs desc";
+                            where a.addtime<=dateadd(day,-5,getdate()) and a.status=0  " + conn + @" order by f.gzs desc";
                     System.Data.DataTable dt2 = dbc.ExecuteDataTable(str1);
 
                     dt.Merge(dt1);
@@ -1564,8 +1565,10 @@ public class InterFaceHandler : IHttpHandler {
                         hash["msg"] = "关注成功，以后第一时间通知您该物流的运费券购买信息！";
                     }
                     else {
+                        string str1 = "delete from tb_b_user_gz where UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"].ToString()) + " and GZUserID = " + dbc.ToSqlValue(GZUserID);
+                        dbc.ExecuteNonQuery(str1);
                         hash["sign"] = "0";
-                        hash["msg"] = "您已关注过改物流，无须再次关注！";
+                        hash["msg"] = "取消关注成功！";
                     }
                 }
             }

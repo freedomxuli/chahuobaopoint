@@ -255,7 +255,7 @@
                                                             '</div>' +
                                                             '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
                                                                 '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
-                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">'
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5>关注人数：<font style="color:red;font-weight:bold;">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</font><h5>' +
                                                                 '<h5>消费总次数：<span style="color:red;font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
@@ -285,7 +285,7 @@
                                                             '</div>' +
                                                             '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
                                                                 '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
-                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\');">'
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5 style="color:#ffffff;">关注人数：<span style="font-weight:bold;color:red">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</span><h5>' +
                                                                 '<h5 style="color:#ffffff;">消费总次数：<span style="font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
@@ -351,10 +351,14 @@
 		        pullupRefresh();
 		    }, false);
 
-		    function GZWL(val)
+		    function GZWL(val,isGZ)
 		    {
+		        var str = "是否关注该物流";
+		        if (isGZ == "已关注") {
+		            str = "是否取消关注该物流";
+		        }
 		        var btnArray = ['否', '是'];
-		        mui.confirm('是否关注该物流？', '提示', btnArray, function (e) {
+		        mui.confirm(str, '提示', btnArray, function (e) {
 		            if (e.index == 1) {
 		                mui.ajax(grobal_url, {
 		                    dataType: "json",
