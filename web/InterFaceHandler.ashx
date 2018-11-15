@@ -974,7 +974,7 @@ public class InterFaceHandler : IHttpHandler {
                             left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
                             left join tb_b_user_gz e on a.UserID = e.GZUserID and e.UserID = " + dbc.ToSqlValue(udt.Rows[0]["UserID"]) + @"
                             left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
-                            where a.status=0 " + conn + @" order by f.gzs desc,a.addtime desc";
+                            where a.status=0 " + conn + @" order by a.addtime desc,f.gzs desc";
                     System.Data.DataTable dtPage = dbc.GetPagedDataTable(str, pagesize, ref cp, out ac);
 
                     dtPage.Columns.Add("sj");
