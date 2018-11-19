@@ -342,21 +342,35 @@ public class InterFaceHandler : IHttpHandler {
         {
             try
             {
-                string str = "select * from tb_b_user where UserName=@UserName and Password=@Password";
-                System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(str);
-                cmd.Parameters.AddWithValue("@UserName", UserName);
-                cmd.Parameters.AddWithValue("@Password", UserPassword);
-                System.Data.DataTable dt = dbc.ExecuteDataTable(cmd);
-                if (dt.Rows.Count > 0)
+                string sql = @"select * from tb_b_user where UserName=@UserName";
+                System.Data.SqlClient.SqlCommand cmd1 = new System.Data.SqlClient.SqlCommand(sql);
+                cmd1.Parameters.AddWithValue("@UserName", UserName);
+                System.Data.DataTable udt = dbc.ExecuteDataTable(cmd1);
+
+                if (udt.Rows.Count > 0)
                 {
-                    hash["sign"] = "1";
-                    hash["msg"] = "注册成功！";
-                    HttpContext.Current.Response.Cookies.Add(new HttpCookie("userid", dt.Rows[0]["UserID"].ToString()) { HttpOnly = true });
+
+                    string str = "select * from tb_b_user where UserName=@UserName and Password=@Password";
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(str);
+                    cmd.Parameters.AddWithValue("@UserName", UserName);
+                    cmd.Parameters.AddWithValue("@Password", UserPassword);
+                    System.Data.DataTable dt = dbc.ExecuteDataTable(cmd);
+                    if (dt.Rows.Count > 0)
+                    {
+                        hash["sign"] = "1";
+                        hash["msg"] = "登录成功！";
+                        HttpContext.Current.Response.Cookies.Add(new HttpCookie("userid", dt.Rows[0]["UserID"].ToString()) { HttpOnly = true });
+                    }
+                    else
+                    {
+                        hash["sign"] = "0";
+                        hash["msg"] = "用户名或密码错误！";
+                    }
                 }
                 else
                 {
                     hash["sign"] = "0";
-                    hash["msg"] = "用户名或密码错误！";
+                    hash["msg"] = "您的账号不存在，请注册！！";
                 }
             }
             catch (Exception ex)

@@ -38,7 +38,7 @@ namespace Senparc.Weixin.MP.Sample.Weixin
         public override IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage)
         {
             var responseMessage = base.CreateResponseMessage<ResponseMessageText>(); //ResponseMessageText也可以是News等其他类型
-            responseMessage.Content = "";
+            responseMessage.Content = "查货宝：零担物流服务平台。致力于为专线带去货源，为发货人带去优惠。平台为专线提供：智能产品、基础耗材、线上广告、金融保险、提货、干线运力、配送等服务。您可通过此公众号、查货APP享受服务，欲了解更多，请咨询：400-688-7856";
             return responseMessage;
         }
 
@@ -61,7 +61,7 @@ namespace Senparc.Weixin.MP.Sample.Weixin
         public override IResponseMessageBase OnTextRequest(RequestMessageText requestMessage)
         {
             var responseMessage = base.CreateResponseMessage<ResponseMessageText>();
-            responseMessage.Content = "哈哈哈哈，功能还没开发好呢~~";//"您的OpenID是：" + requestMessage.FromUserName + "。\r\n您发送了文字信息：" + requestMessage.Content;     //这里的requestMessage.FromUserName也可以直接写成base.WeixinOpenId
+            responseMessage.Content = "查货宝：零担物流服务平台。致力于为专线带去货源，为发货人带去优惠。平台为专线提供：智能产品、基础耗材、线上广告、金融保险、提货、干线运力、配送等服务。您可通过此公众号、查货APP享受服务，欲了解更多，请咨询：400-688-7856";//"您的OpenID是：" + requestMessage.FromUserName + "。\r\n您发送了文字信息：" + requestMessage.Content;     //这里的requestMessage.FromUserName也可以直接写成base.WeixinOpenId
                                       //\r\n用于换行，requestMessage.Content即用户发过来的文字内容
 
             return responseMessage;

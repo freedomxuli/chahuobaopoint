@@ -382,29 +382,45 @@
 
 		    function GZWL(val, isGZ) {
 		        if (localStorage.getItem("mgps_UserName")) {
-		            var str = "是否关注该物流";
+		            //var str = "是否关注该物流";
 		            if (isGZ == "已关注") {
-		                str = "是否取消关注该物流";
+		                var str = "是否取消关注该物流";
+		                var btnArray = ['否', '是'];
+		                mui.confirm(str, '提示', btnArray, function (e) {
+		                    if (e.index == 1) {
+		                        mui.ajax(grobal_url, {
+		                            dataType: "json",
+		                            type: "post",
+		                            data: {
+		                                "action": "GZWL",
+		                                "UserName": localStorage.getItem("mgps_UserName"),
+		                                "WLUser": val
+		                            },
+		                            success: function (data, status, xhr) {
+		                                //ajax_sign = data.sign;
+		                                //ajax_msg = data.msg;
+		                                mui.alert(data.msg);
+		                            }
+		                        });
+		                    }
+		                })
+		            } else {
+		                mui.ajax(grobal_url, {
+		                    dataType: "json",
+		                    type: "post",
+		                    data: {
+		                        "action": "GZWL",
+		                        "UserName": localStorage.getItem("mgps_UserName"),
+		                        "WLUser": val
+		                    },
+		                    success: function (data, status, xhr) {
+		                        //ajax_sign = data.sign;
+		                        //ajax_msg = data.msg;
+		                        mui.alert(data.msg);
+		                    }
+		                });
 		            }
-		            var btnArray = ['否', '是'];
-		            mui.confirm(str, '提示', btnArray, function (e) {
-		                if (e.index == 1) {
-		                    mui.ajax(grobal_url, {
-		                        dataType: "json",
-		                        type: "post",
-		                        data: {
-		                            "action": "GZWL",
-		                            "UserName": localStorage.getItem("mgps_UserName"),
-		                            "WLUser": val
-		                        },
-		                        success: function (data, status, xhr) {
-		                            //ajax_sign = data.sign;
-		                            //ajax_msg = data.msg;
-		                            mui.alert(data.msg);
-		                        }
-		                    });
-		                }
-		            })
+
 		        } else {
 		            var btnArray = ['否', '是'];
 		            mui.confirm("您还没有注册，是否立即注册？", '提示', btnArray, function (e) {
