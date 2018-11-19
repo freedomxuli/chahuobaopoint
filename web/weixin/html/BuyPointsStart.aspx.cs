@@ -6,9 +6,12 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using WxPayAPI;
 using SmartFramework4v2.Data.SqlServer;
+using System.Data;
+using SmartFramework4v2.Data;
 
 public partial class weixin_html_BuyPointsStart : System.Web.UI.Page
 {
+    public string openid;
     public static string wxEditAddrParam { get; set; }
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -23,6 +26,19 @@ public partial class weixin_html_BuyPointsStart : System.Web.UI.Page
                 //获取收货地址js函数入口参数
                 wxEditAddrParam = jsApiPay.GetEditAddressParameters();
                 ViewState["openid"] = jsApiPay.openid;
+                openid = jsApiPay.openid;
+                HttpContext.Current.Response.Cookies.Add(new HttpCookie("openid", openid) { HttpOnly = true });
+                using (var db = new DBConnection())
+                {
+                    //Response.Write("<span style='color:#FF0000;font-size:20px'>" + "您的id为" + HttpContext.Current.Request.Cookies["userid"].Value + "，微信标识为：" + openid + "</span>");
+                    DataTable dt = db.GetEmptyDataTable("tb_b_user");
+                    DataTableTracker dtt = new DataTableTracker(dt);
+                    DataRow dr = dt.NewRow();
+                    dr["UserID"] = HttpContext.Current.Request.Cookies["userid"].Value;
+                    dr["OpenID"] = openid;
+                    dt.Rows.Add(dr);
+                    db.UpdateTable(dt, dtt);
+                }
             }
             catch (Exception ex)
             {

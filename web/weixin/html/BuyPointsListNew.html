@@ -1,0 +1,500 @@
+﻿
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>购买运费券</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+        <link href="../css/mui.showLoading.css" rel="stylesheet" />
+        <link href="../css/mui.picker.css" rel="stylesheet" />
+		<link href="../css/mui.poppicker.css" rel="stylesheet" />
+        <style type="text/css">
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+            .button_bottom {
+                position:absolute;
+                bottom:0px;
+                width:100%;
+                height:50px;
+                line-height:50px;
+                padding:0px;
+            }
+		</style>
+	</head>
+
+	<body>
+        <div class="mui-content">
+		    <div class="mui-content-padded">
+			    <button id='FromRoutePicker' class="mui-btn " type='button' style="width:35%;">起始地</button>
+                <button id='ToRoutePicker' class="mui-btn" type='button' style="width:35%;">目的地</button>
+                <button id="search" class="mui-btn mui-btn-primary ">点击搜索</button>
+		    </div>
+        </div>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:50px;margin-bottom:50px;">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="mui-table-view" id="data_list">
+					
+				</ul>
+			</div>
+		</div>
+        <button type="button" class="mui-btn mui-btn-royal button_bottom" id="button_bottom" onclick="buttonbottom();">立即注册</button>
+		<script src="../js/mui.min.js"></script>
+        <script src="../js/app.js"></script>
+        <script src="../js/mui.showLoading.js"></script>
+        <script src="../js/mui.picker.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+        <script src="../js/city.data.js"></script>
+        <script src="../js/mui.zoom.js"></script>
+        <script src="../js/mui.previewimage.js"></script>
+		<script>
+		    mui.previewImage();
+
+		    mui.init({
+		        pullRefresh: {
+		            container: '#pullrefresh',
+		            up: {
+		                contentrefresh: '正在加载...',
+		                callback: pullupRefresh
+		            }
+		        }
+		    });
+		    var list;
+		    var pagnum = 1;
+		    var pagesize = 10;
+		    var totalcount = 0;
+		    var flag = false;
+		    var show_var = true;
+		    /**
+			 * 上拉加载具体业务实现
+			 */
+		    function pullupRefresh() {
+		        var mgps_UserName = "";
+		        var action_mc = "PlatSaleList";
+		        if (localStorage.getItem("mgps_UserName")) {
+		            mgps_UserName = localStorage.getItem("mgps_UserName");
+		            action_mc = "PlatSaleList";
+		            document.getElementById("button_bottom").textContent = "返回主页";
+		        } else {
+		            action_mc = "PlatSaleListNew";
+		        }  
+		        mui.ajax(grobal_url, {
+		            dataType: "json",
+		            type: "post",
+		            data: {
+		                "action": action_mc,
+		                "UserName": mgps_UserName,
+		                "pagnum": pagnum,
+		                "pagesize": pagesize,
+		                "FromRoute": document.getElementById('FromRoutePicker').textContent,
+		                "ToRoute": document.getElementById('ToRoutePicker').textContent
+		            },
+		            success: function (data, status, xhr) {
+		                if (data.sign == '1') {
+		                    if (localStorage.getItem("PlatToSaleId"))
+		                        localStorage.removeItem("PlatToSaleId");
+		                    list = data.value.dt;
+		                    pagnum = (data.value.cp + 1);
+		                    totalcount = data.value.ac;
+		                    if (totalcount <= (pagnum - 1) * pagesize) {
+		                        flag = true;
+		                    }
+		                    setTimeout(function () {
+		                        if (show_var)
+		                            mui.hideLoading();
+		                        show_var = false;
+		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
+		                        var table = document.body.querySelector('.mui-table-view');
+		                        for (var i = 0; i < list.length; i++) {
+		                            if (parseInt(list[i]["points"]) > 0) {
+		                                var li = document.createElement('li');
+		                                li.className = 'mui-table-view-cell';
+		                                var isGZ = "关注";
+		                                li.innerHTML = '<div class="mui-table">' +
+                                                            '<div class="mui-table-cell mui-col-xs-2" style="float:left;display: flex;padding-top:35px;">' +
+                                                                '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" data-preview-src="" data-preview-group="' + pagnum + i + '" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
+                                                            '</div>' +
+                                                            '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
+                                                                '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
+                                                                + isGZ + '</button> </h5>' +
+                                                                '<h5>关注人数：<font style="color:red;font-weight:bold;">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</font><h5>' +
+                                                                '<h5>消费总次数：<span style="color:red;font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
+                                                                '<h5>消费总券额：<span style="font-weight:bold;">' + ((list[i]["gmje"] == null || list[i]["gmje"] == 0) ? '--' : list[i]["gmje"]) + '</span></h5>' +
+                                                                '<h5>运费券：<span style="color:red;font-weight:bold;">' + list[i]["points"] + '</span>　折扣：<span style="color:red;font-weight:bold;">' + list[i]["discountmemo"] + '</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;">线　路：<span style="color:red;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;">地　址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</span></h5>' +
+                                                            '</div>' +
+                                                            '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
+                                                                '<br /><br /><button type="button" class="mui-btn mui-btn-danger" onClick="BuyPoints(\'' + list[i]["PlatToSaleId"] + '\',\'' + list[i]["DqBm"] + '\');">' +
+                                                                    '购买' +
+                                                                '</button>' +
+                                                            '</div>' +
+                                                       '</div>';
+		                                table.appendChild(li);
+		                            } else {
+		                                var li = document.createElement('li');
+		                                li.className = 'mui-table-view-cell';
+		                                li.style.cssText = "background-color:#cccccc !important;";
+		                                var isGZ = "关注";
+		                                li.innerHTML = '<div class="mui-table">' +
+                                                            '<div class="mui-table-cell mui-col-xs-2" style="float:left;display: flex;padding-top:35px;">' +
+                                                                '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" data-preview-src="" data-preview-group="' + pagnum + i + '" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
+                                                            '</div>' +
+                                                            '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
+                                                                '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
+                                                                + isGZ + '</button> </h5>' +
+                                                                '<h5 style="color:#ffffff;">关注人数：<span style="font-weight:bold;color:red">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</span><h5>' +
+                                                                '<h5 style="color:#ffffff;">消费总次数：<span style="font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
+                                                                '<h5 style="color:#ffffff;">消费总券额：<span style="font-weight:bold;">' + ((list[i]["gmje"] == null || list[i]["gmje"] == 0) ? '--' : list[i]["gmje"]) + '</span></h5>' +
+                                                                '<h5 style="color:#ffffff;">运费券：<span style="color:#ffffff;font-weight:bold;">' + list[i]["points"] + '</span>　折扣：<span style="font-weight:bold;">--</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;color:#ffffff;">线　路：<span style="color:#ffffff;font-weight:bold;">' + list[i]["FromRoute"] + '——' + list[i]["ToRoute"] + '</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;color:#ffffff;">电　话：' + list[i]["UserTel"] + '</span></h5>' +
+                                                                '<h5 style="word-wrap:break-word;color:#ffffff;">地　址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</span></h5>' +
+                                                            '</div>' +
+                                                            '<div class="mui-table-cell mui-col-xs-2 mui-text-center" style="float:right;padding-right:10px;">' +
+                                                                '<br /><br /><br /><span style="font-size:20px;color:red;font-weight:bold;">售罄</span><br /><span style="font-size:10px;color:red;font-weight:normal;">期待下轮</span>'
+		                                '</div>' +
+                                   '</div>';
+		                                table.appendChild(li);
+		                            }
+		                        }
+		                    }, 1500);
+		                } else {
+		                    if (show_var)
+		                        mui.hideLoading();
+		                    show_var = false;
+		                    mui.alert(data.msg)
+		                }
+		            }
+		        });
+		    }
+		    var cityPicker = new mui.PopPicker({
+		        layer: 2
+		    });
+		    cityPicker.setData(cityData);
+		    var showCityPickerButton = document.getElementById('FromRoutePicker');
+		    showCityPickerButton.addEventListener('tap', function (event) {
+		        cityPicker.show(function (items) {
+		            showCityPickerButton.innerHTML = items[1].text;
+		            //返回 false 可以阻止选择框的关闭
+		            //return false;
+		        });
+		    }, false);
+
+		    var cityPicker1 = new mui.PopPicker({
+		        layer: 2
+		    });
+		    cityPicker1.setData(cityData);
+		    var showCityPickerButton1 = document.getElementById('ToRoutePicker');
+		    showCityPickerButton1.addEventListener('tap', function (event) {
+		        cityPicker1.show(function (items) {
+		            showCityPickerButton1.innerHTML = items[1].text;
+		            //返回 false 可以阻止选择框的关闭
+		            //return false;
+		        });
+		    }, false);
+
+		    var searchButton = document.getElementById('search');
+		    searchButton.addEventListener('tap', function (event) {
+		        list;
+		        pagnum = 1;
+		        pagesize = 10;
+		        totalcount = 0;
+		        flag = false;
+		        document.getElementById("data_list").innerHTML = "";
+		        show_var = true;
+		        mui.showLoading("正在加载...", "div");
+		        pullupRefresh();
+		    }, false);
+
+		    function buttonbottom()
+		    {
+		        if (localStorage.getItem("mgps_UserName")) {
+		            document.location.href = "menu.aspx";
+		        } else {
+		            document.location.href = "MGps_login.html";
+		        }
+		    }
+
+		    function GZWL(val, isGZ) {
+		        if (localStorage.getItem("mgps_UserName")) {
+		            var str = "是否关注该物流";
+		            if (isGZ == "已关注") {
+		                str = "是否取消关注该物流";
+		            }
+		            var btnArray = ['否', '是'];
+		            mui.confirm(str, '提示', btnArray, function (e) {
+		                if (e.index == 1) {
+		                    mui.ajax(grobal_url, {
+		                        dataType: "json",
+		                        type: "post",
+		                        data: {
+		                            "action": "GZWL",
+		                            "UserName": localStorage.getItem("mgps_UserName"),
+		                            "WLUser": val
+		                        },
+		                        success: function (data, status, xhr) {
+		                            //ajax_sign = data.sign;
+		                            //ajax_msg = data.msg;
+		                            mui.alert(data.msg);
+		                        }
+		                    });
+		                }
+		            })
+		        } else {
+		            var btnArray = ['否', '是'];
+		            mui.confirm("您还没有注册，是否立即注册？", '提示', btnArray, function (e) {
+		                if (e.index == 1) {
+		                    document.location.href = "MGps_login.html";
+		                }
+		            })
+		        }
+		    }
+
+		    function BuyPoints(val, dqbm) {
+		        if (localStorage.getItem("mgps_UserName")) {
+		            mui.alert('您购买的运费券只能到对应的专线使用，每单货上限500运费券。', '友情提示', '我知道了', function () {
+		                if (dqbm == '320500') {
+		                    if (new Date().getTime() >= 1540774800000) {
+		                        mui.ajax(grobal_url, {
+		                            dataType: "json",
+		                            type: "post",
+		                            data: {
+		                                "action": "IsVaildUser",
+		                                "UserName": localStorage.getItem("mgps_UserName")
+		                            },
+		                            success: function (data, status, xhr) {
+		                                if (data.sign == 1) {
+		                                    document.location.href = "BuyPointsDetails.html";
+		                                    localStorage.setItem("PlatToSaleId", val);
+		                                } else {
+		                                    mui.alert(data.msg);
+		                                }
+		                            }
+		                        });
+		                    } else {
+		                        mui.alert("苏州物流10月29日上午9点开抢，敬请期待！");
+		                    }
+
+		                } else {
+		                    mui.ajax(grobal_url, {
+		                        dataType: "json",
+		                        type: "post",
+		                        data: {
+		                            "action": "IsVaildUser",
+		                            "UserName": localStorage.getItem("mgps_UserName")
+		                        },
+		                        success: function (data, status, xhr) {
+		                            if (data.sign == 1) {
+		                                document.location.href = "BuyPointsDetails.html";
+		                                localStorage.setItem("PlatToSaleId", val);
+		                            } else {
+		                                mui.alert(data.msg);
+		                            }
+		                        }
+		                    });
+		                }
+		            });
+		        } else {
+		            var btnArray = ['否', '是'];
+		            mui.confirm("您还没有注册，是否立即注册？", '提示', btnArray, function (e) {
+		                if (e.index == 1) {
+		                    document.location.href = "MGps_login.html";
+		                }
+		            })
+		        }
+		    }
+
+		    if (mui.os.plus) {
+		        mui.plusReady(function () {
+		            setTimeout(function () {
+		                mui('#pullrefresh').pullRefresh().pullupLoading();
+		            }, 1000);
+
+		        });
+		    } else {
+		        mui.ready(function () {
+		            mui.ajax(grobal_url, {
+		                dataType: "json",
+		                type: "post",
+		                data: {
+		                    "action": "GetYHGSD",
+		                    "UserName": localStorage.getItem("mgps_UserName"),
+		                },
+		                success: function (data, status, xhr) {
+		                    if (data.sign == '1') {
+		                        var udt = data.value.dt;
+		                        if (udt.length > 0) {
+		                            if (udt[0]['dq_mc']) {
+		                                document.getElementById('FromRoutePicker').innerHTML = udt[0]['dq_mc'];
+		                            }
+		                        }
+		                    }
+		                    mui('#pullrefresh').pullRefresh().pullupLoading();
+		                }
+		            });
+
+		        });
+		    }
+		  </script>
+	</body>
+
+</html>
