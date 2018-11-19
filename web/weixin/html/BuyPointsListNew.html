@@ -265,6 +265,9 @@
 		                                var li = document.createElement('li');
 		                                li.className = 'mui-table-view-cell';
 		                                var isGZ = "关注";
+		                                if (action_mc == "PlatSaleList")
+		                                    if (list[i]["GZ_ID"])
+		                                        isGZ = "已关注";
 		                                li.innerHTML = '<div class="mui-table">' +
                                                             '<div class="mui-table-cell mui-col-xs-2" style="float:left;display: flex;padding-top:35px;">' +
                                                                 '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" data-preview-src="" data-preview-group="' + pagnum + i + '" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
@@ -293,6 +296,9 @@
 		                                li.className = 'mui-table-view-cell';
 		                                li.style.cssText = "background-color:#cccccc !important;";
 		                                var isGZ = "关注";
+		                                if (action_mc == "PlatSaleList")
+		                                    if (list[i]["GZ_ID"])
+		                                        isGZ = "已关注";
 		                                li.innerHTML = '<div class="mui-table">' +
                                                             '<div class="mui-table-cell mui-col-xs-2" style="float:left;display: flex;padding-top:35px;">' +
                                                                 '<img style="width:60px;height:60px;justify-content:center;align-items:Center;" data-preview-src="" data-preview-group="' + pagnum + i + '" src="../../files/' + list[i]["FJ_ID"] + "." + list[i]["FJ_MC"] + '">' +
