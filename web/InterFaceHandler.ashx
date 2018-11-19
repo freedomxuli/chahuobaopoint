@@ -50,6 +50,9 @@ public class InterFaceHandler : IHttpHandler {
             case "PlatSaleList":
                 str = PlatSaleList(context);
                 break;
+            case "PlatSaleListNew":
+                str = PlatSaleListNew(context);
+                break;
             case "GetPayRecordList":
                 str = GetPayRecordList(context);
                 break;
@@ -928,6 +931,84 @@ public class InterFaceHandler : IHttpHandler {
         return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
     }
 
+    public string PlatSaleListNew(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+        //用户名
+        System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+        string FromRoute = context.Request["FromRoute"];
+        FromRoute = HttpUtility.UrlDecode(FromRoute.ToUpper(), utf8);
+        string ToRoute = context.Request["ToRoute"];
+        ToRoute = HttpUtility.UrlDecode(ToRoute.ToUpper(), utf8);
+        string conn = "";
+        if (FromRoute != "起始地")
+            conn += " and b.FromRoute like '%" + FromRoute.Replace("'", "").Replace("市", "") + "%'";
+        if (ToRoute != "目的地")
+            conn += " and b.ToRoute like '%" + ToRoute.Replace("'", "").Replace("市", "") + "%'";
+        int cp = Convert.ToInt32(context.Request["pagnum"]);
+        int pagesize = Convert.ToInt32(context.Request["pagesize"]);
+        int ac = 0;
+
+        Hashtable hash = new Hashtable();
+        hash["sign"] = "0";
+        hash["msg"] = "获取失败！";
+
+        hash["value"] = new object();
+        using (SmartFramework4v2.Data.SqlServer.DBConnection dbc = new SmartFramework4v2.Data.SqlServer.DBConnection())
+        {
+            try
+            {
+                System.Data.DataTable dt = new System.Data.DataTable();
+                string str = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,f.gzs,g.gmje
+                              from tb_b_plattosale a 
+                            left join tb_b_user b on a.UserID=b.UserID
+                            left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
+                            left join (select count(OrderID) num,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) d on a.UserID = d.SaleUserID
+                            left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
+                            left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
+                            where a.addtime>dateadd(day,-5,getdate()) and a.status=0  " + conn + @" order by a.points desc,f.gzs desc,a.addtime desc";
+                System.Data.DataTable dt1 = dbc.ExecuteDataTable(str);
+
+                string str1 = @"select a.*,b.UserXM,b.FromRoute,b.ToRoute,b.UserTel,b.Address,b.DqBm,c.FJ_ID,c.FJ_MC,d.num,f.gzs,g.gmje from tb_b_plattosale a 
+                            left join tb_b_user b on a.UserID=b.UserID
+                            left join tb_b_FJ c on a.UserID = c.FJ_PID and c.STATUS = 0
+                            left join (select count(OrderID) num,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) d on a.UserID = d.SaleUserID
+                            left join (select sum(Points) gmje,SaleUserID from tb_b_order where Status = 0 group by SaleUserID) g on a.UserID = g.SaleUserID
+                            left join (select count(GZ_ID) as gzs,GZUserID from tb_b_user_gz group by GZUserID) f on a.UserID=f.GZUserID
+                            where a.addtime<=dateadd(day,-5,getdate()) and a.status=0  " + conn + @" order by f.gzs desc";
+                System.Data.DataTable dt2 = dbc.ExecuteDataTable(str1);
+
+                dt.Merge(dt1);
+                dt.Merge(dt2);
+
+                System.Data.DataTable dtPage = dbc.GetPagedDataTable(dt, pagesize, ref cp, out ac);
+
+                dtPage.Columns.Add("sj");
+                for (int i = 0; i < dtPage.Rows.Count; i++)
+                {
+                    if (dtPage.Rows[i]["addtime"] != null && dtPage.Rows[i]["addtime"].ToString() != "")
+                    {
+                        dtPage.Rows[i]["sj"] = Convert.ToDateTime(dtPage.Rows[i]["addtime"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                    if (string.IsNullOrEmpty(dtPage.Rows[i]["num"].ToString()))
+                    {
+                        dtPage.Rows[i]["num"] = 0;
+                    }
+                }
+
+                hash["sign"] = "1";
+                hash["msg"] = "获取成功！";
+                hash["value"] = new { dt = dtPage, cp = cp, ac = ac };
+            }
+            catch (Exception ex)
+            {
+                hash["sign"] = "0";
+                hash["msg"] = "内部错误:" + ex.Message;
+            }
+        }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(hash);
+    }
+
     public string PlatSaleList(HttpContext context)
     {
 
@@ -1010,7 +1091,7 @@ public class InterFaceHandler : IHttpHandler {
                     hash["sign"] = "1";
                     hash["msg"] = "获取成功！";
                     hash["value"] = new { dt = dtPage, cp = cp, ac = ac };
-
+                    HttpContext.Current.Response.Cookies.Add(new HttpCookie("userid", udt.Rows[0]["UserID"].ToString()) { HttpOnly = true });
                 }
             }
             catch (Exception ex)
