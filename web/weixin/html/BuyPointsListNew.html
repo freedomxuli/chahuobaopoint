@@ -274,7 +274,7 @@
                                                             '</div>' +
                                                             '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
                                                                 '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
-                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + ("gz"+i) + '\');" id="gz' + i + '">'
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5>关注人数：<font style="color:red;font-weight:bold;">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</font><h5>' +
                                                                 '<h5>消费总次数：<span style="color:red;font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
@@ -305,7 +305,7 @@
                                                             '</div>' +
                                                             '<div class="mui-table-cell mui-col-xs-8" style="float:left;padding-left:10px;">' +
                                                                 '<h5 style="line-height:30px;word-wrap:break-word;"><span style="color:blue;font-weight:bold;font-size:14px;line-height:14px;vertical-align: middle;padding-top:10px !important;">' + list[i]["UserXM"]
-                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + isGZ + '\');">'
+                                                                + '</span>　<button type="button" style="background-color:blue;border-radius:15px;padding:5px 10px 5px 10px !important;border:0px !important;color:#ffffff !important;font-weight:bold;" onClick="GZWL(\'' + list[i]["UserID"] + '\',\'' + ("gz"+i) + '\');" id="gz' + i + '">'
                                                                 + isGZ + '</button> </h5>' +
                                                                 '<h5 style="color:#ffffff;">关注人数：<span style="font-weight:bold;color:red">' + (list[i]["gzs"] == null ? '' : list[i]["gzs"] + '人') + '</span><h5>' +
                                                                 '<h5 style="color:#ffffff;">消费总次数：<span style="font-weight:bold;">' + (list[i]["num"] == null ? '' : list[i]["num"]) + '次</span></h5>' +
@@ -380,7 +380,8 @@
 		        }
 		    }
 
-		    function GZWL(val, isGZ) {
+		    function GZWL(val,obj) {
+			var isGZ =document.getElementById(obj).innerText;
 		        if (localStorage.getItem("mgps_UserName")) {
 		            //var str = "是否关注该物流";
 		            if (isGZ == "已关注") {
@@ -400,6 +401,7 @@
 		                                //ajax_sign = data.sign;
 		                                //ajax_msg = data.msg;
 		                                mui.alert(data.msg);
+		                               document.getElementById(obj).innerText = "关注";
 		                            }
 		                        });
 		                    }
@@ -417,6 +419,7 @@
 		                        //ajax_sign = data.sign;
 		                        //ajax_msg = data.msg;
 		                        mui.alert(data.msg);
+		                       document.getElementById(obj).innerText = "已关注";
 		                    }
 		                });
 		            }
