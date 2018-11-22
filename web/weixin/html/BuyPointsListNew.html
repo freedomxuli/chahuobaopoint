@@ -258,8 +258,12 @@
 		                        if (show_var)
 		                            mui.hideLoading();
 		                        show_var = false;
+		                        //console.log("页数：" + pagnum);
+		                        //console.log("总条数：" + totalcount);
+		                        //console.log("标识：" + flag);
 		                        mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
 		                        var table = document.body.querySelector('.mui-table-view');
+		                        //console.log("获取条数:"+list.length);
 		                        for (var i = 0; i < list.length; i++) {
 		                            if (parseInt(list[i]["points"]) > 0) {
 		                                var li = document.createElement('li');
@@ -367,6 +371,7 @@
 		        flag = false;
 		        document.getElementById("data_list").innerHTML = "";
 		        show_var = true;
+		        mui('#pullrefresh').pullRefresh().refresh(true);
 		        mui.showLoading("正在加载...", "div");
 		        pullupRefresh();
 		    }, false);

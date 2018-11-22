@@ -85,7 +85,7 @@ public partial class GetMessage : System.Web.UI.Page
             bg.button.Add(new SingleViewButton()
             {
                 name = "运费券",
-                url = "http://wx.chahuobao.net/weixin/html/MGps_login.html"
+                url = "http://wx.chahuobao.net/weixin/html/BuyPointsListNew.html"
             });
 
             var result = CommonApi.CreateMenu(accessToken, bg);

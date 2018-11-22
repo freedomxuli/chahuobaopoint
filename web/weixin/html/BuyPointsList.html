@@ -347,7 +347,8 @@
 		        flag = false;
 		        document.getElementById("data_list").innerHTML = "";
 		        show_var = true;
-                mui.showLoading("正在加载...", "div");
+		        mui('#pullrefresh').pullRefresh().refresh(true);
+		        mui.showLoading("正在加载...", "div");
 		        pullupRefresh();
 		    }, false);
 
