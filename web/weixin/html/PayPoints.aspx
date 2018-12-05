@@ -82,7 +82,7 @@
                                                         '<h5>所有人：' + list[i]["syr"] + '</h5>' +
                                                         '<h5>电话：' + list[i]["UserTel"] + '</h5>' +
                                                         '<h5>地址：' + (list[i]["Address"] == null ? "" : list[i]["Address"]) + '</h5>' +
-                                                        '<p class="mui-h6 mui-ellipsis">备注：在对应专线使用该运费券可抵扣运费，且一次最多抵扣500</p>' +
+                                                        //'<p class="mui-h6 mui-ellipsis">备注：在对应专线使用该运费券可抵扣运费，且一次最多抵扣500</p>' +
                                                     '</div>' +
                                                     '<div class="mui-table-cell mui-col-xs-2 mui-text-center">' +
                                                         '<br /><br /><button type="button" class="mui-btn mui-btn-primary mui-btn-outlined" data-index="wl" onClick="PayPoints(\'' + list[i]["CardUserID"] + '\',\'' + list[i]["zxmc"] + '\',\'' + list[i]["points"] + '\');">' +
