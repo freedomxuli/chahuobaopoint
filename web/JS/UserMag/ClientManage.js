@@ -7,6 +7,8 @@ var pageSize = 15;
 var cx_role;
 var cx_yhm;
 var cx_xm;
+var cx_beg;
+var cx_end;
 //************************************数据源*****************************************
 var store = createSFW4Store({
     data: [],
@@ -29,7 +31,8 @@ var store = createSFW4Store({
        { name: 'SalePoints' },
        { name: 'KFGMPoints' },
        { name: 'dqS' },
-       { name: 'DqBm' }
+       { name: 'DqBm' },
+       { name: 'AddTime' },
     ],
     onPageChange: function (sto, nPage, sorters) {
         getUser(nPage);
@@ -117,7 +120,7 @@ function getUser(nPage) {
             total: retVal.ac,
             currentPage: retVal.cp
         });
-    }, CS.onError, nPage, pageSize, Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+    }, CS.onError, nPage, pageSize, Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue(), Ext.getCmp("cx_beg").getValue(), Ext.getCmp("cx_end").getValue());
 }
 
 function EditUser(id) {
@@ -757,7 +760,17 @@ Ext.onReady(function () {
                                     return str;
                                 }
 
-                            },{
+                            },
+                            {
+                                xtype: 'datecolumn',
+                                dataIndex: 'AddTime',
+                                format: 'Y-m-d',
+                                sortable: false,
+                                menuDisabled: true,
+                                width: 110,
+                                text: '注册时间'
+                            },
+                            {
                                 xtype: 'gridcolumn',
                                 dataIndex: 'KFGMPoints',
                                 width: 140,
@@ -830,6 +843,22 @@ Ext.onReady(function () {
                                             fieldLabel: '真实姓名'
                                         },
                                         {
+                                            id: 'cx_beg',
+                                            xtype: 'datefield',
+                                            fieldLabel: '注册时间',
+                                            format: 'Y-m-d',
+                                            labelWidth: 80,
+                                            width: 210
+                                        },
+                                        {
+                                            id: 'cx_end',
+                                            xtype: 'datefield',
+                                            format: 'Y-m-d',
+                                            fieldLabel: '至',
+                                            labelWidth: 20,
+                                            width: 150
+                                        },
+                                        {
                                             xtype: 'buttongroup',
                                             title: '',
                                             items: [
@@ -884,7 +913,7 @@ Ext.onReady(function () {
                                                     iconCls: 'view',
                                                     text: '导出专线用户统计表',
                                                     handler: function () {
-                                                        DownloadFile("CZCLZ.YHGLClass.GetZXUSERToFile", "专线用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                        DownloadFile("CZCLZ.YHGLClass.GetZXUSERToFile", "专线用户统计表.xls", Ext.getCmp("cx_beg").getValue(), Ext.getCmp("cx_end").getValue());
                                                     }
                                                 },
                                                 {
@@ -892,7 +921,7 @@ Ext.onReady(function () {
                                                     iconCls: 'view',
                                                     text: '导出三方用户统计表',
                                                     handler: function () {
-                                                        DownloadFile("CZCLZ.YHGLClass.GetSFUSERToFile", "三方用户统计表.xls", Ext.getCmp("cx_role").getValue(), Ext.getCmp("cx_yhm").getValue(), Ext.getCmp("cx_xm").getValue());
+                                                        DownloadFile("CZCLZ.YHGLClass.GetSFUSERToFile", "三方用户统计表.xls", Ext.getCmp("cx_beg").getValue(), Ext.getCmp("cx_end").getValue());
                                                     }
                                                 },
                                                 {
@@ -927,6 +956,8 @@ Ext.onReady(function () {
     cx_role = Ext.getCmp("cx_role").getValue();
     cx_yhm = Ext.getCmp("cx_yhm").getValue();
     cx_xm = Ext.getCmp("cx_xm").getValue();
+    cx_beg = Ext.getCmp("cx_beg").getValue();
+    cx_end = Ext.getCmp("cx_end").getValue();
 
     getUser(1);
 

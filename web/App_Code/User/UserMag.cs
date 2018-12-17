@@ -347,15 +347,22 @@ public class UserMag
 
                 string where1 = "";
                 string where2 = "";
+                string where3 = "";
                 if (!string.IsNullOrEmpty(kind))
                 {
                     switch (kind)
                     {
                         case "1":
                             where1 = " and a.CardUserID = '0'";
+                            where3 = " and a.CardUserID = '0'";
                             break;
                         case "2":
                             where2 = " and a.BuyUserID = '0'";
+                            where1 = " and a.CardUserID = '0'";
+                            break;
+                        case "3":
+                            where2 = " and a.BuyUserID = '0'";
+                            where3 = " and a.CardUserID = '0'";
                             break;
                     }
                 }
@@ -364,16 +371,25 @@ public class UserMag
                 {
                     where1 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
                     where2 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where3 += " and a.AddTime >= " + db.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + db.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
                 }
 
                 if (!string.IsNullOrEmpty(mc))
                 {
                     where1 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                     where2 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where3 += " and " + db.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                 }
 
-                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
-                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"
+                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'转让' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                                left join tb_b_user c on a.PayUserID=c.UserID 
+                                left join tb_b_user d on a.ReceiveUserID=d.UserID 
+                                where 1=1 and  c.ClientKind=2 and  d.ClientKind=2   " + where1 + @"
+                                 union all 
+                                select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                                left join tb_b_user c on a.PayUserID=c.UserID 
+                                left join tb_b_user d on a.ReceiveUserID=d.UserID 
+                                where 1=1 and  c.ClientKind=2 and  d.ClientKind=1   " + where3 + @"
                             union all 
 	                        select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
                             left join tb_b_user c on a.BuyUserID=c.UserID
@@ -456,7 +472,7 @@ public class UserMag
     }
 
     [CSMethod("GetClientList")]
-    public object GetClientList(int pagnum, int pagesize, string roleId, string yhm, string xm)
+    public object GetClientList(int pagnum, int pagesize, string roleId, string yhm, string xm,string beg,string end)
     {
         using (DBConnection dbc = new DBConnection())
         {
@@ -484,6 +500,14 @@ public class UserMag
                 {
                     where += " and " + dbc.C_Like("a.UserXM", xm.Trim(), LikeStyle.LeftAndRightLike);
                 }
+                if (!string.IsNullOrEmpty(beg))
+                {
+                    where += " and  a.AddTime>='" + Convert.ToDateTime(beg).ToString("yyyy-MM-dd") + "'";
+                }
+                if (!string.IsNullOrEmpty(end))
+                {
+                    where += " and a.AddTime<='" + Convert.ToDateTime(end).AddDays(1).ToString("yyyy-MM-dd") + "'";
+                }
 
                 string str = @"select a.*,c.roleName,b.roleId,d.SalePoints,e.Points as KFGMPoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
@@ -494,7 +518,7 @@ public class UserMag
 
                 //开始取分页数据
                 System.Data.DataTable dtPage = new System.Data.DataTable();
-                dtPage = dbc.GetPagedDataTable(str + " order by a.UserName,a.UserXM", pagesize, ref cp, out ac);
+                dtPage = dbc.GetPagedDataTable(str + " order by a.AddTime desc,a.UserName,a.UserXM", pagesize, ref cp, out ac);
 
                 dtPage.Columns.Add("dqS");
                 for (int i = 0; i < dtPage.Rows.Count; i++)
@@ -734,15 +758,22 @@ public class UserMag
 
                 string where1 = "";
                 string where2 = "";
+                string where3 = "";
                 if (!string.IsNullOrEmpty(kind))
                 {
                     switch (kind)
                     {
                         case "1":
                             where1 = " and a.CardUserID = '0'";
+                            where3 = " and a.CardUserID = '0'";
                             break;
                         case "2":
                             where2 = " and a.BuyUserID = '0'";
+                            where1 = " and a.CardUserID = '0'";
+                            break;
+                        case "3":
+                            where2 = " and a.BuyUserID = '0'";
+                            where3 = " and a.CardUserID = '0'";
                             break;
                     }
                 }
@@ -751,15 +782,30 @@ public class UserMag
                 {
                     where1 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
                     where2 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
+                    where3 += " and a.AddTime >= " + dbc.ToSqlValue(Convert.ToDateTime(btime)) + " and a.AddTime < " + dbc.ToSqlValue(Convert.ToDateTime(etime).AddDays(1));
                 }
 
                 if (!string.IsNullOrEmpty(mc))
                 {
                     where1 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                     where2 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
+                    where3 += " and " + dbc.C_Like("c.UserName", mc, LikeStyle.LeftAndRightLike);
                 }
 
-                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID                            left join tb_b_user c on a.PayUserID=c.UserID where 1=1 " + where1 + @"                            union all 	                        select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID                            left join tb_b_user c on a.BuyUserID=c.UserID                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"                            order by AddTime desc";
+                string str = @"select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'转让' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                                left join tb_b_user c on a.PayUserID=c.UserID 
+                                left join tb_b_user d on a.ReceiveUserID=d.UserID 
+                                where 1=1 and  c.ClientKind=2 and  d.ClientKind=2   " + where1 + @"
+                                 union all 
+                                select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'消费' as KIND  from tb_b_pay a left join tb_b_user b on a.CardUserID=b.UserID
+                                left join tb_b_user c on a.PayUserID=c.UserID 
+                                left join tb_b_user d on a.ReceiveUserID=d.UserID 
+                                where 1=1 and  c.ClientKind=2 and  d.ClientKind=1   " + where3 + @"
+                            union all 
+	                        select b.UserXM,c.UserName,a.AddTime,a.Points as MONEY,'购买' as KIND  from tb_b_order a left join tb_b_user b on a.SaleUserID=b.UserID
+                            left join tb_b_user c on a.BuyUserID=c.UserID
+                            where a.Status=0 and a.ZhiFuZT=1 " + where2 + @"
+                            order by AddTime desc";
                 DataTable dt = dbc.ExecuteDataTable(str);
 
                 dt.Columns.Add("DATE");
@@ -798,7 +844,7 @@ public class UserMag
     }
 
     [CSMethod("GetZXUSERToFile", 2)]
-    public byte[] GetZXUSERToFile(string roleId, string yhm, string xm)
+    public byte[] GetZXUSERToFile(string beg, string end)
     {
         using (DBConnection dbc = new DBConnection())
         {
@@ -871,12 +917,19 @@ public class UserMag
                 cells[0, 7].PutValue("在售运费券");
                 cells[0, 7].SetStyle(style2);
                 cells.SetColumnWidth(7, 20);
+                cells[0, 8].PutValue("注册时间");
+                cells[0, 8].SetStyle(style2);
+                cells.SetColumnWidth(8, 20);
 
                 string where = "";
-                //if (!string.IsNullOrEmpty(yhm.Trim()))
-                //{
-                //    where += " and " + dbc.C_Like("b.UserXM", yhm.Trim(), LikeStyle.LeftAndRightLike);
-                //}
+                if (!string.IsNullOrEmpty(beg))
+                {
+                    where += " and  a.AddTime>='" + Convert.ToDateTime(beg).ToString() + "'";
+                }
+                if (!string.IsNullOrEmpty(end))
+                {
+                    where += " and a.AddTime<='" + Convert.ToDateTime(end).AddDays(1).ToString() + "'";
+                }
 
                 string str = @"select a.*,c.roleName,b.roleId,d.SalePoints,e.Points as KFGMPoints from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
@@ -887,7 +940,7 @@ public class UserMag
                 str += where;
                 //开始取分页数据
                 System.Data.DataTable dt = new System.Data.DataTable();
-                dt = dbc.ExecuteDataTable(str + " order by a.UserName,a.UserXM");
+                dt = dbc.ExecuteDataTable(str + " order by a.AddTime desc,a.UserName,a.UserXM");
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     cells[i + 1, 0].PutValue(dt.Rows[i]["UserName"]);
@@ -916,6 +969,8 @@ public class UserMag
                     cells[i + 1, 6].SetStyle(style4);
                     cells[i + 1, 7].PutValue(dt.Rows[i]["SalePoints"]);
                     cells[i + 1, 7].SetStyle(style4);
+                    cells[i + 1, 8].PutValue(Convert.ToDateTime(dt.Rows[i]["AddTime"]).ToString("yyyy-MM-dd"));
+                    cells[i + 1, 8].SetStyle(style4);
                 }
 
                 MemoryStream ms = workbook.SaveToStream();
@@ -931,7 +986,7 @@ public class UserMag
     }
 
     [CSMethod("GetSFUSERToFile", 2)]
-    public byte[] GetSFUSERToFile(string roleId, string yhm, string xm)
+    public byte[] GetSFUSERToFile(string beg, string end)
     {
         using (DBConnection dbc = new DBConnection())
         {
@@ -992,6 +1047,9 @@ public class UserMag
                 cells[0, 3].PutValue("电话");
                 cells[0, 3].SetStyle(style2);
                 cells.SetColumnWidth(3, 20);
+                cells[0, 4].PutValue("注册时间");
+                cells[0, 4].SetStyle(style2);
+                cells.SetColumnWidth(4, 20);
 
                 string where = "";
                 //if (!string.IsNullOrEmpty(yhm.Trim()))
@@ -999,13 +1057,21 @@ public class UserMag
                 //    where += " and " + dbc.C_Like("b.UserXM", yhm.Trim(), LikeStyle.LeftAndRightLike);
                 //}
 
+                if (!string.IsNullOrEmpty(beg))
+                {
+                    where += " and  a.AddTime>='" + Convert.ToDateTime(beg).ToString() + "'";
+                }
+                if (!string.IsNullOrEmpty(end))
+                {
+                    where += " and a.AddTime<='" + Convert.ToDateTime(end).AddDays(1).ToString() + "'";
+                }
                 string str = @"select a.*,c.roleName,b.roleId from tb_b_user a left join tb_b_user_role b on a.UserID=b.UserID
                                left join tb_b_roledb c on b.roleId=c.roleId
                                where 1=1 and a.ClientKind = 2";
                 str += where;
                 //开始取分页数据
                 System.Data.DataTable dt = new System.Data.DataTable();
-                dt = dbc.ExecuteDataTable(str + " order by a.UserName,a.UserXM");
+                dt = dbc.ExecuteDataTable(str + " order by a.AddTime desc,a.UserName,a.UserXM");
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     cells[i + 1, 0].PutValue(dt.Rows[i]["UserName"]);
@@ -1016,6 +1082,8 @@ public class UserMag
                     cells[i + 1, 2].SetStyle(style4);
                     cells[i + 1, 3].PutValue(dt.Rows[i]["UserTel"]);
                     cells[i + 1, 3].SetStyle(style4);
+                    cells[i + 1, 4].PutValue(Convert.ToDateTime(dt.Rows[i]["AddTime"]).ToString("yyyy-MM-dd"));
+                    cells[i + 1, 4].SetStyle(style4);
                 }
 
                 MemoryStream ms = workbook.SaveToStream();

@@ -76,6 +76,10 @@ var KindStore1 = Ext.create('Ext.data.Store', {
         {
             'ID': '2',
             'MC': '消费'
+        },
+        {
+            'ID': '3',
+            'MC': '转让'
         }
     ]
 });
