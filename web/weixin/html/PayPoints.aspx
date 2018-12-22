@@ -72,7 +72,7 @@
     	                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(flag); //参数为true代表没有更多数据了。
     	                    var table = document.body.querySelector('.mui-table-view');
     	                    var cells = document.body.querySelectorAll('.mui-table-view-cell');
-    	                    for (var i = cells.length, len = i + 20; i < len; i++) {
+    	                    for (var i = 0; i < list.length; i++) {
     	                        var li = document.createElement('li');
     	                        li.className = 'mui-table-view-cell';
     	                        //li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';

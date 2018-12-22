@@ -1425,7 +1425,7 @@ public class InterFaceHandler : IHttpHandler {
                                                 SmartFramework4v2.Data.DataTableTracker rmdtt = new SmartFramework4v2.Data.DataTableTracker(rmdt);
                                                 var rmdr = rmdt.NewRow();
                                                 rmdr["mycardId"] = rmcarddt.Rows[0]["mycardId"].ToString();
-                                                rmdr["points"] = Convert.ToDecimal(Convert.ToInt32(dt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points));
+                                                rmdr["points"] = Convert.ToDecimal(Convert.ToInt32(rmcarddt.Rows[0]["Points"].ToString()) + Convert.ToInt32(Points));
                                                 rmdt.Rows.Add(rmdr);
                                                 db.UpdateTable(rmdt, rmdtt);
                                             }
@@ -1556,14 +1556,22 @@ public class InterFaceHandler : IHttpHandler {
                         }
                         else
                         {
-                            hash["sign"] = "1";
-                            hash["msg"] = "有效二维码！";
+                            if (udt.Rows[0]["UserID"].ToString() == "c2fa5f4a-9d4a-4393-9d1b-1e09cc52b24b")
+                            {
+                                hash["sign"] = "0";
+                                hash["msg"] = "请联系查货宝：4006887856!";
+                            }
+                            else
+                            {
+                                hash["sign"] = "1";
+                                hash["msg"] = "有效二维码！";
+                            }
                         }
                     }
                     else
                     {
-                        hash["sign"] = "1";
-                        hash["msg"] = "有效二维码！";
+                        hash["sign"] = "0";
+                        hash["msg"] = "产品升级，暂缓使用！";
                     }
                 }
                 else {
